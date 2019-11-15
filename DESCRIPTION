@@ -1,11 +1,20 @@
 Package: SMLN
 Type: Package
-Title: What the Package Does (Title Case)
-Version: 0.1.0
-Author: Who wrote it
-Maintainer: The package maintainer <yourself@somewhere.net>
+Title: Objective Bayesian Survival Analysis Using Shape Mixtures of Log-Normal
+    Distributions
+Version: 0.0.0.9000
+Authors@R: c(person("Nathan","Constantine-Cooke",
+  email="nathan.constantine-cooke@ed.ac.uk", role = c("aut")),
+  person("Catalina", "Vallejos", role = c("cre"),
+        email="catalina.vallejos@igmm.ed.ac.uk"))
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.
-License: What license is it under?
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Suggests: 
+    testthat
+URL: https://github.com/nathansam/SMLN
+BugReports: https://github.com/nathansam/SMLN/issues
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.0.0
