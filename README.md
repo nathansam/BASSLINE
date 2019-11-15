@@ -26,4 +26,4 @@ devtools::install_github("nathansam/SMLN")
 ```
 
 ### References 
-- [1] <a href="http://dx.doi.org/10.1080/01621459.2014.923316">Vallejos & Steel (2014). Journal of the American Statistical Association. </a>
+- [1] <a href="http://dx.doi.org/10.1080/01621459.2014.923316">Vallejos & Steel (2015). Journal of the American Statistical Association. </a>
