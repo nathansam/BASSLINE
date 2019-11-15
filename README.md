@@ -9,6 +9,8 @@ A project to convert code written by Vallejos & Steel[1] into a library using C+
 ![Windows build state](https://github.com/nathansam/SMLN/workflows/Win-build/badge.svg)
 ![macOS build state](https://github.com/nathansam/SMLN/workflows/macOS-build/badge.svg)
 ![Linux Build state](https://github.com/nathansam/SMLN/workflows/Linux-build/badge.svg)
+[![codecov](https://codecov.io/gh/nathansam/SMLN/branch/master/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
+
 
 ### Installation
 
