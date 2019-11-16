@@ -1,0 +1,6 @@
+template:
+  params:
+    bootswatch: paper
+destination: docs
+development:
+  mode: auto

@@ -4,8 +4,8 @@ Title: Objective Bayesian Survival Analysis Using Shape Mixtures of Log-Normal
     Distributions
 Version: 0.0.0.9000
 Authors@R: c(person("Nathan","Constantine-Cooke",
-  email="nathan.constantine-cooke@ed.ac.uk", role = c("aut")),
-  person("Catalina", "Vallejos", role = c("cre"),
+  email="nathan.constantine-cooke@ed.ac.uk", role = c("cre","aut")),
+  person("Catalina", "Vallejos", role = c("aut"),
         email="catalina.vallejos@igmm.ed.ac.uk"))
 Description: More about what it does (maybe more than one line)
     Use four spaces when indenting paragraphs within the Description.

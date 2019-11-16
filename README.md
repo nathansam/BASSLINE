@@ -15,7 +15,7 @@ A project to convert code written by Vallejos & Steel[1] into a library using C+
 ### Installation
 
 The recommended way to install SMLN is via pak which will handle intalling all dependencies: 
-```{R}
+```R
 if (!requireNamespace("pak", quietly = TRUE))
     install.packages("pak")
 pak::pkg_install("nathansam/SMLN")
@@ -23,7 +23,7 @@ pak::pkg_install("nathansam/SMLN")
 
 Alternatively, SMLN can be install via the devtools package
 
-```{R}
+```R
 devtools::install_github("nathansam/SMLN")
 ```
 
