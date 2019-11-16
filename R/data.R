@@ -19,5 +19,5 @@
 #'   \item{age}{Age (in years)}
 #'   \item{prior}{Prior therapy, 0 or 10}
 #' }
-#' @source \url{http://doi.org/10.7717/peerj.2555}
+#' @source Appendix I of Kalbfleisch and Prentice (1980).
 "cancer"

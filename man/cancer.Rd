@@ -18,7 +18,7 @@ able to care for self.}
 \item{prior}{Prior therapy, 0 or 10}
 }}
 \source{
-\url{http://doi.org/10.7717/peerj.2555}
+Appendix I of Kalbfleisch and Prentice (1980).
 }
 \usage{
 cancer
