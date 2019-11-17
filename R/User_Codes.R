@@ -1,0 +1,1592 @@
+################################################################################
+##############IMPLEMENTATION OF THE LOG-NORMAL MODEL (NO MIXTURE)###############
+################################################################################
+
+#' @title MCMC algorithm for the log-normal model
+#' @description  Markov chain Monte carlo algorithm for the log-normal model
+#'     (no mixture)
+#' @param N Total number of iterations.
+#' @param thin Thinning period.
+#' @param Time Vector containing the survival times.
+#' @param Cens Censoring indication (1: observed, 0: right-censored).
+#' @param X Design matrix with dimensions \eqn{n} x  \eqn{k} where \eqn{n} is
+#'     the number of observations and \eqn{k} is the number of covariates
+#'     (including the intercept).
+#' @param beta0 Starting value for \eqn{\beta}.
+#' @param sigma20 Starting value for \eqn{\sigma^2}.
+#' @param prior Indicator of prior (1: Jeffreys, 2: Type I Ind. Jeffreys,
+#'     3: Ind. Jeffreys).
+#' @param set Indicator for the use of set observations (1: set observations,
+#'     0: point observations).
+#' @param eps_l Lower imprecision \eqn{(\epsilon_l)} for set observations
+#'     (default value: 0.5).
+#' @param eps_r Upper imprecision \eqn{(\epsilon_r)} for set observations
+#'     (default value: 0.5)
+#'
+#' @export
+MCMC_LN <- function(N, thin, Time, Cens, X, beta0, sigma20, prior, set,
+                    eps_l = 0.5, eps_r = 0.5) {
+    k <- length(beta0)
+    n <- length(Time)
+    N.aux = round(N/thin, 0)
+    if (prior == 1) {
+        p = 1 + k/2
+    }
+    if (prior == 2) {
+        p = 1
+    }
+
+    beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    beta[1, ] <- beta0
+    sigma2 <- rep(0, times = N.aux + 1)
+    sigma2[1] <- sigma20
+    logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    logt[1, ] <- log(Time)
+
+    beta.aux <- beta[1, ]
+    sigma2.aux <- sigma2[1]
+    logt.aux <- logt[1, ]
+
+    for (iter in 2:(N + 1)) {
+        mu.aux <- solve(t(X) %*% X) %*% t(X) %*% logt.aux
+        Sigma.aux <- sigma2.aux * solve(t(X) %*% X)
+        beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+
+        shape.aux <- (n + 2 * p - 2)/2
+        rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% (logt.aux - X %*%
+                                                               beta.aux)
+        if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
+            sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
+                                         rate = rate.aux))^(-1)
+        }
+
+        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
+                                    eps_l, eps_r)
+
+        if (iter%%thin == 0) {
+            beta[iter/thin + 1, ] = beta.aux
+            sigma2[iter/thin + 1] = sigma2.aux
+            logt[iter/thin + 1, ] = logt.aux
+        }
+        if ((iter - 1)%%1e+05 == 0) {
+            print(paste("Iteration :", iter))
+        }
+    }
+
+    chain <- cbind(beta, sigma2, logt)
+    return(chain)
+}
+
+#' @title Log-marginal Likelihood estimator for the log-normal model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#' @export
+LML_LN <- function(thin, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
+    chain = as.matrix(chain)
+    n <- length(Time)
+    N <- dim(chain)[1]
+    k <= dim(X)[2]
+    if (prior == 1) {
+        p <- 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    if (k > 1) {
+        beta.star <- apply(chain[, 1:k], 2, "median")
+    } else {
+        beta.star <- stats::median(chain[, 1])
+    }
+    sigma2.star <- stats::median(chain[, k + 1])
+
+    # LIKELIHOOD ORDINATE
+    LL.ord <- log.lik.LN(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
+                        set, eps_l, eps_r)
+    print("Likelihood ordinate ready!")
+
+    # PRIOR ORDINATE
+    LP.ord <- prior.LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
+                      log = TRUE)
+    print("Prior ordinate ready!")
+
+    # POSTERIOR ORDINATE - sigma2
+    shape <- (n + 2 * p - 2)/2
+    po.sigma2 <- rep(0, times = N)
+    for (i in 1:N) {
+        aux1 <- as.vector(as.vector(t(chain[i, (k + 2):(k + 1 + n)])) - X %*%
+                             as.vector(chain[i, 1:k]))
+        rate.aux <- as.numeric(0.5 * t(aux1) %*% aux1)
+        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
+                                           scale = rate.aux)
+    }
+    PO.sigma2 <- mean(po.sigma2)
+    print("Posterior ordinate sigma2 ready!")
+
+    # POSTERIOR ORDINATE - beta
+    chain.beta <- MCMCR.sigma2.LN(N = N * thin, thin = thin, Time, Cens, X,
+                                 beta0 = t(chain[N, 1:k]),
+                                 sigma20 = sigma2.star,
+                                 logt0 = t(chain[N, (k + 2):(k + 1 + n)]),
+                                 prior = prior, set, eps_l, eps_r)
+    po.beta <- rep(0, times = N)
+    aux1.beta <- solve(t(X) %*% X)
+    aux2.beta <- aux1.beta %*% t(X)
+    for (i in 1:N) {
+        mu.aux <- as.vector(aux2.beta %*% chain.beta[(i + 1), (k + 1):(k + n)])
+        po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
+                             sigma = sigma2.star * aux1.beta)
+    }
+    PO.beta <- mean(po.beta)
+    print("Posterior ordinate beta ready!")
+
+    # TAKING LOGARITHM
+    LPO.sigma2 <- log(PO.sigma2)
+    LPO.beta <- log(PO.beta)
+
+    # MARGINAL LOG-LIKELIHOOD
+    LML <- LL.ord + LP.ord - LPO.sigma2 - LPO.beta
+
+    list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.sigma2 = LPO.sigma2,
+         LPO.beta = LPO.beta, LML = LML)
+}
+
+
+#' @title Deviance information criteria for the log-normal model
+#' @description Deviance information criteria is based on the deviance funcion
+#'     \eqn{D(\theta, y) = -2 log(f(y|\theta))} but also incorporates a
+#'     penalization factor of the complexity of the model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+
+DIC_LN = function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    n <- length(Time)
+    LL <- rep(0, times = N)
+
+    for (iter in 1:N) {
+        LL[iter] <- log.lik.LN(Time, Cens, X,
+                               beta = as.vector(chain[iter, 1:k]),
+                               sigma2 = chain[iter, k + 1], set = set,
+                               eps_l, eps_r)
+    }
+
+    aux <- apply(chain[, 1:(k + 1)], 2, "median")
+    pd <- -2 * mean(LL) + 2 * log.lik.LN(Time, Cens, X, beta = aux[1:k],
+                                         sigma2 = aux[k + 1], set = set, eps_l,
+                                         eps_r)
+    pd.aux <- k + 1
+
+    DIC <- -2 * mean(LL) + pd
+
+    print(paste("Effective number of parameters :", round(pd, 2)))
+    print(paste("Actual number of parameters :", pd.aux))
+    return(DIC)
+}
+
+
+#' @title Case deletion analysis for the log-normal model
+#' @description Leave-one-out cross validation analysis. The function returns a
+#'     matrix with n rows. Its first column contains the logarithm of the CPO
+#'     (Geisser and Eddy, 1979). Larger values of the CPO indicate better
+#'     predictive accuracy of the model. The second and third columns contain
+#'     the KL divergence between \eqn{\pi(\beta, \sigma^2,  \theta | t_{-i})}
+#'     and \eqn{\pi(\beta, \sigma^2,  \theta | t)} and its calibration index
+#'     \eqn{p_i}, respectively.
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+CaseDeletion_LN <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    logCPO <- rep(0, times = n)
+    KL.aux <- rep(0, times = n)
+    N <- dim(chain)[1]
+
+    for (s in 1:n) {
+        aux1 <- rep(0, times = N)
+        aux2 <- rep(0, times = N)
+        for (ITER in 1:N) {
+            aux2[ITER] <- log.lik.LN(Time[s], Cens[s], X[s, ],
+                                    beta = as.vector(chain[ITER, 1:k]),
+                                    sigma2 = chain[ITER, (k + 1)], set,
+                                    eps_l, eps_r)
+            aux1[ITER] <- exp(-aux2[ITER])
+        }
+        logCPO[s] <- -log(mean(aux1))
+        KL.aux[s] <- mean(aux2)
+        if (KL.aux[s] - logCPO[s] < 0) {
+            print(paste("Numerical problems for observation:", s))
+        }
+    }
+    KL <- abs(KL.aux - logCPO)
+    CALIBRATION <- 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
+    return(cbind(logCPO, KL, CALIBRATION))
+}
+
+###############################################################################
+##################IMPLEMENTATION OF THE LOG-STUDENT'S T MODEL##################
+###############################################################################
+
+#' @title MCMC algorithm for the log-student's t model
+#' @description  Markov chain Monte carlo algorithm for the log-student's T
+#'     model (no mixture)
+#' @inheritParams MCMC_LN
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
+#'     updates
+#' @param nu0 Starting value for \eqn{v}
+#'
+#' @export
+MCMC_LST = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0, prior, set,
+                    eps_l, eps_r, ar = 0.44) {
+    k <- length(beta0)
+    n <- length(Time)
+    N.aux <- round(N/thin, 0)
+    if (prior == 1) {
+        p <- 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    beta[1, ] <- beta0
+    sigma2 <- rep(0, times = N.aux + 1)
+    sigma2[1] <- sigma20
+    nu <- rep(0, times = N.aux + 1)
+    nu[1] <- nu0
+    logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    logt[1, ] <- log(Time)
+    lambda <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    lambda[1, ] <- stats::rgamma(n, shape = nu0/2, rate = nu0/2)
+    accept.nu <- 0
+    pnu.aux <- 0
+    ls.nu <- rep(0, times = N.aux + 1)
+
+    beta.aux <- beta[1, ]
+    sigma2.aux <- sigma2[1]
+    nu.aux <- nu[1]
+    logt.aux <- logt[1, ]
+    lambda.aux <- lambda[1, ]
+    ls.nu.aux <- ls.nu[1]
+
+    i_batch <- 0
+
+    for (iter in 2:(N + 1)) {
+        i_batch <- i_batch + 1
+
+        Lambda <- diag(lambda.aux)
+        AUX1 <- (t(X) %*% Lambda %*% X)
+        if (det(AUX1) != 0) {
+            AUX <- solve(AUX1)
+            mu.aux <- AUX %*% t(X) %*% Lambda %*% logt.aux
+            Sigma.aux <- sigma2.aux * AUX
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+        }
+
+        shape.aux <- (n + 2 * p - 2)/2
+        rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
+            (logt.aux - X %*% beta.aux)
+        if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
+            sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
+                                         rate = rate.aux))^(-1)
+        }
+
+        MH.nu <- MH.nu.LST(N = 1, omega2 = exp(ls.nu.aux), beta.aux,
+                           lambda.aux, nu.aux, prior)
+        nu.aux <- MH.nu$nu
+        accept.nu <- accept.nu + MH.nu$ind
+        pnu.aux <- pnu.aux + MH.nu$ind
+
+        if ((iter - 1)%%Q == 0) {
+            shape1.aux <- (nu.aux + 1)/2
+            rate1.aux <- 0.5 * (nu.aux + ((logt.aux - X %*% beta.aux)^2) /
+                                    sigma2.aux)
+            lambda.aux <- stats::rgamma(n, shape = rep(shape1.aux, times = n),
+                                        rate = rate1.aux)
+        }
+
+        logt.aux = logt.update.SMLN(Time, Cens, X, beta.aux,
+                                    sigma2.aux/lambda.aux, set, eps_l, eps_r)
+
+        if (i_batch == 50) {
+            pnu.aux <- pnu.aux/50
+            Pnu.aux <- as.numeric(pnu.aux < ar)
+            ls.nu.aux <- ls.nu.aux + ((-1)^Pnu.aux) * min(0.01, 1/sqrt(iter))
+            i_batch <- 0
+            pnu.aux <- 0
+        }
+
+        if (iter%%thin == 0) {
+            beta[iter/thin + 1, ] <- beta.aux
+            sigma2[iter/thin + 1] <- sigma2.aux
+            nu[iter/thin + 1] <- nu.aux
+            logt[iter/thin + 1, ] <- logt.aux
+            lambda[iter/thin + 1, ] <- lambda.aux
+            ls.nu[iter/thin + 1] <- ls.nu.aux
+        }
+        if ((iter - 1)%%1e+05 == 0) {
+            print(paste("Iteration :", iter))
+        }
+    }
+
+    print(paste("AR nu :", round(accept.nu/N, 2)))
+
+    chain <- cbind(beta, sigma2, nu, lambda, logt, ls.nu)
+    return(chain)
+}
+
+#' @title Log-marginal Likelihood estimator for the log-student's t model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#' @export
+LML_LST <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    n <- length(Time)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    if (prior == 1) {
+        p <- 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+    omega2.nu <- exp(stats::median(chain[, k + 3 + 2 * n]))
+
+    chain.nonadapt <- MCMC.LST.NonAdapt(N = N * thin, thin, Q, Time,
+                                        Cens, X, beta0 = t(chain[N, 1:k]),
+                                        sigma20 = chain[N, k + 1],
+                                        nu0 = chain[N, k + 2], prior, set,
+                                        eps_l, eps_r, omega2.nu)
+    chain.nonadapt <- chain.nonadapt[-1, ]
+    sigma2.star <- stats::median(chain.nonadapt[, k + 1])
+    nu.star <- stats::median(chain.nonadapt[, k + 2])
+    if (k > 1) {
+        beta.star <- apply(chain.nonadapt[, 1:k], 2, "median")
+    } else {
+        beta.star <- stats::median(chain.nonadapt[, 1])
+    }
+
+    # Log-LIKELIHOOD ORDINATE
+    LL.ord <- log.lik.LST(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
+                          nu = nu.star, set, eps_l, eps_r)
+    print("Likelihood ordinate ready!")
+
+    # PRIOR ORDINATE
+    LP.ord <- prior.LST(beta = beta.star, sigma2 = sigma2.star, nu = nu.star,
+                       prior, log = TRUE)
+    print("Prior ordinate ready!")
+
+
+    logt0 <- t(chain.nonadapt[N, (n + k + 3):(2 * n + k + 2)])
+    lambda0 <- t(chain.nonadapt[N, (k + 3):(k + 2 + n)])
+
+    chain.sigma2 <- MCMCR.nu.LST(N = N * thin, thin = thin, Q, Time, Cens, X,
+                                 beta0 = t(chain.nonadapt[N, 1:k]),
+                                 sigma20 = chain.nonadapt[N, (k + 1)],
+                                 nu0 = nu.star, logt0 = logt0,
+                                 lambda0 = lambda0, prior = prior, set, eps_l,
+                                 eps_r)
+    print("Reduced chain.sigma2 ready!")
+
+    # POSTERIOR ORDINATE - nu USING AN ADAPTATION CHIB AND JELIAZKOV (2001) METHODOLOGY
+    po1.nu <- rep(0, times = N)
+    po2.nu <- rep(0, times = N)
+    for (i in 1:N) {
+        lambda.po1 <- t(chain.nonadapt[i, (k + 3):(k + 2 + n)])
+        mean <- as.numeric(chain.nonadapt[i,(k + 2)])
+        po1.nu[i] <- alpha.nu(nu0 = as.numeric(chain.nonadapt[i, (k + 2)]),
+                              nu1 = nu.star,
+                              lambda = lambda.po1, k = k,
+                              prior = prior) * stats::dnorm(x = nu.star,
+                                                     mean = mean,
+                                                     sd = sqrt(omega2.nu))
+        nu.aux <- stats::rnorm(n = 1, mean = nu.star, sd = sqrt(omega2.nu))
+
+        lambda.po2 <- t(chain.sigma2[i + 1, (k + 2):(k + 1 + n)])
+        po2.nu[i] <- alpha.nu(nu0 = nu.star, nu1 = nu.aux,
+                              lambda = lambda.po2,
+                              k = k, prior = prior)
+    }
+    PO.nu <- mean(po1.nu)/mean(po2.nu)
+    print("Posterior ordinate nu ready!")
+
+    # POSTERIOR ORDINATE - sigma 2
+    shape <- (n + 2 * p - 2)/2
+    po.sigma2 <- rep(0, times = N)
+    for (i in 1 : N) {
+        aux1 <- (chain.sigma2[i, (k + 2 + n):(k + 1 + 2 * n)]) - X %*%
+                    (chain.sigma2[i, 1:k])
+        aux2 <- diag(as.vector(t(chain.sigma2[i, (k + 2):(k + 1 + n)])))
+        rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
+        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
+                                            scale = rate.aux)
+    }
+    PO.sigma2 <- mean(po.sigma2)
+    print("Posterior ordinate sigma2 ready!")
+
+    # POSTERIOR ORDINATE - beta
+    logt0 <- t(chain.nonadapt[N, (n + k + 3):(2 * n + k + 2)])
+    lambda0 <- t(chain.nonadapt[N, (k + 3):(k + 2 + n)])
+
+    chain.beta <- MCMCR.sigma2.nu.LST(N = N * thin, thin = thin, Q, Time,
+                                      Cens, X,
+                                      beta0 = t(chain.nonadapt[N, 1 : k]),
+                                      sigma20 = sigma2.star, nu0 = nu.star,
+                                      logt0 = logt0, lambda0 = lambda0, prior,
+                                      set, eps_l, eps_r)
+
+    print("Reduced chain.beta ready!")
+    po.beta <- rep(0, times = N)
+    for (i in 1:N) {
+        aux0.beta <- diag(as.vector(t(chain.beta[(i + 1), (k + 1):(k + n)])))
+        aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
+        aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
+        mu.aux <- as.vector(aux2.beta %*%
+                               ((chain.beta[(i + 1), (k + 1 + n):(k + 2 * n)])))
+        po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
+                                       sigma = sigma2.star * aux1.beta,
+                                       log = FALSE)
+    }
+    PO.beta <- mean(po.beta)
+    print("Posterior ordinate beta ready!")
+
+    # TAKING LOGARITHM
+    LPO.nu <- log(PO.nu)
+    LPO.sigma2 <- log(PO.sigma2)
+    LPO.beta <- log(PO.beta)
+
+    # MARGINAL LOG-LIKELIHOOD
+    LML <- LL.ord + LP.ord - LPO.nu - LPO.sigma2 - LPO.beta
+
+    list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.nu = LPO.nu,
+         LPO.sigma2 = LPO.sigma2, LPO.beta = LPO.beta, LML = LML)
+}
+
+#' @title Deviance information criteria for the log-student's t model
+#' @description Deviance information criteria is based on the deviance funcion
+#'     \eqn{D(\theta, y) = -2 log(f(y|\theta))} but also incorporates a
+#'     penalization factor of the complexity of the model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+DIC_LST <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    n <- length(Time)
+    LL <- rep(0, times = N)
+
+    for (iter in 1:N) {
+        LL[iter] <- log.lik.LST(Time, Cens, X,
+                                beta = as.vector(chain[iter, 1:k]),
+                                sigma2 = chain[iter, k + 1],
+                                nu = chain[iter, k + 2], set, eps_l, eps_r)
+    }
+
+    aux <- apply(chain[, 1:(k + 2)], 2, "median")
+    pd <- -2 * mean(LL) + 2 * log.lik.LST(Time, Cens, X, beta = aux[1:k],
+                                          sigma2 = aux[k + 1],
+                                          nu = aux[k + 2], set, eps_l, eps_r)
+    pd.aux <- k + 2
+
+    DIC <- -2 * mean(LL) + pd
+
+    print(paste("Effective number of parameters :", round(pd, 2)))
+    print(paste("Actual number of parameters :", pd.aux))
+    return(DIC)
+}
+
+#' @title Case deletion analysis for the log-student's t model
+#' @description Leave-one-out cross validation analysis. The function returns a
+#'     matrix with n rows. Its first column contains the logarithm of the CPO
+#'     (Geisser and Eddy, 1979). Larger values of the CPO indicate better
+#'     predictive accuracy of the model. The second and third columns contain
+#'     the KL divergence between \eqn{\pi(\beta, \sigma^2,  \theta | t_{-i})}
+#'     and \eqn{\pi(\beta, \sigma^2,  \theta | t)} and its calibration index
+#'     \eqn{p_i}, respectively.
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+CaseDeletion_LST <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    logCPO <- rep(0, times = n)
+    KL.aux <- rep(0, times = n)
+    N <- dim(chain)[1]
+
+    for (s in 1:n) {
+        aux1 <- rep(0, times = N)
+        aux2 <- rep(0, times = N)
+        for (ITER in 1:N) {
+            aux2[ITER] <- log.lik.LST(Time[s], Cens[s], X[s, ],
+                                      beta = as.vector(chain[ITER, 1:k]),
+                                      sigma2 = chain[ITER, k + 1],
+                                      nu = chain[ITER, k + 2],
+                                      set, eps_l, eps_r)
+            aux1[ITER] <- exp(-aux2[ITER])
+        }
+        logCPO[s] <- -log(mean(aux1))
+        KL.aux[s] <- mean(aux2)
+        if (KL.aux[s] <- logCPO[s] < 0) {
+            print(paste("Numerical problems for observation:", s))
+        }
+    }
+    KL <- abs(KL.aux - logCPO)
+    CALIBRATION <- 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
+    return(cbind(logCPO, KL, CALIBRATION))
+}
+
+#' @title Outlier detection for observation for the log-student's t model
+#' @description This returns a unique number corresponding to the Bayes Factor
+#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     required as input. The user should expect long running times for the
+#'     log-Student’s t model, in which case a reduced chain given
+#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#' @inheritParams MCMC_LN
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#' @param burn Burn-in period
+#' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
+#' @param obs Indicates the number of the observation under analysis
+#' @param chain To be added
+#' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
+#'     updates
+#'
+#' @export
+BF_lambda_obs_LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain,
+                              prior, set, eps_l, eps_r, ar = 0.44) {
+    chain <- as.matrix(chain)
+    aux1 <- Post.lambda.obs.LST(obs, ref, X, chain)
+    aux2 <- CFP.obs.LST(N, thin, Q, burn, ref, obs, Time, Cens, X, chain, prior,
+                        set, eps_l, eps_r, ar = 0.44)
+    return(aux1 * aux2)
+}
+
+################################################################################
+#####################IMPLEMENTATION OF THE LOG-LAPLACE MODEL####################
+################################################################################
+#' @title MCMC algorithm for the log-Laplace model
+#' @description  Markov chain Monte carlo algorithm for the log-Laplace model
+#' @inheritParams MCMC_LN
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#'
+#' @export
+MCMC_LLAP <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, prior, set,
+                      eps_l = 0.5, eps_r = 0.5) {
+    k <- length(beta0)
+    n <- length(Time)
+    N.aux <- round(N/thin, 0)
+    if (prior == 1) {
+        p = 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    beta[1, ] <- beta0
+    sigma2 <- rep(0, times = N.aux + 1)
+    sigma2[1] <- sigma20
+    logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    logt[1, ] <- log(Time)
+    lambda <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    lambda[1, ] <- (stats::rgamma(n, shape = 2, rate = 2))^(-1)
+
+    beta.aux <- beta[1, ]
+    sigma2.aux <- sigma2[1]
+    logt.aux <- logt[1, ]
+    lambda.aux <- lambda[1, ]
+
+    for (iter in 2:(N + 1)) {
+        Lambda <- diag(lambda.aux)
+        AUX1 <- (t(X) %*% Lambda %*% X)
+        if (det(AUX1) != 0) {
+            AUX <- solve(AUX1)
+            mu.aux <- AUX %*% t(X) %*% Lambda %*% logt.aux
+            Sigma.aux <- sigma2.aux * AUX
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+        }
+
+        shape.aux <- (n + 2 * p - 2)/2
+        rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
+            (logt.aux - X %*% beta.aux)
+        if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
+            sigma2.aux <- (stats::rgamma(1, shape = shape.aux, rate = rate.aux))^(-1)
+            if (sigma2.aux < 0) {
+                print("Negative sigma2")
+            }
+        }
+
+        if ((iter - 1)%%Q == 0) {
+            mu.aux <- sqrt(sigma2.aux)/abs(logt.aux - X %*% beta.aux)
+            if (sum(is.na(mu.aux)) == 0) {
+                draw.aux <- VGAM::rinv.gaussian(n = n, mu = mu.aux,
+                                                lambda = rep(1, times = n))
+                lambda.aux <- I(draw.aux > 0) * draw.aux +
+                    (1 - I(draw.aux > 0)) * lambda.aux
+            }
+        }
+
+        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux,
+                                     sigma2.aux/lambda.aux, set, eps_l, eps_r)
+
+        if (iter%%thin == 0) {
+            beta[iter/thin + 1, ] <- beta.aux
+            sigma2[iter/thin + 1] <- sigma2.aux
+            logt[iter/thin + 1, ] <- logt.aux
+            lambda[iter/thin + 1, ] <- lambda.aux
+        }
+        if ((iter - 1)%%1e+05 == 0) {
+            print(paste("Iteration :", iter))
+        }
+    }
+
+    chain <- cbind(beta, sigma2, lambda, logt)
+    return(chain)
+}
+
+#' @title Log-marginal likelihood estimator for the log-Laplace model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#'
+#' @export
+LML_LLAP <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    n <- length(Time)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    if (prior == 1) {
+        p <- 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    if (k > 1) {
+        beta.star <- apply(chain[, 1:k], 2, "median")
+    } else {
+        beta.star <- stats::median(chain[, 1])
+    }
+    sigma2.star <- stats::median(chain[, k + 1])
+
+    # LIKELIHOOD ORDINATE
+    LL.ord <- log.lik.LLAP(Time, Cens, X, beta = beta.star,
+                           sigma2 = sigma2.star, set, eps_l, eps_r)
+    print("Likelihood ordinate ready!")
+
+    # PRIOR ORDINATE
+    LP.ord <- prior.LN(beta = beta.star, sigma2 = sigma2.star,
+                       prior = prior, log = TRUE)
+    print("Prior ordinate ready!")
+
+    # POSTERIOR ORDINATE - sigma 2
+    shape <- (n + 2 * p - 2)/2
+    po.sigma2 <- rep(0, times = N)
+    for (i in 1:N) {
+        aux1 <- as.vector(t(chain[i,
+                                  (k + 2 + n):(k + 1 + 2 * n)])) - X %*%
+                                      as.vector(chain[i, 1:k])
+        aux2 <- diag(as.vector(t(chain[i, (k + 2):(k + 1 + n)])))
+        rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
+        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
+                                            scale = rate.aux)
+    }
+    PO.sigma2 <- mean(po.sigma2)
+    print("Posterior ordinate sigma2 ready!")
+
+    # POSTERIOR ORDINATE - beta
+    logt0 <- t(chain[N, (n + k + 2):(2 * n + k + 1)])
+    chain.beta <- MCMCR.sigma2.LLAP(N = N * thin, thin = thin, Q, Time, Cens,
+                                    X, beta0 = t(chain[N, 1:k]),
+                                    sigma20 = sigma2.star,
+                                    logt0 = logt0,
+                                    lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
+                                    prior = prior,set, eps_l, eps_r)
+    print("Reduced chain.beta ready!")
+
+    po.beta <- rep(0, times = N)
+    for (i in 1:N) {
+        aux0.beta <- diag(as.vector(t(chain.beta[(i + 1), (k + 1):(n + k)])))
+        aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
+        aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
+        mu.aux <- as.vector(aux2.beta %*%
+                               ((chain.beta[(i + 1), (n + k + 1):(2 * n + k)])))
+        po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
+                                      sigma = sigma2.star * aux1.beta)
+    }
+    PO.beta <- mean(po.beta)
+    print("Posterior ordinate beta ready!")
+
+    # TAKING LOGARITHM
+    LPO.sigma2 <- log(PO.sigma2)
+    LPO.beta <- log(PO.beta)
+
+    # MARGINAL LOG-LIKELIHOOD
+    LML <- LL.ord + LP.ord - LPO.sigma2 - LPO.beta
+
+    list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.sigma2 = LPO.sigma2,
+         LPO.beta = LPO.beta, LML = LML)
+}
+
+#' @title Deviance information criteria for the log-Laplace model
+#' @description Deviance information criteria is based on the deviance funcion
+#'     \eqn{D(\theta, y) = -2 log(f(y|\theta))} but also incorporates a
+#'     penalization factor of the complexity of the model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+DIC_LLAP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    n <- length(Time)
+    LL <- rep(0, times = N)
+
+    for (iter in 1:N) {
+        LL[iter] <- log.lik.LLAP(Time, Cens, X,
+                                 beta = as.vector(chain[iter, 1:k]),
+                                 sigma2 = chain[iter, k +1],
+                                 set = set, eps_l, eps_r)
+    }
+
+    aux <- apply(chain[, 1:(k + 1)], 2, "median")
+    pd <- -2 * mean(LL) + 2 * log.lik.LLAP(Time, Cens, X, beta = aux[1:k],
+                                           sigma2 = aux[k + 1], set = set,
+                                           eps_l, eps_r)
+    pd.aux <- k + 1
+
+    DIC <- -2 * mean(LL) + pd
+
+    print(paste("Effective number of parameters :", round(pd, 2)))
+    print(paste("Actual number of parameters :", pd.aux))
+    return(DIC)
+}
+
+#' @title Case deletion analysis for the log-Laplace model
+#' @description Leave-one-out cross validation analysis. The function returns a
+#'     matrix with n rows. Its first column contains the logarithm of the CPO
+#'     (Geisser and Eddy, 1979). Larger values of the CPO indicate better
+#'     predictive accuracy of the model. The second and third columns contain
+#'     the KL divergence between \eqn{\pi(\beta, \sigma^2,  \theta | t_{-i})}
+#'     and \eqn{\pi(\beta, \sigma^2,  \theta | t)} and its calibration index
+#'     \eqn{p_i}, respectively.
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+CaseDeletion.LLAP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    logCPO <- rep(0, times = n)
+    KL.aux <- rep(0, times = n)
+    N <- dim(chain)[1]
+
+    for (s in 1:n) {
+        aux1 <- rep(0, times = N)
+        aux2 <- rep(0, times = N)
+        for (ITER in 1:N) {
+            aux2[ITER] <- log.lik.LLAP(Time[s], Cens[s], X[s, ],
+                                       beta = as.vector(chain[ITER, 1:k]),
+                                       sigma2 = chain[ITER, (k + 1)], set,
+                                       eps_l, eps_r)
+            aux1[ITER] <- exp(-aux2[ITER])
+        }
+        logCPO[s] <- -log(mean(aux1))
+        KL.aux[s] <- mean(aux2)
+        if (KL.aux[s] - logCPO[s] < 0) {
+            print(paste("Numerical problems for observation:", s))
+        }
+    }
+    KL <- abs(KL.aux - logCPO)
+    KL <- KL.aux - logCPO
+    CALIBRATION <- 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
+    return(cbind(logCPO, KL, CALIBRATION))
+}
+
+#' @title Outlier detection for observation for the log-Laplace model
+#' @description This returns a unique number corresponding to the Bayes Factor
+#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     required as input. The user should expect long running times for the
+#'     log-Student’s t model, in which case a reduced chain given
+#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#' @inheritParams MCMC_LN
+#' @param obs Indicates the number of the observation under analysis
+#' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
+#' @param chain To be added
+#'     updates
+#'
+#' @export
+BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    aux1 <- rep(0, times = N)
+    aux2 <- rep(0, times = N)
+
+    for (j in 1:N) {
+        aux1[j] <- stats::dnorm(chain[j, (obs + n + k + 1)],
+                                mean = (X[obs, ]) %*%
+                                   as.vector(chain[j, 1:k]),
+                                sd = sqrt(chain[j, (k + 1)]/ref))
+        aux2[j] <- VGAM::dlaplace(chain[j, (obs + n + k + 1)],
+                                  location = (X[obs, ]) %*%
+                                      as.vector(chain[j, 1:k]),
+                                  scale = sqrt(chain[j, (k + 1)]))
+    }
+
+    aux <- mean(aux1/aux2)
+    return(aux)
+}
+
+################################################################################
+################IMPLEMENTATION OF THE LOG-EXPONENTIAL POWER MODEL###############
+################################################################################
+#' @title MCMC algorithm for the log-exponential power model
+#' @description  Markov chain Monte carlo algorithm for the log-exponential model
+#' @inheritParams MCMC_LN
+#' @param alpha0 Starting value for \eqn{\alpha}
+#' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
+#'     updates
+#'
+#' @export
+MCMC_LEP <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0, prior, set,
+                    eps_l, eps_r, ar = 0.44) {
+    k <- length(beta0)
+    n <- length(Time)
+    N.aux <- round(N/thin, 0)
+    if (prior == 1) {
+        p = 1 + k/2
+    }
+    if (prior == 2) {
+        p = 1
+    }
+    if (prior == 3) {
+        p = 1
+    }
+
+    beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    beta[1, ] <- beta0
+    sigma2 <- rep(0, times = N.aux + 1)
+    sigma2[1] <- sigma20
+    alpha <- rep(0, times = N.aux + 1)
+    alpha[1] <- alpha0
+    logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    logt[1, ] <- log(Time)
+    U <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    a <- ((abs(log(Time) - X %*% beta0))/sqrt(sigma20))^alpha0
+    U0 <- -log(1 - stats::runif(n)) + a
+    U[1, ] <- U0
+
+    accept.beta <- rep(0, times = k)
+    pbeta.aux <- rep(0, times = k)
+    ls.beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    accept.sigma2 <- 0
+    psigma2.aux <- 0
+    ls.sigma2 <- rep(0, times = N.aux + 1)
+    accept.alpha <- 0
+    palpha.aux <- 0
+    ls.alpha <- rep(0, times = N.aux + 1)
+
+    beta.aux <- beta[1, ]
+    sigma2.aux <- sigma2[1]
+    alpha.aux <- alpha[1]
+    logt.aux <- logt[1, ]
+    U.aux <- U[1, ]
+    ls.beta.aux <- ls.beta[1, ]
+    ls.sigma2.aux <- ls.sigma2[1]
+    ls.alpha.aux <- ls.alpha[1]
+
+    i_batch <- 0
+
+    for (iter in 2:(N + 1)) {
+        i_batch <- i_batch + 1
+
+        for (ind.b in 1:k) {
+            MH.beta <- MH.marginal.beta.j(N = 1,
+                                          omega2 = exp(ls.beta.aux[ind.b]),
+                                          logt = logt.aux, X = X,
+                                          sigma2 = sigma2.aux,
+                                          alpha = alpha.aux,
+                                          beta0 = beta.aux, j = ind.b)
+            beta.aux[ind.b] <- MH.beta$beta[ind.b]
+            if (MH.beta$ind == 1) {
+                accept.beta[ind.b] <- accept.beta[ind.b] + 1
+                pbeta.aux[ind.b] <- pbeta.aux[ind.b] + 1
+            }
+        }
+
+        MH.sigma2 <- MH.marginal.sigma2(N = 1, omega2 = exp(ls.sigma2.aux),
+                                        logt = logt.aux, X = X, beta = beta.aux,
+                                        alpha = alpha.aux, sigma20 = sigma2.aux,
+                                        prior = prior)
+        sigma2.aux <- MH.sigma2$sigma2
+        if (MH.sigma2$ind == 1) {
+            accept.sigma2 <- accept.sigma2 + 1
+            psigma2.aux <- psigma2.aux + 1
+        }
+
+        MH.alpha <- MH.marginal.alpha(N = 1, omega2 = exp(ls.alpha.aux),
+                                      logt = logt.aux, X = X, beta = beta.aux,
+                                      sigma2 = sigma2.aux, alpha0 = alpha.aux,
+                                      prior = prior)
+        alpha.aux <- MH.alpha$alpha
+        if (MH.alpha$ind == 1) {
+            accept.alpha <- accept.alpha + 1
+            palpha.aux <- palpha.aux + 1
+        }
+
+        a <- ((abs(logt.aux - X %*% beta.aux))/sqrt(sigma2.aux))^alpha.aux
+        U.aux <- -log(1 - stats::runif(n)) + a
+
+        logt.aux <- logt.update.LEP(Time, Cens, X, beta.aux, sigma2.aux,
+                                    alpha.aux, u = U.aux, set, eps_l, eps_r)
+
+        if (i_batch == 50) {
+            pbeta.aux <- pbeta.aux/50
+            Pbeta.aux <- as.numeric(pbeta.aux < rep(ar, times = k))
+            ls.beta.aux <- ls.beta.aux + ((-1)^Pbeta.aux) *
+                                                  min(0.01, 1/sqrt(iter))
+            psigma2.aux <- psigma2.aux/50
+            Psigma2.aux <- as.numeric(psigma2.aux < ar)
+            ls.sigma2.aux <- ls.sigma2.aux + ((-1)^Psigma2.aux) *
+                                                  min(0.01, 1/sqrt(iter))
+            palpha.aux <- palpha.aux/50
+            Palpha.aux <- as.numeric(palpha.aux < ar)
+            ls.alpha.aux <- ls.alpha.aux + ((-1)^Palpha.aux) *
+                                                  min(0.01, 1/sqrt(iter))
+            i_batch <- 0
+            pbeta.aux <- rep(0, times = k)
+            psigma2.aux <- 0
+            palpha.aux <- 0
+        }
+
+        if (iter%%thin == 0) {
+            beta[iter/thin + 1, ] <- beta.aux
+            sigma2[iter/thin + 1] <- sigma2.aux
+            alpha[iter/thin + 1] <- alpha.aux
+            logt[iter/thin + 1, ] <- logt.aux
+            U[iter/thin + 1, ] <- U.aux
+            ls.beta[iter/thin + 1, ] <- ls.beta.aux
+            ls.sigma2[iter/thin + 1] <- ls.sigma2.aux
+            ls.alpha[iter/thin + 1] <- ls.alpha.aux
+        }
+        if ((iter - 1)%%1e+05 == 0) {
+            print(paste("Iteration :", iter))
+        }
+    }
+
+    print(paste("AR beta", 1:k, ":", round(accept.beta/N, 2)))
+    print(paste("AR sigma2 :", round(accept.sigma2/N, 2)))
+    print(paste("AR alpha :", round(accept.alpha/N, 2)))
+
+    chain = cbind(beta, sigma2, alpha, U, logt, ls.beta, ls.sigma2, ls.alpha)
+    return(chain)
+
+}
+#' @title Log-marginal likelihood estimator for the log-exponential power model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+LML_LEP <- function(thin, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    n <- length(Time)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    if (prior == 1) {
+        p <- 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+    if (prior == 3) {
+        p <- 1
+    }
+
+    if (k > 1) {
+        omega2.beta <- exp(apply(chain[, (2 * n + k + 3):(2 * n + 2 * k + 2)],
+                                 2, "median"))
+    } else {
+        omega2.beta <- exp(stats::median(chain[, 2 * n + 4]))
+    }
+    omega2.sigma2 <- exp(stats::median(chain[, 2 * n + 2 * k + 3]))
+    omega2.alpha <- exp(stats::median(chain[, 2 * n + 2 * k + 4]))
+
+    chain.nonadapt <- MCMC.LEP.NonAdapt(N = N * thin, thin = thin, Time, Cens,
+                                        X, beta0 = as.vector(chain[N, 1:k]),
+                                        sigma20 = chain[N, k + 1],
+                                        alpha0 = chain[N, k + 2], prior, set,
+                                        eps_l, eps_r, omega2.beta,
+                                        omega2.sigma2, omega2.alpha)
+    chain.nonadapt <- chain.nonadapt[-1, ]
+    if (k > 1) {
+        beta.star <- apply(chain.nonadapt[, 1:k], 2, "median")
+    } else {
+        beta.star <- stats::median(chain.nonadapt[, 1])
+    }
+    sigma2.star <- stats::median(chain.nonadapt[, k + 1])
+    alpha.star <- stats::median(chain.nonadapt[, k + 2])
+
+    # Log-LIKELIHOOD ORDINATE
+    LL.ord <- log.lik.LEP(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
+                          alpha = alpha.star, set, eps_l, eps_r)
+    print("Likelihood ordinate ready!")
+
+    # PRIOR ORDINATE
+    LP.ord <- prior.LEP(beta = beta.star, sigma2 = sigma2.star,
+                       alpha = alpha.star, prior, log = TRUE)
+    print("Prior ordinate ready!")
+
+    chain.sigma2 <- MCMCR.alpha.LEP(N = N * thin, thin = thin, Time, Cens, X,
+                                    beta0 = as.vector(chain.nonadapt[N, 1:k]),
+                                    sigma20 = chain.nonadapt[N, (k + 1)],
+                                    alpha0 = alpha.star,
+                                    logt0 = t(chain.nonadapt[N, (k +3 + n) :
+                                                              (2 * n + k + 2)]),
+                                    u0 = t(chain.nonadapt[N,
+                                                          (k + 3):(k + 2 + n)]),
+                                    prior, set, eps_l, eps_r,
+                                    omega2.beta, omega2.sigma2)
+    print("Reduced chain.sigma2 ready!")
+
+    # POSTERIOR ORDINATE - alpha USING AN ADAPTATION CHIB AND JELIAZKOV (2001) METHODOLOGY
+    po1.alpha <- rep(0, times = N)
+    po2.alpha <- rep(0, times = N)
+    for (i in 1:N) {
+        po1.alpha[i] <- alpha.alpha(alpha0 = as.numeric(chain.nonadapt[i,
+                                                                      (k + 2)]),
+                                    alpha1 = alpha.star,
+                                    logt = as.vector(chain.nonadapt[i, (k + 3 + n) :
+                                                              (2 * n + k + 2)]),
+                                    X = X,
+                                    beta = as.vector(chain.nonadapt[i, 1:k]),
+                                    sigma2 = as.numeric(chain.nonadapt[i, (k + 1)]),
+                                    prior = prior) * stats::dnorm(x = alpha.star,
+                                                           mean = as.numeric(chain.nonadapt[i, (k + 2)]),
+                                                           sd = sqrt(omega2.alpha))
+        alpha.aux <- stats::rnorm(n = 1, mean = alpha.star, sd = sqrt(omega2.alpha))
+        po2.alpha[i] <- alpha.alpha(alpha0 = alpha.star, alpha1 = alpha.aux,
+                                    logt = as.vector(chain.sigma2[i, (k + 2 + n) :
+                                                              (2 * n + k + 1)]),
+                                    X = X,
+                                    beta = as.vector(chain.sigma2[i + 1, 1:k]),
+                                    sigma2 = as.numeric(chain.sigma2[i +1,
+                                                                     (k + 1)]),
+                                    prior = prior)
+    }
+    PO.alpha <- mean(po1.alpha)/mean(po2.alpha)
+    print("Posterior ordinate alpha ready!")
+
+    chain.beta <- MCMCR.sigma2.alpha.LEP(N = N * thin, thin = thin, Time, Cens,
+                                        X,
+                                        beta0 = as.vector(chain.nonadapt[N, 1:k]),
+                                        sigma20 = sigma2.star,
+                                        alpha0 = alpha.star,
+                                        logt0 = t(chain.nonadapt[N, (k + 3 + n) :
+                                                              (2 * n + k + 2)]),
+                                        u0 = t(chain.nonadapt[N, (k + 3) :
+                                                                  (k + 2 + n)]),
+                                        prior, set, eps_l, eps_r, omega2.beta)
+    print("Reduced chain.beta ready!")
+
+    # POSTERIOR ORDINATE - sigma2
+    po1.sigma2 <- rep(0, times = N)
+    po2.sigma2 <- rep(0, times = N)
+    for (i in 1:N) {
+        po1.sigma2[i] <- alpha.sigma2(sigma2.0 = as.numeric(chain.sigma2[i + 1,
+                                                                      (k + 1)]),
+                                      sigma2.1 = sigma2.star,
+                                      logt = as.vector(chain.sigma2[i,
+                                                                (k + 2 + n) :
+                                                              (2 * n + k + 1)]),
+                                      X = X,
+                                      beta = as.vector(t(chain.sigma2[i + 1,
+                                                                      1:k])),
+                                      alpha = alpha.star,
+                                      prior = prior) *
+            stats::dnorm(x = sigma2.star,
+                         mean = as.numeric(chain.sigma2[i + 1, (k + 1)]),
+                         sd = sqrt(omega2.sigma2))
+        sigma2.aux <- stats::rnorm(n = 1, mean = sigma2.star, sd = sqrt(omega2.sigma2))
+        po2.sigma2[i] <- alpha.sigma2(sigma2.0 = sigma2.star,
+                                      sigma2.1 = sigma2.aux,
+                                      logt = as.vector(chain.beta[i, (k + 1 + n):
+                                                                 (2 * n + k)]),
+                                      X = X,
+                                      beta = as.vector(chain.beta[i + 1, 1:k]),
+                                      alpha = alpha.star,
+                                      prior = prior)
+    }
+    PO.sigma2 <- mean(po1.sigma2)/mean(po2.sigma2)
+    print("Posterior ordinate sigma2 ready!")
+
+    # POSTERIOR ORDINATE - beta
+    chain.prev <- chain.beta
+    PO.beta <- rep(0, times = k)
+
+    for (j.beta in 0:(k - 1)) {
+        print(j.beta)
+        beta0 <- as.vector(chain.prev[N, 1:k])
+        beta0[j.beta + 1] <- beta.star[j.beta + 1]
+        chain.next <- MCMCR.betaJ.sigma2.alpha.LEP(N = N * thin, thin = thin,
+                                                   Time, Cens, X, beta0 = beta0,
+                                                   sigma20 = sigma2.star,
+                                                   alpha0 = alpha.star,
+                                                   logt0 = as.vector(chain.nonadapt[N,
+                                                                                    (k + 3 + n):
+                                                                                       (2 * n + k + 2)]),
+                                                   u0 = as.vector(chain.nonadapt[N,
+                                                                                 (k + 3):
+                                                                                     (k + 2 + n)]),
+                                                   prior, set, eps_l, eps_r,
+                                                   omega2.beta, J = j.beta + 1)
+        po1.beta <- rep(0, times = N)
+        po2.beta <- rep(0, times = N)
+
+        for (i in 1:N) {
+            beta.0 <- as.vector(t(chain.prev[i + 1, 1:k]))
+            beta.1 <- beta.0
+            beta.1[j.beta + 1] = beta.star[j.beta + 1]
+            po1.beta[i] <- alpha.beta(beta.0 = beta.0, beta.1 = beta.1,
+                                      logt = as.vector(chain.prev[i + 1,
+                                                                  (k +1 + n) :
+                                                                  (2 * n + k)]),
+                                      X = X, sigma2 = sigma2.star,
+                                      alpha = alpha.star) *
+                stats::dnorm(x = beta.star[j.beta +1],
+                             mean = as.numeric(chain.prev[i + 1, j.beta + 1]),
+                             sd = sqrt(omega2.beta[j.beta + 1]))
+            betaj.aux <- stats::rnorm(n = 1, mean = beta.star[j.beta + 1],
+                                      sd = sqrt(omega2.beta[j.beta + 1]))
+            beta.2 <- beta.star
+            beta.2[j.beta + 1] <- betaj.aux
+            po2.beta[i] <- alpha.beta(beta.0 = beta.star, beta.1 = beta.2,
+                                      logt = as.vector(chain.next[i + 1, (k + 1
+                                                                          + n):
+                                                                  (2 * n + k)]),
+                                      X = X, sigma2 = sigma2.star,
+                                      alpha = alpha.star)
+        }
+        PO.beta[j.beta + 1] <- mean(po1.beta)/mean(po2.beta)
+
+        chain.prev <- chain.next
+    }
+    print("Posterior ordinate beta ready!")
+
+    # TAKING LOGARITHM
+    LPO.alpha <- log(PO.alpha)
+    LPO.sigma2 <- log(PO.sigma2)
+    LPO.beta <- log(PO.beta)
+
+    # MARGINAL LOG-LIKELIHOOD
+    LML <- LL.ord + LP.ord - LPO.alpha - LPO.sigma2 - sum(LPO.beta)
+
+    list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.alpha = LPO.alpha,
+         LPO.sigma2 = LPO.sigma2, LPO.beta = sum(LPO.beta),
+         LML = LML)
+}
+
+#' @title Deviance information criteria for the log-exponential power model
+#' @description Deviance information criteria is based on the deviance funcion
+#'     \eqn{D(\theta, y) = -2 log(f(y|\theta))} but also incorporates a
+#'     penalization factor of the complexity of the model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+DIC_LEP = function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    n <- length(Time)
+    LL <- rep(0, times = N)
+
+    for (iter in 1:N) {
+        LL[iter] <- log.lik.LEP(Time, Cens, X,
+                                beta = as.vector(chain[iter, 1:k]),
+                                sigma2 = chain[iter, k +1],
+                                alpha = chain[iter, k + 2], set, eps_l, eps_r)
+    }
+
+    aux <- apply(chain[, 1:(k + 2)], 2, "median")
+    pd <- -2 * mean(LL) + 2 * log.lik.LEP(Time, Cens, X, beta = aux[1:k],
+                                          sigma2 = aux[k + 1],
+                                          alpha = aux[k + 2], set, eps_l, eps_r)
+    pd.aux <- k + 2
+
+    DIC <- -2 * mean(LL) + pd
+
+    print(paste("Effective number of parameters :", round(pd, 2)))
+    print(paste("Actual number of parameters :", pd.aux))
+    return(DIC)
+}
+
+#' @title Case deletion analysis for the log-exponential power model
+#' @description Leave-one-out cross validation analysis. The function returns a
+#'     matrix with n rows. Its first column contains the logarithm of the CPO
+#'     (Geisser and Eddy, 1979). Larger values of the CPO indicate better
+#'     predictive accuracy of the model. The second and third columns contain
+#'     the KL divergence between \eqn{\pi(\beta, \sigma^2,  \theta | t_{-i})}
+#'     and \eqn{\pi(\beta, \sigma^2,  \theta | t)} and its calibration index
+#'     \eqn{p_i}, respectively.
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+CaseDeletion_LEP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain = as.matrix(chain)
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    logCPO <- rep(0, times = n)
+    KL.aux <- rep(0, times = n)
+    N <- dim(chain)[1]
+
+    for (s in 1:n) {
+        aux1 <- rep(0, times = N)
+        aux2 <- rep(0, times = N)
+        for (ITER in 1:N) {
+            aux2[ITER] <- log.lik.LEP(Time[s], Cens[s], X[s, ],
+                                      beta = as.vector(chain[ITER, 1:k]),
+                                      sigma2 = chain[ITER, k + 1],
+                                      alpha = chain[ITER, k + 2], set, eps_l,
+                                      eps_r)
+            aux1[ITER] <- exp(-aux2[ITER])
+        }
+        logCPO[s] <- -log(mean(aux1))
+        KL.aux[s] <- mean(aux2)
+        if (KL.aux[s] - logCPO[s] < 0) {
+            print(paste("Numerical problems for observation:", s))
+        }
+    }
+    KL <- abs(KL.aux - logCPO)
+    CALIBRATION = 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
+    return(cbind(logCPO, KL, CALIBRATION))
+}
+
+
+#' @title Outlier detection for observation for the log-exponential power model
+#' @description This returns a unique number corresponding to the Bayes Factor
+#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     required as input. The user should expect long running times for the
+#'     log-Student’s t model, in which case a reduced chain given
+#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#' @inheritParams MCMC_LN
+#' @param burn Burn-in period
+#' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
+#' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
+#'     updates
+#' @param obs Indicates the number of the observation under analysis
+#' @param chain To be added
+#'
+#' @export
+BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
+                         prior, set, eps_l, eps_r, ar = 0.44) {
+    chain <- as.matrix(chain)
+    aux1 <- Post.u.obs.LEP(obs, ref, X, chain)
+    aux2 <- CFP.obs.LEP(N, thin, burn, ref, obs, Time, Cens, X, chain, prior,
+                        set, eps_l, eps_r, ar = 0.44)
+    return(aux1 * aux2)
+}
+
+################################################################################
+####################IMPLEMENTATION OF THE LOG-LOGISTIC MODEL####################
+################################################################################
+# MCMC ALGORITHM
+#' @title MCMC algorithm for the log-logistic model
+#' @description  Markov chain Monte carlo algorithm for the log-logistic model
+#' @inheritParams MCMC_LN
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#' @param N.AKS Maximum number of terms of the Kolmogorov-Smirnov density used
+#'     for the rejection sampling when updating mixing parameters (default
+#'     value: 3)
+#'
+#' @export
+MCMC_LLOG <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, prior, set,
+                      eps_l = 0.5, eps_r = 0.5, N.AKS = 3) {
+    k <- length(beta0)
+    n <- length(Time)
+    N.aux <- round(N/thin, 0)
+    if (prior == 1) {
+        p <- 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    beta[1, ] <- beta0
+    sigma2 <- rep(0, times = N.aux + 1)
+    sigma2[1] <- sigma20
+    logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    logt[1, ] <- log(Time)
+    lambda <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    lambda[1, ] <- (stats::rgamma(n, shape = 2, rate = 2))^(-1)
+
+    beta.aux <- beta[1, ]
+    sigma2.aux <- sigma2[1]
+    logt.aux <- logt[1, ]
+    lambda.aux <- lambda[1, ]
+
+    for (iter in 2:(N + 1)) {
+        Lambda <- diag(lambda.aux)
+        AUX1 <- (t(X) %*% Lambda %*% X)
+        if (det(AUX1) != 0) {
+            AUX <- solve(AUX1)
+            mu.aux <- AUX %*% t(X) %*% Lambda %*% logt.aux
+            Sigma.aux <- sigma2.aux * AUX
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+        }
+
+        shape.aux <- (n + 2 * p - 2)/2
+        rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
+                                                     (logt.aux - X %*% beta.aux)
+        if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
+            sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
+                                         rate = rate.aux))^(-1)
+        }
+
+        if ((iter - 1)%%Q == 0) {
+            for (obs in 1:n) {
+                lambda.aux[obs] <-  1/RS.lambda.obs.LLOG(logt = logt.aux, X = X,
+                                                         beta = beta.aux,
+                                                         sigma2 = sigma2.aux,
+                                                         obs = obs,
+                                                         N.AKS = N.AKS)$lambda
+            }
+        }
+
+        logt.aux = logt.update.SMLN(Time, Cens, X, beta.aux,
+                                    sigma2.aux/lambda.aux, set, eps_l, eps_r)
+
+        if (iter%%thin == 0) {
+            beta[iter/thin + 1, ] = beta.aux
+            sigma2[iter/thin + 1] = sigma2.aux
+            logt[iter/thin + 1, ] = logt.aux
+            lambda[iter/thin + 1, ] = lambda.aux
+        }
+        if ((iter - 1)%%1e+05 == 0) {
+            print(paste("Iteration :", iter))
+        }
+    }
+
+    chain = cbind(beta, sigma2, lambda, logt)
+    return(chain)
+}
+
+
+#' @title Log-marginal likelihood estimator for the log-logistic model
+#' @inheritParams MCMC_LN
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#' @param chain To be added
+#' @param N.AKS Maximum number of terms of the Kolmogorov-Smirnov density used
+#'     for the rejection sampling when updating mixing parameters (default
+#'     value: 3)
+#'
+#' @export
+LML_LLOG <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r,
+                     N.AKS = 3) {
+    chain <- as.matrix(chain)
+    n <- length(Time)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    if (prior == 1) {
+        p <- 1 + k/2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    if (k > 1) {
+        beta.star <- apply(chain[, 1:k], 2, "median")
+    } else {
+        beta.star <- stats::median(chain[, 1])
+    }
+    sigma2.star <- stats::median(chain[, k + 1])
+
+    # LIKELIHOOD ORDINATE
+    LL.ord <- log.lik.LLOG(Time, Cens, X, beta = beta.star,
+                           sigma2 = sigma2.star, set, eps_l, eps_r)
+    print("Likelihood ordinate ready!")
+
+    # PRIOR ORDINATE
+    LP.ord <- prior.LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
+                      log = TRUE)
+    print("Prior ordinate ready!")
+
+    # POSTERIOR ORDINATE - sigma 2
+    shape <- (n + 2 * p - 2)/2
+    po.sigma2 <- rep(0, times = N)
+    for (i in 1:N) {
+        aux1 <- as.vector(t(chain[i, (k + 2 + n):(k + 1 + 2 * n)])) - X %*%
+                                                        as.vector(chain[i, 1:k])
+        aux2 <- diag(as.vector(t(chain[i, (k + 2):(k + 1 + n)])))
+        rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
+        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape, scale = rate.aux)
+    }
+    PO.sigma2 <- mean(po.sigma2)
+    print("Posterior ordinate sigma2 ready!")
+
+    # POSTERIOR ORDINATE - beta
+    chain.beta <- MCMCR.sigma2.LLOG(N = N * thin, thin = thin, Q, Time, Cens, X,
+                                    beta0 = t(chain[N, 1:k]),
+                                    sigma20 = sigma2.star,
+                                    logt0 = t(chain[N, (n + k + 2):(2 * n + k + 1)]),
+                                    lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
+                                    prior = prior, set, eps_l, eps_r, N.AKS)
+    print("Reduced chain.beta ready!")
+
+    po.beta <- rep(0, times = N)
+    for (i in 1:N) {
+        aux0.beta <- diag(as.vector(t(chain.beta[(i + 1), (k + 1):(n + k)])))
+        aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
+        aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
+        mu.aux <- as.vector(aux2.beta %*% ((chain.beta[(i + 1),
+                                                       (n + k + 1):(2 * n + k)])))
+        po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
+                                       sigma = sigma2.star * aux1.beta)
+    }
+    PO.beta <- mean(po.beta)
+    print("Posterior ordinate beta ready!")
+
+    # TAKING LOGARITHM
+    LPO.sigma2 <- log(PO.sigma2)
+    LPO.beta <- log(PO.beta)
+
+    # MARGINAL LOG-LIKELIHOOD
+    LML <- LL.ord + LP.ord - LPO.sigma2 - LPO.beta
+
+    list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.sigma2 = LPO.sigma2,
+         LPO.beta = LPO.beta, LML = LML)
+}
+#' @title Deviance information criteria for the log-logistic model
+#' @description Deviance information criteria is based on the deviance funcion
+#'     \eqn{D(\theta, y) = -2 log(f(y|\theta))} but also incorporates a
+#'     penalization factor of the complexity of the model
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+################################################################################ DIC
+DIC_LLOG <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    n <- length(Time)
+    LL <- rep(0, times = N)
+
+    for (iter in 1:N) {
+        LL[iter] <- log.lik.LLOG(Time, Cens, X,
+                                 beta = as.vector(chain[iter, 1:k]),
+                                 sigma2 = chain[iter, k +1],
+                                 set = set, eps_l, eps_r)
+    }
+
+    aux <- apply(chain[, 1:(k + 1)], 2, "median")
+    pd <- -2 * mean(LL) + 2 * log.lik.LLOG(Time, Cens, X,
+                                           beta = aux[1:k], sigma2 = aux[k + 1],
+                                           set = set, eps_l, eps_r)
+    pd.aux <- k + 1
+
+    DIC <- -2 * mean(LL) + pd
+
+    print(paste("Effective number of parameters :", round(pd, 2)))
+    print(paste("Actual number of parameters :", pd.aux))
+    return(DIC)
+}
+
+#' @title Case deletion analysis for the log-logistic model
+#' @description Leave-one-out cross validation analysis. The function returns a
+#'     matrix with n rows. Its first column contains the logarithm of the CPO
+#'     (Geisser and Eddy, 1979). Larger values of the CPO indicate better
+#'     predictive accuracy of the model. The second and third columns contain
+#'     the KL divergence between \eqn{\pi(\beta, \sigma^2,  \theta | t_{-i})}
+#'     and \eqn{\pi(\beta, \sigma^2,  \theta | t)} and its calibration index
+#'     \eqn{p_i}, respectively.
+#' @inheritParams MCMC_LN
+#' @param chain To be added
+#'
+#' @export
+CaseDeletion.LLOG <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+    chain <- as.matrix(chain)
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    logCPO <- rep(0, times = n)
+    KL.aux <- rep(0, times = n)
+    N <- dim(chain)[1]
+
+    for (s in 1:n) {
+        aux1 <- rep(0, times = N)
+        aux2 <- rep(0, times = N)
+        for (ITER in 1:N) {
+            aux2[ITER] <- log.lik.LLOG(Time[s], Cens[s], X[s, ],
+                                       beta = as.vector(chain[ITER, 1:k]),
+                                       sigma2 = chain[ITER, (k + 1)], set,
+                                       eps_l, eps_r)
+            aux1[ITER] <- exp(-aux2[ITER])
+        }
+        logCPO[s] <- -log(mean(aux1))
+        KL.aux[s] <- mean(aux2)
+        if (KL.aux[s] - logCPO[s] < 0) {
+            print(paste("Numerical problems for observation:", s))
+        }
+    }
+    KL <- abs(KL.aux - logCPO)
+    CALIBRATION <- 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
+    return(cbind(logCPO, KL, CALIBRATION))
+}
+
+
+#' @title Outlier detection for observation for the log-logisitc model
+#' @description This returns a unique number corresponding to the Bayes Factor
+#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     required as input. The user should expect long running times for the
+#'     log-Student’s t model, in which case a reduced chain given
+#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#' @inheritParams MCMC_LN
+#' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
+#' @param obs Indicates the number of the observation under analysis
+#' @param chain To be added
+#'
+#' @export
+BF_lambda_obs_LLOG <- function(ref, obs, X, chain) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    aux1 <- rep(0, times = N)
+    aux2 <- rep(0, times = N)
+    for (j in 1:N) {
+        aux1[j] <- stats::dnorm(chain[j, (obs + n + k + 1)],
+                                mean = (X[obs, ]) %*% as.vector(chain[j, 1:k]),
+                                sd = sqrt(chain[j, (k + 1)]/ref))
+        aux2[j] <- stats::dlogis(chain[j, (obs + n + k + 1)],
+                          location = (X[obs, ]) %*% as.vector(chain[j, 1:k]),
+                          scale = sqrt(chain[j, (k + 1)]))
+    }
+
+    aux <- mean(aux1/aux2)
+    return(aux)
+}

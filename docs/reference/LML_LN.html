@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hello, World! — hello • SMLN</title>
+<title>Log-marginal Likelihood estimator for the log-normal model — LML_LN • SMLN</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Hello, World! — hello" />
-<meta property="og:description" content="Prints 'Hello, world!'." />
+<meta property="og:title" content="Log-marginal Likelihood estimator for the log-normal model — LML_LN" />
+<meta property="og:description" content="Log-marginal Likelihood estimator for the log-normal model" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,26 +105,70 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Hello, World!</h1>
-    
-    <div class="hidden name"><code>hello.Rd</code></div>
+    <h1>Log-marginal Likelihood estimator for the log-normal model</h1>
+    <small class="dont-index">Source: <a href='https://github.com/nathansam/SMLN/blob/master/R/User_Codes.R'><code>R/User_Codes.R</code></a></small>
+    <div class="hidden name"><code>LML_LN.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Prints 'Hello, world!'.</p>
+    <p>Log-marginal Likelihood estimator for the log-normal model</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hello</span>()</pre>
+    <pre class="usage"><span class='fu'>LML_LN</span>(<span class='no'>thin</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>chain</span>, <span class='no'>prior</span>, <span class='no'>set</span>, <span class='no'>eps_l</span>, <span class='no'>eps_r</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>thin</th>
+      <td><p>Thinning period.</p></td>
+    </tr>
+    <tr>
+      <th>Time</th>
+      <td><p>Vector containing the survival times.</p></td>
+    </tr>
+    <tr>
+      <th>Cens</th>
+      <td><p>Censoring indication (1: observed, 0: right-censored).</p></td>
+    </tr>
+    <tr>
+      <th>X</th>
+      <td><p>Design matrix with dimensions \(n\) x  \(k\) where \(n\) is
+the number of observations and \(k\) is the number of covariates
+(including the intercept).</p></td>
+    </tr>
+    <tr>
+      <th>chain</th>
+      <td><p>To be added</p></td>
+    </tr>
+    <tr>
+      <th>prior</th>
+      <td><p>Indicator of prior (1: Jeffreys, 2: Type I Ind. Jeffreys,
+3: Ind. Jeffreys).</p></td>
+    </tr>
+    <tr>
+      <th>set</th>
+      <td><p>Indicator for the use of set observations (1: set observations,
+0: point observations).</p></td>
+    </tr>
+    <tr>
+      <th>eps_l</th>
+      <td><p>Lower imprecision \((\epsilon_l)\) for set observations
+(default value: 0.5).</p></td>
+    </tr>
+    <tr>
+      <th>eps_r</th>
+      <td><p>Upper imprecision \((\epsilon_r)\) for set observations
+(default value: 0.5)</p></td>
+    </tr>
+    </table>
 
 
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>hello</span>()</div><div class='output co'>#&gt; <span class='error'>Error in hello(): could not find function "hello"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#examples">Examples</a></li>
+      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Hello, World! — hello • SMLN</title>
+<title>Outlier detection for observation for the log-logisitc model — BF_lambda_obs_LLOG • SMLN</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,14 @@
 
 
 
-<meta property="og:title" content="Hello, World! — hello" />
-<meta property="og:description" content="Prints 'Hello, world!'." />
+<meta property="og:title" content="Outlier detection for observation for the log-logisitc model — BF_lambda_obs_LLOG" />
+<meta property="og:description" content="This returns a unique number corresponding to the Bayes Factor
+associated to the test \(M_0: \Delta_{obs} = \lambda_{ref}\) versus
+\(M_1: \Delta_{obs} \neq \lambda_{ref}\) (with all other
+\(\Delta_j, \neq obs\) free). The value of \(\lambda_{ref}\) is
+required as input. The user should expect long running times for the
+log-Student’s t model, in which case a reduced chain given
+\(\Delta_{obs} = \lambda_{ref}\) needs to be generated" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -105,26 +111,52 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Hello, World!</h1>
-    
-    <div class="hidden name"><code>hello.Rd</code></div>
+    <h1>Outlier detection for observation for the log-logisitc model</h1>
+    <small class="dont-index">Source: <a href='https://github.com/nathansam/SMLN/blob/master/R/User_Codes.R'><code>R/User_Codes.R</code></a></small>
+    <div class="hidden name"><code>BF_lambda_obs_LLOG.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Prints 'Hello, world!'.</p>
+    <p>This returns a unique number corresponding to the Bayes Factor
+associated to the test \(M_0: \Delta_{obs} = \lambda_{ref}\) versus
+\(M_1: \Delta_{obs} \neq \lambda_{ref}\) (with all other
+\(\Delta_j, \neq obs\) free). The value of \(\lambda_{ref}\) is
+required as input. The user should expect long running times for the
+log-Student’s t model, in which case a reduced chain given
+\(\Delta_{obs} = \lambda_{ref}\) needs to be generated</p>
     </div>
 
-    <pre class="usage"><span class='fu'>hello</span>()</pre>
+    <pre class="usage"><span class='fu'>BF_lambda_obs_LLOG</span>(<span class='no'>ref</span>, <span class='no'>obs</span>, <span class='no'>X</span>, <span class='no'>chain</span>)</pre>
+
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>ref</th>
+      <td><p>Reference value \(\lambda_{ref}\) or \(u_{ref}\)</p></td>
+    </tr>
+    <tr>
+      <th>obs</th>
+      <td><p>Indicates the number of the observation under analysis</p></td>
+    </tr>
+    <tr>
+      <th>X</th>
+      <td><p>Design matrix with dimensions \(n\) x  \(k\) where \(n\) is
+the number of observations and \(k\) is the number of covariates
+(including the intercept).</p></td>
+    </tr>
+    <tr>
+      <th>chain</th>
+      <td><p>To be added</p></td>
+    </tr>
+    </table>
 
 
-
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>hello</span>()</div><div class='output co'>#&gt; <span class='error'>Error in hello(): could not find function "hello"</span></div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#examples">Examples</a></li>
+      <li><a href="#arguments">Arguments</a></li>
     </ul>
 
   </div>
