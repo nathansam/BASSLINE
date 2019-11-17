@@ -14,7 +14,7 @@ A project to convert code written by Vallejos & Steel[1] into a library using C+
 
 ### Installation
 
-The recommended way to install SMLN is via pak which will handle intalling all dependencies: 
+The recommended way to install SMLN is via pak which will handle installing all dependencies: 
 ```R
 if (!requireNamespace("pak", quietly = TRUE))
     install.packages("pak")
