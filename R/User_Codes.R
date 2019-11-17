@@ -550,12 +550,12 @@ CaseDeletion_LST <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 
 #' @title Outlier detection for observation for the log-student's t model
 #' @description This returns a unique number corresponding to the Bayes Factor
-#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
-#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
 #' @inheritParams MCMC_LN
 #' @param Q Update period for the \eqn{\lambda_{i}}’s
 #' @param burn Burn-in period
@@ -821,12 +821,12 @@ CaseDeletion.LLAP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 
 #' @title Outlier detection for observation for the log-Laplace model
 #' @description This returns a unique number corresponding to the Bayes Factor
-#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
-#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
 #' @inheritParams MCMC_LN
 #' @param obs Indicates the number of the observation under analysis
 #' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
@@ -1285,12 +1285,12 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 
 #' @title Outlier detection for observation for the log-exponential power model
 #' @description This returns a unique number corresponding to the Bayes Factor
-#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
-#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
 #' @inheritParams MCMC_LN
 #' @param burn Burn-in period
 #' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
@@ -1559,12 +1559,12 @@ CaseDeletion.LLOG <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 
 #' @title Outlier detection for observation for the log-logisitc model
 #' @description This returns a unique number corresponding to the Bayes Factor
-#'     associated to the test \eqn{M_0: \Delta_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Delta_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Delta_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
-#'     \eqn{\Delta_{obs} = \lambda_{ref}} needs to be generated
+#'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
 #' @inheritParams MCMC_LN
 #' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
 #' @param obs Indicates the number of the observation under analysis
