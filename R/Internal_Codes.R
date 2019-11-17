@@ -190,7 +190,7 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0, prior
     for (iter in 2:(N + 1)) {
         mu.aux = solve(t(X) %*% X) %*% t(X) %*% logt.aux
         Sigma.aux = sigma2.aux * solve(t(X) %*% X)
-        beta.aux <- MASS:mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+        beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
 
         logt.aux = logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set, eps_l, eps_r)
 
@@ -306,7 +306,7 @@ MCMC.LST.NonAdapt = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0, pri
             AUX = solve(AUX1)
             mu.aux = AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux = sigma2.aux * AUX
-            beta.aux <- MASS:mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         shape.aux = (n + 2 * p - 2)/2
@@ -383,7 +383,7 @@ MCMCR.nu.LST = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0, logt0, l
             AUX = solve(AUX1)
             mu.aux = AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux = sigma2.aux * AUX
-            beta.aux <- MASS:mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         shape.aux = (n + 2 * p - 2)/2
@@ -454,7 +454,7 @@ MCMCR.sigma2.nu.LST = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0, l
             AUX = solve(AUX1)
             mu.aux = AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux = sigma2.aux * AUX
-            beta.aux <- MASS:mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         if ((iter - 1)%%Q == 0) {
@@ -528,7 +528,7 @@ MCMCR.LST.lambda.obs = function(ref, obs, N, thin, Q, Time, Cens, X, beta0, sigm
             AUX = solve(AUX1)
             mu.aux = AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux = sigma2.aux * AUX
-            beta.aux <- MASS:mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         shape.aux = (n + 2 * p - 2)/2
@@ -673,7 +673,7 @@ MCMCR.sigma2.LLAP <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, logt0, 
             AUX = solve(AUX1)
             mu.aux = AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux = sigma2.aux * AUX
-            beta.aux <- MASS:mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         if ((iter - 1)%%Q == 0) {
@@ -1583,7 +1583,7 @@ MCMCR.sigma2.LLOG <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, logt0, 
             AUX = solve(AUX1)
             mu.aux = AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux = sigma2.aux * AUX
-            beta.aux <- MASS:mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         if ((iter - 1)%%Q == 0) {

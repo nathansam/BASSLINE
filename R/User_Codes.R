@@ -85,7 +85,7 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
     chain = as.matrix(chain)
     n <- length(Time)
     N <- dim(chain)[1]
-    k <= dim(X)[2]
+    k <- dim(X)[2]
     if (prior == 1) {
         p <- 1 + k/2
     }
@@ -789,7 +789,7 @@ DIC_LLAP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 #' @param chain To be added
 #'
 #' @export
-CaseDeletion.LLAP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+CaseDeletion_LLAP <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]
     k <- dim(X)[2]
@@ -1527,7 +1527,7 @@ DIC_LLOG <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 #' @param chain To be added
 #'
 #' @export
-CaseDeletion.LLOG <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
+CaseDeletion_LLOG <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]
     k <- dim(X)[2]
