@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Deviance information criteria for the log-Laplace model — DIC_LLAP • SMLN</title>
+<title>Case deletion analysis for the log-logistic model — CaseDeletion_LLOG • SMLN</title>
 
 
 <!-- jquery -->
@@ -35,10 +35,14 @@
 
 
 
-<meta property="og:title" content="Deviance information criteria for the log-Laplace model — DIC_LLAP" />
-<meta property="og:description" content="Deviance information criteria is based on the deviance funcion
-\(D(\theta, y) = -2 log(f(y|\theta))\) but also incorporates a
-penalization factor of the complexity of the model" />
+<meta property="og:title" content="Case deletion analysis for the log-logistic model — CaseDeletion_LLOG" />
+<meta property="og:description" content="Leave-one-out cross validation analysis. The function returns a
+matrix with n rows. Its first column contains the logarithm of the CPO
+(Geisser and Eddy, 1979). Larger values of the CPO indicate better
+predictive accuracy of the model. The second and third columns contain
+the KL divergence between \(\pi(\beta, \sigma^2,  \theta | t_{-i})\)
+and \(\pi(\beta, \sigma^2,  \theta | t)\) and its calibration index
+\(p_i\), respectively." />
 <meta name="twitter:card" content="summary" />
 
 
@@ -110,18 +114,22 @@ penalization factor of the complexity of the model" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Deviance information criteria for the log-Laplace model</h1>
+    <h1>Case deletion analysis for the log-logistic model</h1>
     <small class="dont-index">Source: <a href='https://github.com/nathansam/SMLN/blob/master/R/User_Codes.R'><code>R/User_Codes.R</code></a></small>
-    <div class="hidden name"><code>DIC_LLAP.Rd</code></div>
+    <div class="hidden name"><code>CaseDeletion_LLOG.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Deviance information criteria is based on the deviance funcion
-\(D(\theta, y) = -2 log(f(y|\theta))\) but also incorporates a
-penalization factor of the complexity of the model</p>
+    <p>Leave-one-out cross validation analysis. The function returns a
+matrix with n rows. Its first column contains the logarithm of the CPO
+(Geisser and Eddy, 1979). Larger values of the CPO indicate better
+predictive accuracy of the model. The second and third columns contain
+the KL divergence between \(\pi(\beta, \sigma^2,  \theta | t_{-i})\)
+and \(\pi(\beta, \sigma^2,  \theta | t)\) and its calibration index
+\(p_i\), respectively.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DIC_LLAP</span>(<span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>chain</span>, <span class='no'>set</span>, <span class='no'>eps_l</span>, <span class='no'>eps_r</span>)</pre>
+    <pre class="usage"><span class='fu'>CaseDeletion_LLOG</span>(<span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>chain</span>, <span class='no'>set</span>, <span class='no'>eps_l</span>, <span class='no'>eps_r</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
