@@ -22,6 +22,41 @@
 #'     (default value: 0.5).
 #' @param eps_r Upper imprecision \eqn{(\epsilon_r)} for set observations
 #'     (default value: 0.5)
+#' @examples
+#' library(SMLN)
+#' n <- dim(cancer)[1]
+#' # Building the Design Matrix
+#' Intercept <- rep(1, times = n) # Intercept
+#' x1 <- rep(0, times = n) # Treat (1 dummy variable)
+#' for(i in 1 : n) {if(cancer$treat[i] == 2) x1[i] <- 1}
+#' # Type (3 dummy variables)
+#' x2 <- rep(0, times = n)
+#' x3 <- rep(0, times = n)
+#' x4 <- rep(0, times = n)
+#'
+#' for(i in 1 : n) {if(cancer$type[i] == 1) x2[i] <- 1
+#' if(cancer$type[i] == 2) x3[i] <- 1
+#' if(cancer$type[i] == 3) x4[i] <- 1}
+#' x5 <- cancer$status # Status
+#' x6 <- cancer$mfd # Months from diagnosis
+#' x7 <- cancer$age # Age
+#' x8 <- rep(0, times = n) # Prior (Dummy variable)
+#' for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
+#' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
+#' Time <- cancer$time; Cens <- cancer$censor
+#'
+#' # Set random starting values
+#' beta0 <- rnorm(9, 0, 1)
+#' sigma20 <- rgamma(1, 2, 2)
+#' nu0 <- rgamma(1, 2, 2)
+#' alpha0 <- runif(1, 1, 2)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LN <- MCMC_LN(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20,
+#'               prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
 #'
 #' @export
 MCMC_LN <- function(N, thin, Time, Cens, X, beta0, sigma20, prior, set,
@@ -242,6 +277,41 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
 #' @param nu0 Starting value for \eqn{v}
+#' @examples
+#' library(SMLN)
+#' n <- dim(cancer)[1]
+#' # Building the Design Matrix
+#' Intercept <- rep(1, times = n) # Intercept
+#' x1 <- rep(0, times = n) # Treat (1 dummy variable)
+#' for(i in 1 : n) {if(cancer$treat[i] == 2) x1[i] <- 1}
+#' # Type (3 dummy variables)
+#' x2 <- rep(0, times = n)
+#' x3 <- rep(0, times = n)
+#' x4 <- rep(0, times = n)
+#'
+#' for(i in 1 : n) {if(cancer$type[i] == 1) x2[i] <- 1
+#' if(cancer$type[i] == 2) x3[i] <- 1
+#' if(cancer$type[i] == 3) x4[i] <- 1}
+#' x5 <- cancer$status # Status
+#' x6 <- cancer$mfd # Months from diagnosis
+#' x7 <- cancer$age # Age
+#' x8 <- rep(0, times = n) # Prior (Dummy variable)
+#' for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
+#' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
+#' Time <- cancer$time; Cens <- cancer$censor
+#'
+#' # Set random starting values
+#' beta0 <- rnorm(9, 0, 1)
+#' sigma20 <- rgamma(1, 2, 2)
+#' nu0 <- rgamma(1, 2, 2)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LST <- MCMC_LST(N = 1000, thin = 20, Q = 1, Time, Cens, X, beta0,
+#'                 sigma20, nu0, prior = 2, set = 1, eps_l = 0.5,
+#'                 eps_r = 0.5, ar = 0.44)
 #'
 #' @export
 MCMC_LST = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0, prior, set,
@@ -583,6 +653,40 @@ BF_lambda_obs_LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain,
 #' @inheritParams MCMC_LN
 #' @param Q Update period for the \eqn{\lambda_{i}}’s
 #'
+#' @examples
+#' library(SMLN)
+#' n <- dim(cancer)[1]
+#' # Building the Design Matrix
+#' Intercept <- rep(1, times = n) # Intercept
+#' x1 <- rep(0, times = n) # Treat (1 dummy variable)
+#' for(i in 1 : n) {if(cancer$treat[i] == 2) x1[i] <- 1}
+#' # Type (3 dummy variables)
+#' x2 <- rep(0, times = n)
+#' x3 <- rep(0, times = n)
+#' x4 <- rep(0, times = n)
+#'
+#' for(i in 1 : n) {if(cancer$type[i] == 1) x2[i] <- 1
+#' if(cancer$type[i] == 2) x3[i] <- 1
+#' if(cancer$type[i] == 3) x4[i] <- 1}
+#' x5 <- cancer$status # Status
+#' x6 <- cancer$mfd # Months from diagnosis
+#' x7 <- cancer$age # Age
+#' x8 <- rep(0, times = n) # Prior (Dummy variable)
+#' for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
+#' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
+#' Time <- cancer$time; Cens <- cancer$censor
+#'
+#' # Set random starting values
+#' beta0 <- rnorm(9, 0, 1)
+#' sigma20 <- rgamma(1, 2, 2)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LLAP <- MCMC_LLAP(N = 1000, thin = 20,  Q = 1, Time, Cens, X, beta0,
+#'                   sigma20, prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
+#'
 #' @export
 MCMC_LLAP <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, prior, set,
                       eps_l = 0.5, eps_r = 0.5) {
@@ -866,6 +970,41 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 #' @param alpha0 Starting value for \eqn{\alpha}
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
+#' @examples
+#' library(SMLN)
+#' n <- dim(cancer)[1]
+#' # Building the Design Matrix
+#' Intercept <- rep(1, times = n) # Intercept
+#' x1 <- rep(0, times = n) # Treat (1 dummy variable)
+#' for(i in 1 : n) {if(cancer$treat[i] == 2) x1[i] <- 1}
+#' # Type (3 dummy variables)
+#' x2 <- rep(0, times = n)
+#' x3 <- rep(0, times = n)
+#' x4 <- rep(0, times = n)
+#'
+#' for(i in 1 : n) {if(cancer$type[i] == 1) x2[i] <- 1
+#' if(cancer$type[i] == 2) x3[i] <- 1
+#' if(cancer$type[i] == 3) x4[i] <- 1}
+#' x5 <- cancer$status # Status
+#' x6 <- cancer$mfd # Months from diagnosis
+#' x7 <- cancer$age # Age
+#' x8 <- rep(0, times = n) # Prior (Dummy variable)
+#' for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
+#' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
+#' Time <- cancer$time; Cens <- cancer$censor
+#'
+#' # Set random starting values
+#' beta0 <- rnorm(9, 0, 1)
+#' sigma20 <- rgamma(1, 2, 2)
+#' alpha0 <- runif(1, 1, 2)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations (especially for the log-exponential power model).
+#'
+#' LEP <- MCMC_LEP(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20,
+#'                 alpha0, prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5,
+#'                 ar = 0.44)
 #'
 #' @export
 MCMC_LEP <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0, prior, set,
@@ -1320,6 +1459,40 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
 #' @param N.AKS Maximum number of terms of the Kolmogorov-Smirnov density used
 #'     for the rejection sampling when updating mixing parameters (default
 #'     value: 3)
+#' @examples
+#' #' library(SMLN)
+#' n <- dim(cancer)[1]
+#' # Building the Design Matrix
+#' Intercept <- rep(1, times = n) # Intercept
+#' x1 <- rep(0, times = n) # Treat (1 dummy variable)
+#' for(i in 1 : n) {if(cancer$treat[i] == 2) x1[i] <- 1}
+#' # Type (3 dummy variables)
+#' x2 <- rep(0, times = n)
+#' x3 <- rep(0, times = n)
+#' x4 <- rep(0, times = n)
+#'
+#' for(i in 1 : n) {if(cancer$type[i] == 1) x2[i] <- 1
+#' if(cancer$type[i] == 2) x3[i] <- 1
+#' if(cancer$type[i] == 3) x4[i] <- 1}
+#' x5 <- cancer$status # Status
+#' x6 <- cancer$mfd # Months from diagnosis
+#' x7 <- cancer$age # Age
+#' x8 <- rep(0, times = n) # Prior (Dummy variable)
+#' for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
+#' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
+#' Time <- cancer$time; Cens <- cancer$censor
+#'
+#' # Set random starting values
+#' beta0 <- rnorm(9, 0, 1)
+#' sigma20 <- rgamma(1, 2, 2)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, Q = 10, Time, Cens, X,
+#'                   beta0, sigma20, prior = 2, set = 1, N.AKS = 3)
+#'
 #'
 #' @export
 MCMC_LLOG <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, prior, set,
