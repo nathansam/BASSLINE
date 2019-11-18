@@ -1,5 +1,4 @@
 
-
 test_that("MCMC_LN first value",{
   data(cancer)
   set.seed(1)
