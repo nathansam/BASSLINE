@@ -65,10 +65,10 @@ MCMC_LN <- function(N, thin, Time, Cens, X, beta0, sigma20, prior, set,
     n <- length(Time)
     N.aux = round(N/thin, 0)
     if (prior == 1) {
-        p = 1 + k/2
+        p <- 1 + k / 2
     }
     if (prior == 2) {
-        p = 1
+        p <- 1
     }
 
     beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
@@ -99,9 +99,9 @@ MCMC_LN <- function(N, thin, Time, Cens, X, beta0, sigma20, prior, set,
                                     eps_l, eps_r)
 
         if (iter%%thin == 0) {
-            beta[iter/thin + 1, ] = beta.aux
-            sigma2[iter/thin + 1] = sigma2.aux
-            logt[iter/thin + 1, ] = logt.aux
+            beta[iter/thin + 1, ] <- beta.aux
+            sigma2[iter/thin + 1] <- sigma2.aux
+            logt[iter/thin + 1, ] <- logt.aux
         }
         if ((iter - 1)%%1e+05 == 0) {
             print(paste("Iteration :", iter))
