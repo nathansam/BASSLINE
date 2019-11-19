@@ -16,8 +16,7 @@ Imports:
     truncnorm,
     VGAM,
     MCMCpack,
-    mvtnorm,
-    coda
+    mvtnorm
 Suggests: 
     testthat,
     knitr,
