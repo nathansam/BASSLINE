@@ -6,10 +6,10 @@ A project to convert code written by Vallejos & Steel[1] into a library using C+
 ### Build states
 
 
-![Windows build state](https://github.com/nathansam/SMLN/workflows/Win-build/badge.svg)
-![macOS build state](https://github.com/nathansam/SMLN/workflows/macOS-build/badge.svg)
-![Linux Build state](https://github.com/nathansam/SMLN/workflows/Linux-build/badge.svg)
-[![codecov](https://codecov.io/gh/nathansam/SMLN/branch/master/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
+![Windows build state](https://github.com/nathansam/SMLN/workflows/Win-build/badge.svg?branch=rcpp)
+![macOS build state](https://github.com/nathansam/SMLN/workflows/macOS-build/badge.svg?branch=rcpp)
+![Linux Build state](https://github.com/nathansam/SMLN/workflows/Linux-build/badge.svg?branch=rcpp)
+[![codecov](https://codecov.io/gh/nathansam/SMLN/branch/rcpp/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
 
 
 ### Installation

@@ -5,25 +5,25 @@
 
 ###################################################### PRIOR FOR (BETA,SIGMA2)
 
-prior.LN <- function(beta, sigma2, prior, log) {
-    k = length(beta)
-    if (prior == 1) {
-        p <- 1 + k / 2
-    }
-    if (prior == 2) {
-        p <- 1
-    }
-    if (prior == 3) {
-        p <- 1
-    }
-    if (log == FALSE) {
-        aux <- sigma2 ^ (-p)
-    }
-    if (log == TRUE) {
-        aux <- -p * log(sigma2)
-    }
-    return(aux)
-}
+#prior.LN <- function(beta, sigma2, prior, log) {
+#    k = length(beta)
+#    if (prior == 1) {
+#        p <- 1 + k / 2
+#    }
+#    if (prior == 2) {
+#        p <- 1
+#    }
+#    if (prior == 3) {
+#        p <- 1
+#    }
+#    if (log == FALSE) {
+#        aux <- sigma2 ^ (-p)
+#    }
+#    if (log == TRUE) {
+#        aux <- -p * log(sigma2)
+#    }
+#    return(aux)
+#}
 
 #########################PRIOR FOR (BETA,SIGMA2,NU) (LOG-STUDENT'S T MODEL ONLY)
 
@@ -41,11 +41,11 @@ prior.nu <- function(nu, k, prior) {
 }
 prior.LST <- function(beta, sigma2, nu, prior, log) {
     if (log == FALSE) {
-        aux <- prior.LN(beta, sigma2, prior, log = FALSE) *
+        aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
           prior.nu(nu, length(beta), prior)
     }
     if (log == TRUE) {
-        aux <- prior.LN(beta, sigma2, prior, log = TRUE) +
+        aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
           log(prior.nu(nu, length(beta), prior))
     }
     return(aux)
@@ -82,11 +82,11 @@ prior.alpha <- function(alpha, k, prior) {
 }
 prior.LEP <- function(beta, sigma2, alpha, prior, log) {
     if (log == FALSE) {
-        aux <- prior.LN(beta, sigma2, prior, log = FALSE) *
+        aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
                   prior.alpha(alpha, length(beta), prior)
     }
     if (log == TRUE) {
-        aux <- prior.LN(beta, sigma2, prior, log = TRUE) +
+        aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
                   log(prior.alpha(alpha, length(beta), prior))
     }
     return(aux)

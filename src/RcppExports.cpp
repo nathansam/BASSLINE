@@ -16,9 +16,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// prior_LN
+double prior_LN(NumericVector beta, double sigma2, int prior, bool logs);
+RcppExport SEXP _SMLN_prior_LN(SEXP betaSEXP, SEXP sigma2SEXP, SEXP priorSEXP, SEXP logsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
+    Rcpp::traits::input_parameter< int >::type prior(priorSEXP);
+    Rcpp::traits::input_parameter< bool >::type logs(logsSEXP);
+    rcpp_result_gen = Rcpp::wrap(prior_LN(beta, sigma2, prior, logs));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMLN_timesTwo", (DL_FUNC) &_SMLN_timesTwo, 1},
+    {"_SMLN_prior_LN", (DL_FUNC) &_SMLN_prior_LN, 4},
     {NULL, NULL, 0}
 };
 

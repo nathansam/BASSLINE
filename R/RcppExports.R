@@ -9,3 +9,7 @@ timesTwo <- function(x) {
     .Call(`_SMLN_timesTwo`, x)
 }
 
+prior_LN <- function(beta, sigma2, prior, logs) {
+    .Call(`_SMLN_prior_LN`, beta, sigma2, prior, logs)
+}
+

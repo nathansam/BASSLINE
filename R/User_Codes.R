@@ -141,8 +141,8 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
     print("Likelihood ordinate ready!")
 
     # PRIOR ORDINATE
-    LP.ord <- prior.LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
-                      log = TRUE)
+    LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
+                      logs = TRUE)
     print("Prior ordinate ready!")
 
     # POSTERIOR ORDINATE - sigma2
@@ -793,8 +793,8 @@ LML_LLAP <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
     print("Likelihood ordinate ready!")
 
     # PRIOR ORDINATE
-    LP.ord <- prior.LN(beta = beta.star, sigma2 = sigma2.star,
-                       prior = prior, log = TRUE)
+    LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star,
+                       prior = prior, logs = TRUE)
     print("Prior ordinate ready!")
 
     # POSTERIOR ORDINATE - sigma 2
@@ -1603,8 +1603,8 @@ LML_LLOG <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r,
     print("Likelihood ordinate ready!")
 
     # PRIOR ORDINATE
-    LP.ord <- prior.LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
-                      log = TRUE)
+    LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
+                      logs = TRUE)
     print("Prior ordinate ready!")
 
     # POSTERIOR ORDINATE - sigma 2
