@@ -2,7 +2,7 @@ Package: SMLN
 Type: Package
 Title: Objective Bayesian Survival Analysis Using Shape Mixtures of Log-Normal
     Distributions
-Version: 0.0.0.9000
+Version: 0.0.0.9001
 Authors@R: c(person("Nathan","Constantine-Cooke",
   email="nathan.constantine-cooke@ed.ac.uk", role = c("cre","aut")),
   person("Catalina", "Vallejos", role = c("aut"),
