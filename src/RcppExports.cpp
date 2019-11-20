@@ -42,11 +42,48 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// II_alpha
+NumericVector II_alpha(NumericVector alpha);
+RcppExport SEXP _SMLN_II_alpha(SEXP alphaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
+    rcpp_result_gen = Rcpp::wrap(II_alpha(alpha));
+    return rcpp_result_gen;
+END_RCPP
+}
+// IIJ_nu
+NumericVector IIJ_nu(NumericVector nu);
+RcppExport SEXP _SMLN_IIJ_nu(SEXP nuSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type nu(nuSEXP);
+    rcpp_result_gen = Rcpp::wrap(IIJ_nu(nu));
+    return rcpp_result_gen;
+END_RCPP
+}
+// r_GIG
+NumericVector r_GIG(double r, int n);
+RcppExport SEXP _SMLN_r_GIG(SEXP rSEXP, SEXP nSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type r(rSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    rcpp_result_gen = Rcpp::wrap(r_GIG(r, n));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMLN_timesTwo", (DL_FUNC) &_SMLN_timesTwo, 1},
     {"_SMLN_prior_LN", (DL_FUNC) &_SMLN_prior_LN, 4},
     {"_SMLN_J_alpha", (DL_FUNC) &_SMLN_J_alpha, 2},
+    {"_SMLN_II_alpha", (DL_FUNC) &_SMLN_II_alpha, 1},
+    {"_SMLN_IIJ_nu", (DL_FUNC) &_SMLN_IIJ_nu, 1},
+    {"_SMLN_r_GIG", (DL_FUNC) &_SMLN_r_GIG, 2},
     {NULL, NULL, 0}
 };
 

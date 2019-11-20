@@ -27,15 +27,15 @@
 
 #########################PRIOR FOR (BETA,SIGMA2,NU) (LOG-STUDENT'S T MODEL ONLY)
 
-IIJ.nu <- function(nu) {
-    aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) -
-                                       trigamma((nu + 1) / 2) -
-                                            (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
-    return(aux)
-}
+#IIJ.nu <- function(nu) {
+#    aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) -
+#                                       trigamma((nu + 1) / 2) -
+#                                            (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
+#    return(aux)
+#}
 prior.nu <- function(nu, prior) {
     if (prior == 2)
-        aux <- IIJ.nu(nu) / stats::integrate(IIJ.nu, lower = 0,
+        aux <- IIJ_nu(nu) / stats::integrate(IIJ_nu, lower = 0,
                                              upper = Inf)$value
     return(aux)
 }

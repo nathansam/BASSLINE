@@ -17,3 +17,15 @@ J_alpha <- function(alpha, k) {
     .Call(`_SMLN_J_alpha`, alpha, k)
 }
 
+II_alpha <- function(alpha) {
+    .Call(`_SMLN_II_alpha`, alpha)
+}
+
+IIJ_nu <- function(nu) {
+    .Call(`_SMLN_IIJ_nu`, nu)
+}
+
+r_GIG <- function(r, n = 1L) {
+    .Call(`_SMLN_r_GIG`, r, n)
+}
+
