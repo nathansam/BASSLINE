@@ -30,3 +30,4 @@ test_that("MCMC_LN first value",{
 
   expect_equivalent(LN[1,1], -0.626453811)
 })
+

@@ -30,10 +30,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// J_alpha
+NumericVector J_alpha(NumericVector alpha, int k);
+RcppExport SEXP _SMLN_J_alpha(SEXP alphaSEXP, SEXP kSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< int >::type k(kSEXP);
+    rcpp_result_gen = Rcpp::wrap(J_alpha(alpha, k));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_SMLN_timesTwo", (DL_FUNC) &_SMLN_timesTwo, 1},
     {"_SMLN_prior_LN", (DL_FUNC) &_SMLN_prior_LN, 4},
+    {"_SMLN_J_alpha", (DL_FUNC) &_SMLN_J_alpha, 2},
     {NULL, NULL, 0}
 };
 

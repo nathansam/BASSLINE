@@ -76,7 +76,7 @@ alpha0 <- runif(1, 1, 2)
 
 ## MCMC chains 
 
-Please note: N=1000 is not enough to reach convergence. This is only an illustration. Run longer chains for more accurate estimations (especially for the log-exponential power model).
+Please note: N = 1000 is not enough to reach convergence. This is only an illustration. Run longer chains for more accurate estimations (especially for the log-exponential power model).
 
 ```{r}
 system.time(LN <- MCMC_LN(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20, 

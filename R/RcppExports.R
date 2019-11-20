@@ -13,3 +13,7 @@ prior_LN <- function(beta, sigma2, prior, logs) {
     .Call(`_SMLN_prior_LN`, beta, sigma2, prior, logs)
 }
 
+J_alpha <- function(alpha, k) {
+    .Call(`_SMLN_J_alpha`, alpha, k)
+}
+
