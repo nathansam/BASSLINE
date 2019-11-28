@@ -724,7 +724,8 @@ CFP.obs.LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain, prior,
                                    beta0 = t(chain[N.aux, 1:k]),
                                    sigma20 = chain[N.aux, (k + 1)],
                                    nu0 = chain[N.aux, (k + 2)],
-                                   lambda0 = t(chain[N.aux, (k + 3) : (k + 2 + n)]),
+                                   lambda0 = t(chain[N.aux,
+                                                     (k + 3) : (k + 2 + n)]),
                                    prior, set, eps_l, eps_r, ar)
     chain1 <- chain1[-(1:burn), ]
     N.aux2 <- dim(chain1)[1]

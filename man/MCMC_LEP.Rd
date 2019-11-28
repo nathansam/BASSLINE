@@ -58,7 +58,7 @@ updates}
 Markov chain Monte carlo algorithm for the log-exponential model
 }
 \examples{
-library(SMLN)
+library(BASSLINE)
 n <- dim(cancer)[1]
 # Building the Design Matrix
 Intercept <- rep(1, times = n) # Intercept

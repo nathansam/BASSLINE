@@ -1,30 +1,30 @@
-# SMLN
-Objective Bayesian survival analysis using shape mixtures of log-normal distributions.
+# BASSLINE
+BAyeSian Survival anaLysIs usiNg shapE mixtures of log-normal distributions
 
 A project to convert code written by Vallejos & Steel[1] into a library using C++ to speed-up functions.  
 
 ### Build states
 
 
-![Windows build state](https://github.com/nathansam/SMLN/workflows/Win-build/badge.svg?branch=rcpp)
-![macOS build state](https://github.com/nathansam/SMLN/workflows/macOS-build/badge.svg?branch=rcpp)
-![Linux Build state](https://github.com/nathansam/SMLN/workflows/Linux-build/badge.svg?branch=rcpp)
-[![codecov](https://codecov.io/gh/nathansam/SMLN/branch/rcpp/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
+![Windows build state](https://github.com/nathansam/BASSLINE/workflows/Win-build/badge.svg?branch=rcpp)
+![macOS build state](https://github.com/nathansam/BASSLINE/workflows/macOS-build/badge.svg?branch=rcpp)
+![Linux Build state](https://github.com/nathansam/BASSLINE/workflows/Linux-build/badge.svg?branch=rcpp)
+[![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/rcpp/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
 
 
 ### Installation
 
-The recommended way to install SMLN is via pak which will handle installing all dependencies: 
+The recommended way to install BASSLINE is via pak which will handle installing all dependencies: 
 ```R
 if (!requireNamespace("pak", quietly = TRUE))
     install.packages("pak")
-pak::pkg_install("nathansam/SMLN")
+pak::pkg_install("nathansam/BASSLINE")
 ```
 
-Alternatively, SMLN can be install via the devtools package
+Alternatively, BASSLINE can be installed via the devtools package
 
 ```R
-devtools::install_github("nathansam/SMLN")
+devtools::install_github("nathansam/BASSLINE")
 ```
 
 ### References 

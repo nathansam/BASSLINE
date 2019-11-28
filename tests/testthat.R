@@ -1,5 +1,5 @@
 library(testthat)
-library(SMLN)
+library(BASSLINE)
 
-test_check("SMLN")
+test_check("BASSLINE")
 
