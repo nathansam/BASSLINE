@@ -1,3 +1,3 @@
-#' @useDynLib SMLN, .registration = TRUE
+#' @useDynLib BASSLINE, .registration = TRUE
 #' @importFrom Rcpp sourceCpp
 globalVariables(c("n"))

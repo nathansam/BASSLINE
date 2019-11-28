@@ -1,8 +1,7 @@
-Package: SMLN
+Package: BASSLINE
 Type: Package
-Title: Objective Bayesian Survival Analysis Using Shape Mixtures of Log-Normal
-    Distributions
-Version: 0.0.0.9001
+Title: BAyeSian Survival anaLysIs usiNg shapE mixtures of log-normal distributions
+Version: 0.0.0.9002
 Authors@R: c(person("Nathan","Constantine-Cooke",
   email="nathan.constantine-cooke@ed.ac.uk", role = c("cre","aut")),
   person("Catalina", "Vallejos", role = c("aut"),
@@ -23,11 +22,14 @@ Suggests:
     knitr,
     rmarkdown
 LazyData: true
-URL: https://github.com/nathansam/SMLN
-BugReports: https://github.com/nathansam/SMLN/issues
+URL: https://github.com/nathansam/BASSLINE
+BugReports: https://github.com/nathansam/BASSLINE/issues
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.0.0
+RoxygenNote: 7.0.1
 Encoding: UTF-8
 VignetteBuilder: knitr
 LinkingTo: 
-    Rcpp
+    Rcpp,
+    RcppArmadillo
+SystemRequirements: C++11
+NeedsCompilation: yes

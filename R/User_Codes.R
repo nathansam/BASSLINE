@@ -23,7 +23,7 @@
 #' @param eps_r Upper imprecision \eqn{(\epsilon_r)} for set observations
 #'     (default value: 0.5)
 #' @examples
-#' library(SMLN)
+#' library(BASSLINE)
 #' n <- dim(cancer)[1]
 #' # Building the Design Matrix
 #' Intercept <- rep(1, times = n) # Intercept
@@ -278,7 +278,7 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 #'     updates
 #' @param nu0 Starting value for \eqn{v}
 #' @examples
-#' library(SMLN)
+#' library(BASSLINE)
 #' n <- dim(cancer)[1]
 #' # Building the Design Matrix
 #' Intercept <- rep(1, times = n) # Intercept
@@ -654,7 +654,7 @@ BF_lambda_obs_LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain,
 #' @param Q Update period for the \eqn{\lambda_{i}}’s
 #'
 #' @examples
-#' library(SMLN)
+#' library(BASSLINE)
 #' n <- dim(cancer)[1]
 #' # Building the Design Matrix
 #' Intercept <- rep(1, times = n) # Intercept
@@ -971,7 +971,7 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
 #' @examples
-#' library(SMLN)
+#' library(BASSLINE)
 #' n <- dim(cancer)[1]
 #' # Building the Design Matrix
 #' Intercept <- rep(1, times = n) # Intercept
@@ -1460,7 +1460,7 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
 #'     for the rejection sampling when updating mixing parameters (default
 #'     value: 3)
 #' @examples
-#' #' library(SMLN)
+#' library(BASSLINE)
 #' n <- dim(cancer)[1]
 #' # Building the Design Matrix
 #' Intercept <- rep(1, times = n) # Intercept

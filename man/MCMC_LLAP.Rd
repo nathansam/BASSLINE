@@ -54,7 +54,7 @@ the number of observations and \eqn{k} is the number of covariates
 Markov chain Monte carlo algorithm for the log-Laplace model
 }
 \examples{
-library(SMLN)
+library(BASSLINE)
 n <- dim(cancer)[1]
 # Building the Design Matrix
 Intercept <- rep(1, times = n) # Intercept
