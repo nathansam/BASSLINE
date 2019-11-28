@@ -31,4 +31,5 @@ VignetteBuilder: knitr
 LinkingTo: 
     Rcpp,
     RcppArmadillo
+SystemRequirements: C++11
 NeedsCompilation: yes
