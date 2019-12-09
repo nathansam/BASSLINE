@@ -7,7 +7,7 @@ A project to convert code written by Vallejos & Steel[1] into a library using C+
 
 
  <!-- badges: start -->
-  [![Travis build status](https://travis-ci.org/nathansam/SMLN.svg?branch=master)](https://travis-ci.org/nathansam/SMLN)
+  [![Travis build status](https://travis-ci.org/nathansam/SMLN.svg?branch=rcpp)](https://travis-ci.org/nathansam/SMLN)
   [![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/rcpp/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
   <!-- badges: end -->
 
