@@ -1,4 +1,28 @@
-# R for travis: see documentation at https://docs.travis-ci.com/user/languages/r
+language: r
 
-language: R
-cache: packages
+r:
+  - bioc-devel
+  - bioc-release
+
+# Strict checks in place
+warnings_are_errors: false
+
+cache:
+  - packages: true
+
+#branches:
+#  only:
+#    - master
+
+r_github_packages:
+  - jimhester/covr
+  
+notifications:
+  email:
+    recipients:
+      - nathan.constantine-cooke@ed.ac.uk 
+    on_success: change # default: change
+    on_failure: always # default: always
+
+after_success:
+  - Rscript -e 'library(covr);codecov()'
