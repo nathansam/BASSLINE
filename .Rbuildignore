@@ -3,6 +3,7 @@
 
 ^\.github$
 ^_pkgdown\.yml$
+^_config\.yml$
 ^docs$
 ^pkgdown$
 ^\.travis\.yml$

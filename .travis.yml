@@ -1,8 +1,9 @@
 language: r
 
 r:
-  - bioc-devel
-  - bioc-release
+- oldrel
+- release
+- devel
 
 # Strict checks in place
 warnings_are_errors: false
