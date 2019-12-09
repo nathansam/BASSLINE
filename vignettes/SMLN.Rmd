@@ -27,10 +27,10 @@ knitr::opts_chunk$set(
 
 # Demonstration 
 
-This vignette demonstrates how to use the `SMLN` package using the included `cancer` data-set from the veterans administration lung cancer trial. 
+This vignette demonstrates how to use the `BASSLINE` package using the included `cancer` data-set from the veterans administration lung cancer trial. 
 
 ```{r setup}
-library(SMLN)
+library(BASSLINE)
 ``` 
 
 ```{r}
@@ -76,7 +76,7 @@ alpha0 <- runif(1, 1, 2)
 
 ## MCMC chains 
 
-Please note: N=1000 is not enough to reach convergence. This is only an illustration. Run longer chains for more accurate estimations (especially for the log-exponential power model).
+Please note: N = 1000 is not enough to reach convergence. This is only an illustration. Run longer chains for more accurate estimations (especially for the log-exponential power model).
 
 ```{r}
 system.time(LN <- MCMC_LN(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20, 

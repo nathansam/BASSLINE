@@ -3,50 +3,50 @@
 #####################################PRIORS#####################################
 ################################################################################
 
-###################################################### PRIOR FOR (BETA,SIGMA2)
+###################### ################################ PRIOR FOR (BETA,SIGMA2)
 
-prior.LN <- function(beta, sigma2, prior, log) {
-    k = length(beta)
-    if (prior == 1) {
-        p <- 1 + k / 2
-    }
-    if (prior == 2) {
-        p <- 1
-    }
-    if (prior == 3) {
-        p <- 1
-    }
-    if (log == FALSE) {
-        aux <- sigma2 ^ (-p)
-    }
-    if (log == TRUE) {
-        aux <- -p * log(sigma2)
-    }
-    return(aux)
-}
+#prior.LN <- function(beta, sigma2, prior, log) {
+#    k = length(beta)
+#    if (prior == 1) {
+#        p <- 1 + k / 2
+#    }
+#    if (prior == 2) {
+#        p <- 1
+#    }
+#    if (prior == 3) {
+#        p <- 1
+#   }
+#    if (log == FALSE) {
+#        aux <- sigma2 ^ (-p)
+#    }
+#    if (log == TRUE) {
+#        aux <- -p * log(sigma2)
+#    }
+#    return(aux)
+#}
 
 #########################PRIOR FOR (BETA,SIGMA2,NU) (LOG-STUDENT'S T MODEL ONLY)
 
-IIJ.nu <- function(nu) {
-    aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) -
-                                       trigamma((nu + 1) / 2) -
-                                            (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
-    return(aux)
-}
-prior.nu <- function(nu, k, prior) {
+#IIJ.nu <- function(nu) {
+#    aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) -
+#                                       trigamma((nu + 1) / 2) -
+#                                            (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
+#    return(aux)
+#}
+prior.nu <- function(nu, prior) {
     if (prior == 2)
-        aux <- IIJ.nu(nu) / stats::integrate(IIJ.nu, lower = 0,
+        aux <- IIJ_nu(nu) / stats::integrate(IIJ_nu, lower = 0,
                                              upper = Inf)$value
     return(aux)
 }
 prior.LST <- function(beta, sigma2, nu, prior, log) {
     if (log == FALSE) {
-        aux <- prior.LN(beta, sigma2, prior, log = FALSE) *
-          prior.nu(nu, length(beta), prior)
+        aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
+          prior.nu(nu, prior)
     }
     if (log == TRUE) {
-        aux <- prior.LN(beta, sigma2, prior, log = TRUE) +
-          log(prior.nu(nu, length(beta), prior))
+        aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
+          log(prior.nu(nu, prior))
     }
     return(aux)
 }
@@ -82,11 +82,11 @@ prior.alpha <- function(alpha, k, prior) {
 }
 prior.LEP <- function(beta, sigma2, alpha, prior, log) {
     if (log == FALSE) {
-        aux <- prior.LN(beta, sigma2, prior, log = FALSE) *
+        aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
                   prior.alpha(alpha, length(beta), prior)
     }
     if (log == TRUE) {
-        aux <- prior.LN(beta, sigma2, prior, log = TRUE) +
+        aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
                   log(prior.alpha(alpha, length(beta), prior))
     }
     return(aux)
@@ -291,8 +291,8 @@ MH.nu.LST <- function(N = 1, omega2, beta, lambda, nu0, prior) {
                                                     shape = nu[j.nu] / 2,
                                                     rate = nu[j.nu] / 2,
                                                     log = TRUE)) +
-                                          log(prior.nu(y, k, prior) /
-                                                prior.nu(nu[j.nu], k, prior))
+                                          log(prior.nu(y, prior) /
+                                                prior.nu(nu[j.nu], prior))
         aux <- I(log(u.aux) < log.aux)
         aux <- as.numeric(aux) * as.numeric(ind.aux)
         nu[j.nu + 1] <- aux * y + (1 - aux) * nu[j.nu]
@@ -317,9 +317,7 @@ alpha.nu <- function(nu0, nu1, lambda, k, prior) {
                                               shape = nu0 / 2,
                                               rate = nu0 / 2,
                                               log = TRUE))) *
-                            (prior.nu(nu1, k, prior) / prior.nu(nu0,
-                                                                k,
-                                                                prior)))
+                            (prior.nu(nu1, prior) / prior.nu(nu0, prior)))
     }
     return(aux)
 }
@@ -726,7 +724,8 @@ CFP.obs.LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain, prior,
                                    beta0 = t(chain[N.aux, 1:k]),
                                    sigma20 = chain[N.aux, (k + 1)],
                                    nu0 = chain[N.aux, (k + 2)],
-                                   lambda0 = t(chain[N.aux, (k + 3) : (k + 2 + n)]),
+                                   lambda0 = t(chain[N.aux,
+                                                     (k + 3) : (k + 2 + n)]),
                                    prior, set, eps_l, eps_r, ar)
     chain1 <- chain1[-(1:burn), ]
     N.aux2 <- dim(chain1)[1]
