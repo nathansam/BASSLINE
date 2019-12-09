@@ -28,7 +28,7 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@master
 
-      - uses: nathansam/actions/setup-tinytex@master
+      - uses: r-lib/actions/setup-tinytex@master
         if: contains(matrix.config.args, 'no-manual') == false
 
       - name: Cache R packages
