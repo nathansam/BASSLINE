@@ -5,7 +5,6 @@ A project to convert code written by Vallejos & Steel[1] into a library using C+
 
 ### Build states
 
-
  <!-- badges: start -->
   [![Travis build status](https://travis-ci.org/nathansam/BASSLINE.svg?branch=master)](https://travis-ci.org/nathansam/BASSLINE)
   [![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/rcpp/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
