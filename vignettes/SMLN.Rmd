@@ -93,7 +93,7 @@ system.time(LEP <- MCMC_LEP(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20,
 system.time(LLOG <- MCMC_LLOG(N = 1000, thin = 20, Q = 10, Time, Cens, X,
                               beta0, sigma20, prior = 2, set = 1, N.AKS = 3))
 ```
-## Removing the BURN-IN PERIOD
+## Removing the burn-in period
 ```{r}
 burn <- 1 : 11
 LN.B <- LN[-burn, ]
@@ -104,7 +104,6 @@ LLOG.B <- LLOG[-burn, ]
 ```
 
 
-
 ## Deviance information criteria 
 ```{r}
 DIC_LN(Time, Cens, X, chain = LN.B, set = 1, eps_l = 0.5, eps_r = 0.5)
@@ -113,7 +112,6 @@ DIC_LLAP(Time, Cens, X, chain = LLAP.B, set = 1, eps_l = 0.5, eps_r = 0.5)
 DIC_LEP(Time, Cens, X, chain = LEP.B, set = 1, eps_l = 0.5, eps_r = 0.5)
 DIC_LLOG(Time, Cens, X, chain = LLOG.B, set = 1, eps_l = 0.5, eps_r = 0.5)
 ```
-
 
 ## LOG-MARGINAL LIKELIHOOD
 ```{r}
