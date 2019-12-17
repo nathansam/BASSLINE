@@ -50,8 +50,18 @@ the number of observations and \eqn{k} is the number of covariates
 \item{eps_r}{Upper imprecision \eqn{(\epsilon_r)} for set observations
 (default value: 0.5)}
 }
+\value{
+A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+\eqn{\theta} (1 column, if appropriate), \eqn{\lambda} (\eqn{n} columns,
+not provided for log-normal model), \eqn{\log(t)} (\eqn{n} columns,
+simulated via data augmentation) and the logarithm of the adaptive
+variances (the number varies among models). The latter allows the user to
+evaluate if the adaptive variances have been stabilized.
+}
 \description{
-Markov chain Monte carlo algorithm for the log-Laplace model
+Adaptive Metropolis-within-Gibbs algorithm with univariate
+Gaussian random walk proposals for the log-Laplace model
 }
 \examples{
 library(BASSLINE)

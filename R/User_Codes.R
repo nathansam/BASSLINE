@@ -3,7 +3,8 @@
 ################################################################################
 
 #' @title MCMC algorithm for the log-normal model
-#' @description  Markov chain Monte carlo algorithm for the log-normal model
+#' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
+#'     Gaussian random walk proposals for the log-normal model
 #'     (no mixture)
 #' @param N Total number of iterations.
 #' @param thin Thinning period.
@@ -22,6 +23,12 @@
 #'     (default value: 0.5).
 #' @param eps_r Upper imprecision \eqn{(\epsilon_r)} for set observations
 #'     (default value: 0.5)
+#' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+#'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+#'     \eqn{\theta} (1 column, if appropriate), \eqn{\log(t)} (\eqn{n} columns,
+#'     simulated via data augmentation) and the logarithm of the adaptive
+#'     variances (the number varies among models). The latter allows the user to
+#'     evaluate if the adaptive variances have been stabilized.
 #' @examples
 #' library(BASSLINE)
 #' n <- dim(cancer)[1]
@@ -270,13 +277,20 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 ###############################################################################
 
 #' @title MCMC algorithm for the log-student's t model
-#' @description  Markov chain Monte carlo algorithm for the log-student's T
-#'     model (no mixture)
+#' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
+#'     Gaussian random walk proposals for the log-student's T model (no mixture)
 #' @inheritParams MCMC_LN
 #' @param Q Update period for the \eqn{\lambda_{i}}’s
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
 #' @param nu0 Starting value for \eqn{v}
+#' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+#'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+#'     \eqn{\theta} (1 column, if appropriate), \eqn{\lambda} (\eqn{n} columns,
+#'     not provided for log-normal model), \eqn{\log(t)} (\eqn{n} columns,
+#'     simulated via data augmentation) and the logarithm of the adaptive
+#'     variances (the number varies among models). The latter allows the user to
+#'     evaluate if the adaptive variances have been stabilized.
 #' @examples
 #' library(BASSLINE)
 #' n <- dim(cancer)[1]
@@ -467,7 +481,8 @@ LML_LST <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
                                  eps_r)
     print("Reduced chain.sigma2 ready!")
 
-    # POSTERIOR ORDINATE - nu USING AN ADAPTATION CHIB AND JELIAZKOV (2001) METHODOLOGY
+    # POSTERIOR ORDINATE - nu
+    # USING AN ADAPTATION of the CHIB AND JELIAZKOV (2001) METHODOLOGY
     po1.nu <- rep(0, times = N)
     po2.nu <- rep(0, times = N)
     for (i in 1:N) {
@@ -649,10 +664,17 @@ BF_lambda_obs_LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain,
 #####################IMPLEMENTATION OF THE LOG-LAPLACE MODEL####################
 ################################################################################
 #' @title MCMC algorithm for the log-Laplace model
-#' @description  Markov chain Monte carlo algorithm for the log-Laplace model
+#' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
+#'     Gaussian random walk proposals for the log-Laplace model
 #' @inheritParams MCMC_LN
 #' @param Q Update period for the \eqn{\lambda_{i}}’s
-#'
+#' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+#'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+#'     \eqn{\theta} (1 column, if appropriate), \eqn{\lambda} (\eqn{n} columns,
+#'     not provided for log-normal model), \eqn{\log(t)} (\eqn{n} columns,
+#'     simulated via data augmentation) and the logarithm of the adaptive
+#'     variances (the number varies among models). The latter allows the user to
+#'     evaluate if the adaptive variances have been stabilized.
 #' @examples
 #' library(BASSLINE)
 #' n <- dim(cancer)[1]
@@ -728,7 +750,8 @@ MCMC_LLAP <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, prior, set,
         rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
             (logt.aux - X %*% beta.aux)
         if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
-            sigma2.aux <- (stats::rgamma(1, shape = shape.aux, rate = rate.aux))^(-1)
+            sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
+                                         rate = rate.aux)) ^ (-1)
             if (sigma2.aux < 0) {
                 print("Negative sigma2")
             }
@@ -965,11 +988,19 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 ################IMPLEMENTATION OF THE LOG-EXPONENTIAL POWER MODEL###############
 ################################################################################
 #' @title MCMC algorithm for the log-exponential power model
-#' @description  Markov chain Monte carlo algorithm for the log-exponential model
+#' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
+#'     Gaussian random walk proposals for the log-exponential model
 #' @inheritParams MCMC_LN
 #' @param alpha0 Starting value for \eqn{\alpha}
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
+#' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+#'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+#'     \eqn{\theta} (1 column, if appropriate), \eqn{u} (\eqn{n} columns, not
+#'     provided for log-normal model), \eqn{\log(t)} (\eqn{n} columns, simulated
+#'     via data augmentation) and the logarithm of the adaptive variances (the
+#'     number varies among models). The latter allows the user to evaluate if
+#'     the adaptive variances have been stabilized.
 #' @examples
 #' library(BASSLINE)
 #' n <- dim(cancer)[1]
@@ -1207,7 +1238,8 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior, set, eps_l, eps_r) {
                                     omega2.beta, omega2.sigma2)
     print("Reduced chain.sigma2 ready!")
 
-    # POSTERIOR ORDINATE - alpha USING AN ADAPTATION CHIB AND JELIAZKOV (2001) METHODOLOGY
+    # POSTERIOR ORDINATE - alpha
+    # USING AN ADAPTATION of the CHIB AND JELIAZKOV (2001) METHODOLOGY
     po1.alpha <- rep(0, times = N)
     po2.alpha <- rep(0, times = N)
     for (i in 1:N) {
@@ -1453,12 +1485,20 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
 ################################################################################
 # MCMC ALGORITHM
 #' @title MCMC algorithm for the log-logistic model
-#' @description  Markov chain Monte carlo algorithm for the log-logistic model
+#' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
+#'     Gaussian random walk proposals for the log-logistic model
 #' @inheritParams MCMC_LN
 #' @param Q Update period for the \eqn{\lambda_{i}}’s
 #' @param N.AKS Maximum number of terms of the Kolmogorov-Smirnov density used
 #'     for the rejection sampling when updating mixing parameters (default
 #'     value: 3)
+#' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+#'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+#'     \eqn{\theta} (1 column, if appropriate), \eqn{\lambda} (\eqn{n} columns,
+#'     not provided for log-normal model), \eqn{\log(t)} (\eqn{n} columns,
+#'     simulated via data augmentation) and the logarithm of the adaptive
+#'     variances (the number varies among models). The latter allows the user to
+#'     evaluate if the adaptive variances have been stabilized.
 #' @examples
 #' library(BASSLINE)
 #' n <- dim(cancer)[1]
@@ -1615,7 +1655,8 @@ LML_LLOG <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r,
                                                         as.vector(chain[i, 1:k])
         aux2 <- diag(as.vector(t(chain[i, (k + 2):(k + 1 + n)])))
         rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
-        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape, scale = rate.aux)
+        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
+                                            scale = rate.aux)
     }
     PO.sigma2 <- mean(po.sigma2)
     print("Posterior ordinate sigma2 ready!")
@@ -1624,7 +1665,8 @@ LML_LLOG <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r,
     chain.beta <- MCMCR.sigma2.LLOG(N = N * thin, thin = thin, Q, Time, Cens, X,
                                     beta0 = t(chain[N, 1:k]),
                                     sigma20 = sigma2.star,
-                                    logt0 = t(chain[N, (n + k + 2):(2 * n + k + 1)]),
+                                    logt0 = t(chain[N, (n + k + 2) :
+                                                            (2 * n + k + 1)]),
                                     lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
                                     prior = prior, set, eps_l, eps_r, N.AKS)
     print("Reduced chain.beta ready!")
@@ -1635,7 +1677,8 @@ LML_LLOG <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r,
         aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
         aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
         mu.aux <- as.vector(aux2.beta %*% ((chain.beta[(i + 1),
-                                                       (n + k + 1):(2 * n + k)])))
+                                                       (n + k + 1) :
+                                                           (2 * n + k)])))
         po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
                                        sigma = sigma2.star * aux1.beta)
     }
@@ -1660,7 +1703,6 @@ LML_LLOG <- function(thin, Q, Time, Cens, X, chain, prior, set, eps_l, eps_r,
 #' @param chain MCMC chains generated by a BASSLINE MCMC function
 #'
 #' @export
-################################################################################ DIC
 DIC_LLOG <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
