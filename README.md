@@ -2,6 +2,7 @@
 
  <!-- badges: start -->
   [![Travis build status](https://travis-ci.org/nathansam/BASSLINE.svg?branch=master)](https://travis-ci.org/nathansam/BASSLINE)
+   [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/nathansam/SMLN?branch=master&svg=true)](https://ci.appveyor.com/project/nathansam/SMLN)
   [![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/rcpp/graph/badge.svg)](https://codecov.io/gh/nathansam/SMLN)
   <!-- badges: end -->
 
