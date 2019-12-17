@@ -25,8 +25,8 @@ test_that("MCMC_LN first value",{
   beta0 <- rnorm(9, 0, 1)
   sigma20 <- rgamma(1, 2, 2)
 
-  LN <- MCMC_LN(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20,
+  LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0, sigma20,
                 prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
 
-  expect_equivalent(LN[1,1], -0.626453811)
+  expect_equivalent(LN[1,1], 	1.099728975)
 })

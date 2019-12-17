@@ -131,6 +131,7 @@ Gaussian random walk proposals for the log-logistic model</p>
     <pre class="usage"><span class='fu'>MCMC_LLOG</span>(
   <span class='no'>N</span>,
   <span class='no'>thin</span>,
+  <span class='no'>burn</span>,
   <span class='no'>Q</span>,
   <span class='no'>Time</span>,
   <span class='no'>Cens</span>,
@@ -154,6 +155,10 @@ Gaussian random walk proposals for the log-logistic model</p>
     <tr>
       <th>thin</th>
       <td><p>Thinning period.</p></td>
+    </tr>
+    <tr>
+      <th>burn</th>
+      <td><p>Burn-in period.</p></td>
     </tr>
     <tr>
       <th>Q</th>
@@ -250,7 +255,7 @@ evaluate if the adaptive variances have been stabilized.</p>
 <span class='co'># This is only an illustration. Run longer chains for more accurate</span>
 <span class='co'># estimations.</span>
 
-<span class='no'>LLOG</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LLOG</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>,
+<span class='no'>LLOG</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LLOG</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>,
                   <span class='no'>beta0</span>, <span class='no'>sigma20</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>N.AKS</span> <span class='kw'>=</span> <span class='fl'>3</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

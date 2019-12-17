@@ -7,6 +7,7 @@
 MCMC_LEP(
   N,
   thin,
+  burn,
   Time,
   Cens,
   X,
@@ -24,6 +25,8 @@ MCMC_LEP(
 \item{N}{Total number of iterations.}
 
 \item{thin}{Thinning period.}
+
+\item{burn}{Burn-in period.}
 
 \item{Time}{Vector containing the survival times.}
 
@@ -99,8 +102,8 @@ alpha0 <- runif(1, 1, 2)
 # This is only an illustration. Run longer chains for more accurate
 # estimations (especially for the log-exponential power model).
 
-LEP <- MCMC_LEP(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20,
-                alpha0, prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5,
-                ar = 0.44)
+LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0,
+                sigma20, alpha0, prior = 2, set = 1, eps_l = 0.5,
+                eps_r = 0.5, ar = 0.44)
 
 }

@@ -131,6 +131,7 @@ Gaussian random walk proposals for the log-exponential model</p>
     <pre class="usage"><span class='fu'>MCMC_LEP</span>(
   <span class='no'>N</span>,
   <span class='no'>thin</span>,
+  <span class='no'>burn</span>,
   <span class='no'>Time</span>,
   <span class='no'>Cens</span>,
   <span class='no'>X</span>,
@@ -154,6 +155,10 @@ Gaussian random walk proposals for the log-exponential model</p>
     <tr>
       <th>thin</th>
       <td><p>Thinning period.</p></td>
+    </tr>
+    <tr>
+      <th>burn</th>
+      <td><p>Burn-in period.</p></td>
     </tr>
     <tr>
       <th>Time</th>
@@ -250,9 +255,9 @@ the adaptive variances have been stabilized.</p>
 <span class='co'># This is only an illustration. Run longer chains for more accurate</span>
 <span class='co'># estimations (especially for the log-exponential power model).</span>
 
-<span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LEP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>beta0</span>, <span class='no'>sigma20</span>,
-                <span class='no'>alpha0</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-                <span class='kw'>ar</span> <span class='kw'>=</span> <span class='fl'>0.44</span>)</div><div class='output co'>#&gt; [1] "AR beta 1 : 0.39" "AR beta 2 : 0.5"  "AR beta 3 : 0.57" "AR beta 4 : 0.54"
+<span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LEP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>beta0</span>,
+                <span class='no'>sigma20</span>, <span class='no'>alpha0</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+                <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>ar</span> <span class='kw'>=</span> <span class='fl'>0.44</span>)</div><div class='output co'>#&gt; [1] "AR beta 1 : 0.39" "AR beta 2 : 0.5"  "AR beta 3 : 0.57" "AR beta 4 : 0.54"
 #&gt; [5] "AR beta 5 : 0.63" "AR beta 6 : 0.02" "AR beta 7 : 0.05" "AR beta 8 : 0.01"
 #&gt; [9] "AR beta 9 : 0.55"
 #&gt; [1] "AR sigma2 : 0.85"

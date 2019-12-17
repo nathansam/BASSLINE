@@ -7,6 +7,7 @@
 MCMC_LST(
   N,
   thin,
+  burn,
   Q,
   Time,
   Cens,
@@ -25,6 +26,8 @@ MCMC_LST(
 \item{N}{Total number of iterations.}
 
 \item{thin}{Thinning period.}
+
+\item{burn}{Burn-in period.}
 
 \item{Q}{Update period for the \eqn{\lambda_{i}}’s}
 
@@ -102,7 +105,7 @@ nu0 <- rgamma(1, 2, 2)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LST <- MCMC_LST(N = 1000, thin = 20, Q = 1, Time, Cens, X, beta0,
+LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Q = 1, Time, Cens, X, beta0,
                 sigma20, nu0, prior = 2, set = 1, eps_l = 0.5,
                 eps_r = 0.5, ar = 0.44)
 

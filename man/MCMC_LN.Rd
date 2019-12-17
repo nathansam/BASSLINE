@@ -7,6 +7,7 @@
 MCMC_LN(
   N,
   thin,
+  burn,
   Time,
   Cens,
   X,
@@ -22,6 +23,8 @@ MCMC_LN(
 \item{N}{Total number of iterations.}
 
 \item{thin}{Thinning period.}
+
+\item{burn}{Burn-in period.}
 
 \item{Time}{Vector containing the survival times.}
 
@@ -93,7 +96,7 @@ alpha0 <- runif(1, 1, 2)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LN <- MCMC_LN(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20,
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0, sigma20,
               prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
 
 }

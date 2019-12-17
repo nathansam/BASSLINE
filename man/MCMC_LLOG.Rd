@@ -7,6 +7,7 @@
 MCMC_LLOG(
   N,
   thin,
+  burn,
   Q,
   Time,
   Cens,
@@ -24,6 +25,8 @@ MCMC_LLOG(
 \item{N}{Total number of iterations.}
 
 \item{thin}{Thinning period.}
+
+\item{burn}{Burn-in period.}
 
 \item{Q}{Update period for the \eqn{\lambda_{i}}’s}
 
@@ -99,7 +102,7 @@ sigma20 <- rgamma(1, 2, 2)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LLOG <- MCMC_LLOG(N = 1000, thin = 20, Q = 10, Time, Cens, X,
+LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Q = 10, Time, Cens, X,
                   beta0, sigma20, prior = 2, set = 1, N.AKS = 3)
 
 
