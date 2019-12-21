@@ -12,8 +12,8 @@ MCMC_LLOG(
   Time,
   Cens,
   X,
-  beta0,
-  sigma20,
+  beta0 = NULL,
+  sigma20 = NULL,
   prior,
   set,
   eps_l = 0.5,
@@ -38,9 +38,11 @@ MCMC_LLOG(
 the number of observations and \eqn{k} is the number of covariates
 (including the intercept).}
 
-\item{beta0}{Starting value for \eqn{\beta}.}
+\item{beta0}{Starting values for \eqn{\beta}. If not provided, they will
+be randomly generated from a normal distribution.}
 
-\item{sigma20}{Starting value for \eqn{\sigma^2}.}
+\item{sigma20}{Starting value for \eqn{\sigma^2}. If not provided, it
+will be randomly generated from a gamma distribution.}
 
 \item{prior}{Indicator of prior (1: Jeffreys, 2: Type I Ind. Jeffreys,
 3: Ind. Jeffreys).}
@@ -94,16 +96,13 @@ for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
 X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
 Time <- cancer$time; Cens <- cancer$censor
 
-# Set random starting values
-beta0 <- rnorm(9, 0, 1)
-sigma20 <- rgamma(1, 2, 2)
 
 # Please note: N=1000 is not enough to reach convergence.
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
 LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Q = 10, Time, Cens, X,
-                  beta0, sigma20, prior = 2, set = 1, N.AKS = 3)
+                  prior = 2, set = 1, N.AKS = 3)
 
 
 }
