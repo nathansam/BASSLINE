@@ -14,8 +14,10 @@
 #' @param X Design matrix with dimensions \eqn{n} x  \eqn{k} where \eqn{n} is
 #'     the number of observations and \eqn{k} is the number of covariates
 #'     (including the intercept).
-#' @param beta0 Starting value for \eqn{\beta}.
-#' @param sigma20 Starting value for \eqn{\sigma^2}.
+#' @param beta0 Starting values for \eqn{\beta}. If not provided, they will
+#'     be randomly generated from a normal distribution.
+#' @param sigma20 Starting value for \eqn{\sigma^2}. If not provided, it
+#'     will be randomly generated from a gamma distribution.
 #' @param prior Indicator of prior (1: Jeffreys, 2: Type I Ind. Jeffreys,
 #'     3: Ind. Jeffreys).
 #' @param set Indicator for the use of set observations (1: set observations,
@@ -53,22 +55,21 @@
 #' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
 #' Time <- cancer$time; Cens <- cancer$censor
 #'
-#' # Set random starting values
-#' beta0 <- rnorm(9, 0, 1)
-#' sigma20 <- rgamma(1, 2, 2)
-#' nu0 <- rgamma(1, 2, 2)
-#' alpha0 <- runif(1, 1, 2)
-#'
 #' # Please note: N=1000 is not enough to reach convergence.
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0, sigma20,
-#'               prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
+#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time, Cens, X, prior = 2,
+#'               set = 1, eps_l = 0.5, eps_r = 0.5)
 #'
 #' @export
-MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set,
-                    eps_l = 0.5, eps_r = 0.5) {
+MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
+                    prior, set, eps_l = 0.5, eps_r = 0.5) {
+
+    # Sample starting values if not given
+    if (is.null(beta0)) beta0 <- stats::rnorm(ncol(X), 0, 1)
+    if (is.null(sigma20)) sigma20 <- stats::rgamma(1, 2, 2)
+
     MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
                                  prior, set, eps_l, eps_r)
 
@@ -293,7 +294,8 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 #' @param Q Update period for the \eqn{\lambda_{i}}’s
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
-#' @param nu0 Starting value for \eqn{v}
+#' @param nu0 Starting value for \eqn{v}. If not provided, then it will be
+#'     randomly generated from a gamma distribution.
 #' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
 #'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
 #'     \eqn{\theta} (1 column, if appropriate), \eqn{\lambda} (\eqn{n} columns,
@@ -324,24 +326,28 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 #' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
 #' Time <- cancer$time; Cens <- cancer$censor
 #'
-#' # Set random starting values
-#' beta0 <- rnorm(9, 0, 1)
-#' sigma20 <- rgamma(1, 2, 2)
-#' nu0 <- rgamma(1, 2, 2)
-#'
 #' # Please note: N=1000 is not enough to reach convergence.
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Q = 1, Time, Cens, X, beta0,
-#'                 sigma20, nu0, prior = 2, set = 1, eps_l = 0.5,
-#'                 eps_r = 0.5, ar = 0.44)
+#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Q = 1, Time, Cens, X,
+#'                 prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5, ar = 0.44)
 #'
 #' @export
-MCMC_LST = function(N, thin, burn, Q, Time, Cens, X, beta0, sigma20, nu0, prior, set,
-                    eps_l, eps_r, ar = 0.44) {
+MCMC_LST = function(N, thin, burn, Q, Time, Cens, X, beta0 = NULL,
+                    sigma20 = NULL, nu0 = NULL, prior, set, eps_l, eps_r,
+                    ar = 0.44) {
+
+    # Sample starting values if not given
+    if (is.null(beta0)) beta0 <- stats::rnorm(ncol(X), 0, 1)
+    if (is.null(sigma20)) sigma20 <- stats::rgamma(1, 2, 2)
+    if (is.null(nu0)) nu0 <- stats::rgamma(1, 2, 2)
+
     MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
                      prior, set, eps_l, eps_r)
+
+
+
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)
@@ -716,22 +722,24 @@ BF_lambda_obs_LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain,
 #' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
 #' Time <- cancer$time; Cens <- cancer$censor
 #'
-#' # Set random starting values
-#' beta0 <- rnorm(9, 0, 1)
-#' sigma20 <- rgamma(1, 2, 2)
 #'
 #' # Please note: N=1000 is not enough to reach convergence.
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
 #' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40,  Q = 1, Time, Cens, X,
-#'                   beta0, sigma20, prior = 2, set = 1, eps_l = 0.5,
-#'                   eps_r = 0.5)
+#'                   prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
 #' @export
-MCMC_LLAP <- function(N, thin, burn, Q, Time, Cens, X, beta0, sigma20, prior, set,
-                      eps_l = 0.5, eps_r = 0.5) {
+MCMC_LLAP <- function(N, thin, burn, Q, Time, Cens, X, beta0 = NULL,
+                      sigma20 = NULL, prior, set, eps_l = 0.5, eps_r = 0.5) {
+
+    # Sample starting values if not given
+    if (is.null(beta0)) beta0 <- stats::rnorm(ncol(X), 0, 1)
+    if (is.null(sigma20)) sigma20 <- stats::rgamma(1, 2, 2)
+
     MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
                      prior, set, eps_l, eps_r)
+
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)
@@ -1017,7 +1025,8 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 #' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
 #'     Gaussian random walk proposals for the log-exponential model
 #' @inheritParams MCMC_LN
-#' @param alpha0 Starting value for \eqn{\alpha}
+#' @param alpha0 Starting value for \eqn{\alpha}. If not provided, then it will
+#'     be randomly generated from a uniform distribution.
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
 #' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
@@ -1050,24 +1059,26 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 #' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
 #' Time <- cancer$time; Cens <- cancer$censor
 #'
-#' # Set random starting values
-#' beta0 <- rnorm(9, 0, 1)
-#' sigma20 <- rgamma(1, 2, 2)
-#' alpha0 <- runif(1, 1, 2)
 #'
 #' # Please note: N=1000 is not enough to reach convergence.
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations (especially for the log-exponential power model).
 #'
-#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0,
-#'                 sigma20, alpha0, prior = 2, set = 1, eps_l = 0.5,
-#'                 eps_r = 0.5, ar = 0.44)
+#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time, Cens, X,
+#'                 prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5, ar = 0.44)
 #'
 #' @export
-MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0, sigma20, alpha0,
-                     prior, set, eps_l, eps_r, ar = 0.44) {
+MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
+                     alpha0 = NULL, prior, set, eps_l, eps_r, ar = 0.44) {
+
+    # Sample starting values if not given
+    if (is.null(beta0)) beta0 <- stats::rnorm(ncol(X), 0, 1)
+    if (is.null(sigma20)) sigma20 <- stats::rgamma(1, 2, 2)
+    if(is.null(alpha0)) alpha0 <- stats::runif(1, 1, 2)
+
     MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set,
                      eps_l, eps_r)
+
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)
@@ -1556,23 +1567,28 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
 #' X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
 #' Time <- cancer$time; Cens <- cancer$censor
 #'
-#' # Set random starting values
-#' beta0 <- rnorm(9, 0, 1)
-#' sigma20 <- rgamma(1, 2, 2)
 #'
 #' # Please note: N=1000 is not enough to reach convergence.
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
 #' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Q = 10, Time, Cens, X,
-#'                   beta0, sigma20, prior = 2, set = 1, N.AKS = 3)
+#'                   prior = 2, set = 1, N.AKS = 3)
 #'
 #'
 #' @export
-MCMC_LLOG <- function(N, thin, burn,  Q, Time, Cens, X, beta0, sigma20, prior,
-                      set, eps_l = 0.5, eps_r = 0.5, N.AKS = 3) {
+MCMC_LLOG <- function(N, thin, burn,  Q, Time, Cens, X, beta0 = NULL,
+                      sigma20 = NULL, prior, set, eps_l = 0.5, eps_r = 0.5,
+                      N.AKS = 3) {
+
+    # Sample starting values if not given
+    if (is.null(beta0)) beta0 <- stats::rnorm(ncol(X), 0, 1)
+    if (is.null(sigma20)) sigma20 <- stats::rgamma(1, 2, 2)
+
     MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
                      prior, set, eps_l, eps_r)
+
+
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)
