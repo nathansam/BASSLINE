@@ -69,9 +69,12 @@
 #' @export
 MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set,
                     eps_l = 0.5, eps_r = 0.5) {
+    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
+                                 prior, set, eps_l, eps_r)
+
     k <- length(beta0)
     n <- length(Time)
-    N.aux = round(N/thin, 0)
+    N.aux = round(N / thin, 0)
     if (prior == 1) {
         p <- 1 + k / 2
     }
@@ -337,6 +340,8 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set, eps_l, eps_r) {
 #' @export
 MCMC_LST = function(N, thin, burn, Q, Time, Cens, X, beta0, sigma20, nu0, prior, set,
                     eps_l, eps_r, ar = 0.44) {
+    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
+                     prior, set, eps_l, eps_r)
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)
@@ -725,6 +730,8 @@ BF_lambda_obs_LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain,
 #' @export
 MCMC_LLAP <- function(N, thin, burn, Q, Time, Cens, X, beta0, sigma20, prior, set,
                       eps_l = 0.5, eps_r = 0.5) {
+    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
+                     prior, set, eps_l, eps_r)
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)
@@ -1059,6 +1066,8 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 #' @export
 MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0, sigma20, alpha0,
                      prior, set, eps_l, eps_r, ar = 0.44) {
+    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set,
+                     eps_l, eps_r)
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)
@@ -1562,6 +1571,8 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
 #' @export
 MCMC_LLOG <- function(N, thin, burn,  Q, Time, Cens, X, beta0, sigma20, prior,
                       set, eps_l = 0.5, eps_r = 0.5, N.AKS = 3) {
+    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
+                     prior, set, eps_l, eps_r)
     k <- length(beta0)
     n <- length(Time)
     N.aux <- round(N/thin, 0)

@@ -14,7 +14,7 @@ A project to convert code written by Vallejos & Steel[1] into an R library using
 
 Mixtures of life distributions provide a convienient framework for survival analysis: particularly when standard models such as the Weibull or the log-normal are unable to capture some features from the data. These mixtures can also account for unobserved heterogeneity or outlying observations.  
 
-BASSLINE uses shape mixtures of log-normal distributions to fit data with various tail behaviour. Accelerated failure time (AFT) regressions are used over proportional hazard models as AFT provides a clearer interpretation of the regression parameters.  
+BASSLINE uses shape mixtures of log-normal distributions to fit data with various tail behaviour. Accelerated failure time (AFT) regressions are used over proportional hazard models which provides a clearer interpretation of the regression parameters.  
 
 
 ## Installation

@@ -1869,3 +1869,64 @@ MCMCR.sigma2.LLOG <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, logt0,
     chain <- cbind(beta, lambda, logt)
     return(chain)
 }
+
+
+#### Input check
+MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
+                             prior, set, eps_l, eps_r){
+
+    num.obs <- nrow(X)
+    num.covariates <- ncol(X)
+
+    if (is.matrix(X) == F){
+        stop("X is not a matrix. \n")
+    }
+
+
+
+    # Check N is a  0 < integer{
+    if (N <= 0 | N %% 1 != 0 ){
+        stop("N should be an integer greater than zero. \n")
+    }
+
+    if (thin < 0 | thin %% 1 != 0){
+        stop ("thin should be a non-negative integer. \n")
+    }
+
+    if (burn < 0 | burn %% 1 != 0){
+        stop ("burn should be a non-negative integer. \n")
+    }
+
+    if (all (Time > 0) == F){
+        stop ("All values in Time should be non-negative. \n")
+    }
+    if (length(Time) != num.obs){
+    stop ("Time is not the correct length. \n")
+        }
+
+    if ( all(Cens == 1 | Cens == 0) == F){
+        stop ("Cens should be either 0 or 1 for each observation \n")
+    }
+    if (length(Cens) != num.obs){
+        stop ("Cens is not the correct length. \n")
+    }
+
+
+    if (length(beta0) != num.covariates){
+        stop ("beta0 is not the correct length. \n")
+    }
+
+    if (prior %in% c(1,2,3) == F){
+        stop("prior should be 1, 2 or 3. See documentation \n")
+    }
+
+    if (set %in% c(1,2) == F){
+        stop("set should be 1 or 2. See documentation \n")
+    }
+
+
+
+    if (thin == 0){cat(paste0("Note! No thinning period is being used! \n"))}
+    if (burn == 0){cat(paste0("Note! No burn-in period is being used! \n"))}
+
+}
