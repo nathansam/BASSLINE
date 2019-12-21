@@ -62,38 +62,25 @@ Time <- cancer$time; Cens <- cancer$censor
 ```
 
 
-### Starting values
-
-Set random starting values
-
-```{r}
-beta0 <- rnorm(9, 0, 1)
-sigma20 <- rgamma(1, 2, 2)
-nu0 <- rgamma(1, 2, 2)
-alpha0 <- runif(1, 1, 2)
-```
-
 
 ## MCMC chains 
 
 Please note: N = 1000 is not enough to reach convergence. This is only an illustration. Run longer chains for more accurate estimations (especially for the log-exponential power model).
 
 ```{r}
-system.time(LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0,
-                          sigma20, prior = 2, set = 1, eps_l = 0.5,
-                          eps_r = 0.5))
+system.time(LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = Time, Cens = Cens,
+                          X = X, prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5))
 system.time(LST <- MCMC_LST(N = 1000, thin = 20, burn = 40 ,Q = 1, Time, Cens,
-                            X, beta0, sigma20, nu0, prior = 2, set = 1,
-                            eps_l = 0.5, eps_r = 0.5, ar = 0.44))
+                            X, prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5,
+                            ar = 0.44))
 system.time(LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40,  Q = 1, Time,
-                              Cens, X, beta0, sigma20, prior = 2, set = 1,
-                              eps_l = 0.5, eps_r = 0.5))
+                              Cens, X, prior = 2, set = 1, eps_l = 0.5,
+                              eps_r = 0.5))
 system.time(LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time, Cens, X,
-                            beta0, sigma20,  alpha0, prior = 2, set = 1,
-                            eps_l = 0.5, eps_r = 0.5, ar = 0.44))
+                            prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5,
+                            ar = 0.44))
 system.time(LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Q = 10, Time,
-                              Cens, X, beta0, sigma20, prior = 2, set = 1,
-                              N.AKS = 3))
+                              Cens, X, prior = 2, set = 1, N.AKS = 3))
 ```
 
 
