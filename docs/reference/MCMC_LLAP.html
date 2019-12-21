@@ -36,7 +36,8 @@
 
 
 <meta property="og:title" content="MCMC algorithm for the log-Laplace model — MCMC_LLAP" />
-<meta property="og:description" content="Markov chain Monte carlo algorithm for the log-Laplace model" />
+<meta property="og:description" content="Adaptive Metropolis-within-Gibbs algorithm with univariate
+Gaussian random walk proposals for the log-Laplace model" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -123,12 +124,14 @@
     </div>
 
     <div class="ref-description">
-    <p>Markov chain Monte carlo algorithm for the log-Laplace model</p>
+    <p>Adaptive Metropolis-within-Gibbs algorithm with univariate
+Gaussian random walk proposals for the log-Laplace model</p>
     </div>
 
     <pre class="usage"><span class='fu'>MCMC_LLAP</span>(
   <span class='no'>N</span>,
   <span class='no'>thin</span>,
+  <span class='no'>burn</span>,
   <span class='no'>Q</span>,
   <span class='no'>Time</span>,
   <span class='no'>Cens</span>,
@@ -151,6 +154,10 @@
     <tr>
       <th>thin</th>
       <td><p>Thinning period.</p></td>
+    </tr>
+    <tr>
+      <th>burn</th>
+      <td><p>Burn-in period.</p></td>
     </tr>
     <tr>
       <th>Q</th>
@@ -200,6 +207,15 @@ the number of observations and \(k\) is the number of covariates
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>A matrix with \(N / thin + 1\) rows. The columns are the MCMC
+chains for \(\beta\) (\(k\) columns), \(\sigma^2\) (1 column),
+\(\theta\) (1 column, if appropriate), \(\lambda\) (\(n\) columns,
+not provided for log-normal model), \(\log(t)\) (\(n\) columns,
+simulated via data augmentation) and the logarithm of the adaptive
+variances (the number varies among models). The latter allows the user to
+evaluate if the adaptive variances have been stabilized.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>BASSLINE</span>)
@@ -232,13 +248,15 @@ the number of observations and \(k\) is the number of covariates
 <span class='co'># This is only an illustration. Run longer chains for more accurate</span>
 <span class='co'># estimations.</span>
 
-<span class='no'>LLAP</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LLAP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>,  <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>beta0</span>,
-                  <span class='no'>sigma20</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</div></pre>
+<span class='no'>LLAP</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LLAP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>,  <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>,
+                  <span class='no'>beta0</span>, <span class='no'>sigma20</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>, <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
+                  <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#value">Value</a></li>
       <li><a href="#examples">Examples</a></li>
     </ul>
 

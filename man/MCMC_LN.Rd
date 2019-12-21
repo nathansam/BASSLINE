@@ -7,6 +7,7 @@
 MCMC_LN(
   N,
   thin,
+  burn,
   Time,
   Cens,
   X,
@@ -22,6 +23,8 @@ MCMC_LN(
 \item{N}{Total number of iterations.}
 
 \item{thin}{Thinning period.}
+
+\item{burn}{Burn-in period.}
 
 \item{Time}{Vector containing the survival times.}
 
@@ -47,8 +50,17 @@ the number of observations and \eqn{k} is the number of covariates
 \item{eps_r}{Upper imprecision \eqn{(\epsilon_r)} for set observations
 (default value: 0.5)}
 }
+\value{
+A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+\eqn{\theta} (1 column, if appropriate), \eqn{\log(t)} (\eqn{n} columns,
+simulated via data augmentation) and the logarithm of the adaptive
+variances (the number varies among models). The latter allows the user to
+evaluate if the adaptive variances have been stabilized.
+}
 \description{
-Markov chain Monte carlo algorithm for the log-normal model
+Adaptive Metropolis-within-Gibbs algorithm with univariate
+Gaussian random walk proposals for the log-normal model
 (no mixture)
 }
 \examples{
@@ -84,7 +96,7 @@ alpha0 <- runif(1, 1, 2)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LN <- MCMC_LN(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20,
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0, sigma20,
               prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
 
 }

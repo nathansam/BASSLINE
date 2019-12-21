@@ -53,7 +53,7 @@ for(i in 1 : n) {if(cancer$type[i] == 1) x2[i] <- 1
 if(cancer$type[i] == 2) x3[i] <- 1
 if(cancer$type[i] == 3) x4[i] <- 1}
 x5 <- cancer$status # Status 
-x6 <- cancer$mfd # Moths from diagnosis
+x6 <- cancer$mfd # Months from diagnosis
 x7 <- cancer$age # Age
 x8 <- rep(0, times = n) # Prior (Dummy variable) 
 for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
@@ -79,64 +79,57 @@ alpha0 <- runif(1, 1, 2)
 Please note: N = 1000 is not enough to reach convergence. This is only an illustration. Run longer chains for more accurate estimations (especially for the log-exponential power model).
 
 ```{r}
-system.time(LN <- MCMC_LN(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20, 
-                          prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5))
-system.time(LST <- MCMC_LST(N = 1000, thin = 20, Q = 1, Time, Cens, X, beta0,
-                            sigma20, nu0, prior = 2, set = 1, eps_l = 0.5,
-                            eps_r = 0.5, ar = 0.44))
-system.time(LLAP <- MCMC_LLAP(N = 1000, thin = 20,  Q = 1, Time, Cens, X, beta0,
-                              sigma20, prior = 2, set = 1, eps_l = 0.5,
-                              eps_r = 0.5))
-system.time(LEP <- MCMC_LEP(N = 1000, thin = 20, Time, Cens, X, beta0, sigma20, 
-                            alpha0, prior = 2, set = 1, eps_l = 0.5,
-                            eps_r = 0.5, ar = 0.44))
-system.time(LLOG <- MCMC_LLOG(N = 1000, thin = 20, Q = 10, Time, Cens, X,
-                              beta0, sigma20, prior = 2, set = 1, N.AKS = 3))
-```
-## Removing the burn-in period
-```{r}
-burn <- 1 : 11
-LN.B <- LN[-burn, ]
-LST.B <- LST[-burn, ]
-LLAP.B <- LLAP[-burn, ]
-LEP.B <- LEP[-burn, ] 
-LLOG.B <- LLOG[-burn, ]
+system.time(LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time, Cens, X, beta0,
+                          sigma20, prior = 2, set = 1, eps_l = 0.5,
+                          eps_r = 0.5))
+system.time(LST <- MCMC_LST(N = 1000, thin = 20, burn = 40 ,Q = 1, Time, Cens,
+                            X, beta0, sigma20, nu0, prior = 2, set = 1,
+                            eps_l = 0.5, eps_r = 0.5, ar = 0.44))
+system.time(LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40,  Q = 1, Time,
+                              Cens, X, beta0, sigma20, prior = 2, set = 1,
+                              eps_l = 0.5, eps_r = 0.5))
+system.time(LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time, Cens, X,
+                            beta0, sigma20,  alpha0, prior = 2, set = 1,
+                            eps_l = 0.5, eps_r = 0.5, ar = 0.44))
+system.time(LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Q = 10, Time,
+                              Cens, X, beta0, sigma20, prior = 2, set = 1,
+                              N.AKS = 3))
 ```
 
 
 ## Deviance information criteria 
 ```{r}
-DIC_LN(Time, Cens, X, chain = LN.B, set = 1, eps_l = 0.5, eps_r = 0.5)
-DIC_LST(Time, Cens, X, chain = LST.B, set = 1, eps_l = 0.5, eps_r = 0.5)
-DIC_LLAP(Time, Cens, X, chain = LLAP.B, set = 1, eps_l = 0.5, eps_r = 0.5)
-DIC_LEP(Time, Cens, X, chain = LEP.B, set = 1, eps_l = 0.5, eps_r = 0.5)
-DIC_LLOG(Time, Cens, X, chain = LLOG.B, set = 1, eps_l = 0.5, eps_r = 0.5)
+DIC_LN(Time, Cens, X, chain = LN, set = 1, eps_l = 0.5, eps_r = 0.5)
+DIC_LST(Time, Cens, X, chain = LST, set = 1, eps_l = 0.5, eps_r = 0.5)
+DIC_LLAP(Time, Cens, X, chain = LLAP, set = 1, eps_l = 0.5, eps_r = 0.5)
+DIC_LEP(Time, Cens, X, chain = LEP, set = 1, eps_l = 0.5, eps_r = 0.5)
+DIC_LLOG(Time, Cens, X, chain = LLOG, set = 1, eps_l = 0.5, eps_r = 0.5)
 ```
 
 ## LOG-MARGINAL LIKELIHOOD
 ```{r}
-LML_LN(thin = 20, Time, Cens, X, chain = LN.B, prior = 2, set = 1, eps_l = 0.5,
+LML_LN(thin = 20, Time, Cens, X, chain = LN, prior = 2, set = 1, eps_l = 0.5,
        eps_r = 0.5) 
-LML_LST(thin = 20, Q = 1, Time, Cens, X, chain = LST.B, prior = 2, set = 1,
+LML_LST(thin = 20, Q = 1, Time, Cens, X, chain = LST, prior = 2, set = 1,
         eps_l = 0.5, eps_r = 0.5) 
-LML_LLAP(thin = 20, Q = 1, Time, Cens, X, chain = LLAP.B, prior = 2, set = 1,
+LML_LLAP(thin = 20, Q = 1, Time, Cens, X, chain = LLAP, prior = 2, set = 1,
          eps_l = 0.5, eps_r = 0.5) 
-LML_LEP(thin = 20, Time, Cens, X, chain = LEP.B, prior = 2, set = 1,
+LML_LEP(thin = 20, Time, Cens, X, chain = LEP, prior = 2, set = 1,
         eps_l = 0.5, eps_r = 0.5) 
-LML_LLOG(thin = 20, Q = 10, Time, Cens, X, chain = LLOG.B, prior = 2, set = 1,
+LML_LLOG(thin = 20, Q = 10, Time, Cens, X, chain = LLOG, prior = 2, set = 1,
          eps_l = 0.5, eps_r = 0.5, N.AKS = 3) 
 ```
 
 
 ## CPO, KL and calibration 
 ```{r}
-CaseDeletion_LN(Time, Cens, X, chain = LN.B, set = 1, eps_l = 0.5, eps_r = 0.5)
-CaseDeletion_LST(Time, Cens, X, chain = LST.B, set = 1, eps_l = 0.5,
+CaseDeletion_LN(Time, Cens, X, chain = LN, set = 1, eps_l = 0.5, eps_r = 0.5)
+CaseDeletion_LST(Time, Cens, X, chain = LST, set = 1, eps_l = 0.5,
                  eps_r = 0.5)
-CaseDeletion_LLAP(Time,Cens, X, chain = LLAP.B, set = 1, eps_l = 0.5,
+CaseDeletion_LLAP(Time,Cens, X, chain = LLAP, set = 1, eps_l = 0.5,
                   eps_r = 0.5)
-CaseDeletion_LEP(Time,Cens,X,chain = LEP.B, set = 1,eps_l = 0.5, eps_r = 0.5)
-CaseDeletion_LLOG(Time, Cens, X, chain = LLOG.B, set = 1, eps_l = 0.5,
+CaseDeletion_LEP(Time,Cens,X,chain = LEP, set = 1,eps_l = 0.5, eps_r = 0.5)
+CaseDeletion_LLOG(Time, Cens, X, chain = LLOG, set = 1, eps_l = 0.5,
                   eps_r = 0.5)
 ```
 
@@ -150,29 +143,29 @@ OD.LEP <- rep(0, n)
 for(i in 1 : n)
 {
 	OD.LST[i] <- BF_lambda_obs_LST(N = 100, thin = 20, Q = 1 , burn = 1, ref = 1,
-	                               obs = i, Time, Cens, X, chain = LST.B, 
+	                               obs = i, Time, Cens, X, chain = LST, 
 	                               prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5,
 	                               ar = 0.44)
 	print(i)
 }
 for(i in 1 : n)
 {
-	OD.LLAP[i] <- BF_lambda_obs_LLAP(i, ref = 1, X, chain = LLAP.B)
+	OD.LLAP[i] <- BF_lambda_obs_LLAP(i, ref = 1, X, chain = LLAP)
 	print(i)
 }
 for(i in 1 : n)
 {
-	OD.LLOG[i] <- BF_lambda_obs_LLOG(i, ref = 0.4, X, chain = LLAP.B)
+	OD.LLOG[i] <- BF_lambda_obs_LLOG(i, ref = 0.4, X, chain = LLAP)
 	print(i)
 }
-alpha <- median(LEP.B[,11])
+alpha <- median(LEP[,11])
 uref <- 1 + 1 / alpha + 0.6
 uref
 
 for(i in 1:n)
 {
 	OD.LEP[i] < -BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref, obs = i,
-	                          Time, Cens, X, chain = LEP.B, prior = 2, set = 1,
+	                          Time, Cens, X, chain = LEP, prior = 2, set = 1,
 	                          eps_l = 0.5, eps_r = 0.5, ar = 0.44)
 	print(i)
 }

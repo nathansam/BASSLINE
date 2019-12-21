@@ -7,6 +7,7 @@
 MCMC_LST(
   N,
   thin,
+  burn,
   Q,
   Time,
   Cens,
@@ -25,6 +26,8 @@ MCMC_LST(
 \item{N}{Total number of iterations.}
 
 \item{thin}{Thinning period.}
+
+\item{burn}{Burn-in period.}
 
 \item{Q}{Update period for the \eqn{\lambda_{i}}’s}
 
@@ -57,9 +60,18 @@ the number of observations and \eqn{k} is the number of covariates
 \item{ar}{Optimal acceptance rate for the adaptive Metropolis-Hastings
 updates}
 }
+\value{
+A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+\eqn{\theta} (1 column, if appropriate), \eqn{\lambda} (\eqn{n} columns,
+not provided for log-normal model), \eqn{\log(t)} (\eqn{n} columns,
+simulated via data augmentation) and the logarithm of the adaptive
+variances (the number varies among models). The latter allows the user to
+evaluate if the adaptive variances have been stabilized.
+}
 \description{
-Markov chain Monte carlo algorithm for the log-student's T
-model (no mixture)
+Adaptive Metropolis-within-Gibbs algorithm with univariate
+Gaussian random walk proposals for the log-student's T model (no mixture)
 }
 \examples{
 library(BASSLINE)
@@ -93,7 +105,7 @@ nu0 <- rgamma(1, 2, 2)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LST <- MCMC_LST(N = 1000, thin = 20, Q = 1, Time, Cens, X, beta0,
+LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Q = 1, Time, Cens, X, beta0,
                 sigma20, nu0, prior = 2, set = 1, eps_l = 0.5,
                 eps_r = 0.5, ar = 0.44)
 
