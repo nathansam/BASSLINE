@@ -53,30 +53,30 @@ prior.LST <- function(beta, sigma2, nu, prior, log) {
 
 ############### PRIOR FOR (BETA,SIGMA2,ALPHA) (LOG-EXPONENTIAL POWER MODEL ONLY)
 
-J.alpha <- function(alpha, k) {
-    aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
-               gamma(1 / alpha)) ^ (k / 2)) * (1 / alpha) *
-                  sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-    return(aux)
-}
-II.alpha <- function(alpha) {
-    aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-    return(aux)
-}
-I.alpha <- function(alpha) {
-    aux <- sqrt(1 / alpha ^ 3) * sqrt((1 + 1 / alpha) *
-                 trigamma(1 + 1 / alpha) + (1 + digamma(1 + 1 / alpha))^ 2  - 1)
-    return(aux)
-}
+#J.alpha <- function(alpha, k) {
+#    aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
+#               gamma(1 / alpha)) ^ (k / 2)) * (1 / alpha) *
+#                  sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
+#    return(aux)
+#}
+#II.alpha <- function(alpha) {
+#    aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
+#    return(aux)
+#}
+#I.alpha <- function(alpha) {
+#    aux <- sqrt(1 / alpha ^ 3) * sqrt((1 + 1 / alpha) *
+#                 trigamma(1 + 1 / alpha) + (1 + digamma(1 + 1 / alpha))^ 2  - 1)
+#    return(aux)
+#}
 prior.alpha <- function(alpha, k, prior) {
     if (prior == 1)
-        aux <- J.alpha(alpha, k) / stats::integrate(J.alpha, lower = 1,
+        aux <- J_alpha(alpha, k) / stats::integrate(J_alpha, lower = 1,
                                                     upper = 2, k = k)$value
     if (prior == 2)
-        aux <- II.alpha(alpha) / stats::integrate(II.alpha, lower = 1,
+        aux <- II_alpha(alpha) / stats::integrate(II_alpha, lower = 1,
                                                   upper = 2)$value
     if (prior == 3)
-        aux <- I.alpha(alpha) / stats::integrate(I.alpha, lower = 1,
+        aux <- I_alpha(alpha) / stats::integrate(I_alpha, lower = 1,
                                                  upper = 2)$value
     return(aux)
 }

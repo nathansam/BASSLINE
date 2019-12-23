@@ -21,25 +21,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // J_alpha
-NumericVector J_alpha(NumericVector alpha, int k);
+double J_alpha(double alpha, int k);
 RcppExport SEXP _BASSLINE_J_alpha(SEXP alphaSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     rcpp_result_gen = Rcpp::wrap(J_alpha(alpha, k));
-    return rcpp_result_gen;
-END_RCPP
-}
-// II_alpha
-NumericVector II_alpha(NumericVector alpha);
-RcppExport SEXP _BASSLINE_II_alpha(SEXP alphaSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
-    rcpp_result_gen = Rcpp::wrap(II_alpha(alpha));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -66,13 +55,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// II_alpha
+NumericVector II_alpha(NumericVector alpha);
+RcppExport SEXP _BASSLINE_II_alpha(SEXP alphaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
+    rcpp_result_gen = Rcpp::wrap(II_alpha(alpha));
+    return rcpp_result_gen;
+END_RCPP
+}
+// I_alpha
+NumericVector I_alpha(NumericVector alpha);
+RcppExport SEXP _BASSLINE_I_alpha(SEXP alphaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
+    rcpp_result_gen = Rcpp::wrap(I_alpha(alpha));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_prior_LN", (DL_FUNC) &_BASSLINE_prior_LN, 4},
     {"_BASSLINE_J_alpha", (DL_FUNC) &_BASSLINE_J_alpha, 2},
-    {"_BASSLINE_II_alpha", (DL_FUNC) &_BASSLINE_II_alpha, 1},
     {"_BASSLINE_IIJ_nu", (DL_FUNC) &_BASSLINE_IIJ_nu, 1},
     {"_BASSLINE_r_GIG", (DL_FUNC) &_BASSLINE_r_GIG, 2},
+    {"_BASSLINE_II_alpha", (DL_FUNC) &_BASSLINE_II_alpha, 1},
+    {"_BASSLINE_I_alpha", (DL_FUNC) &_BASSLINE_I_alpha, 1},
     {NULL, NULL, 0}
 };
 
