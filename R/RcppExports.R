@@ -9,15 +9,19 @@ J_alpha <- function(alpha, k) {
     .Call(`_BASSLINE_J_alpha`, alpha, k)
 }
 
-II_alpha <- function(alpha) {
-    .Call(`_BASSLINE_II_alpha`, alpha)
-}
-
 IIJ_nu <- function(nu) {
     .Call(`_BASSLINE_IIJ_nu`, nu)
 }
 
 r_GIG <- function(r, n = 1L) {
     .Call(`_BASSLINE_r_GIG`, r, n)
+}
+
+II_alpha <- function(alpha) {
+    .Call(`_BASSLINE_II_alpha`, alpha)
+}
+
+I_alpha <- function(alpha) {
+    .Call(`_BASSLINE_I_alpha`, alpha)
 }
 
