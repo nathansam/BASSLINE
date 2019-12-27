@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Deviance information criteria for the log-student's t model — DIC_LST • BASSLINE</title>
+<title>Deviance information criterion for the log-student's t model — DIC_LST • BASSLINE</title>
 
 
 <!-- jquery -->
@@ -35,8 +35,8 @@
 
 
 
-<meta property="og:title" content="Deviance information criteria for the log-student's t model — DIC_LST" />
-<meta property="og:description" content="Deviance information criteria is based on the deviance funcion
+<meta property="og:title" content="Deviance information criterion for the log-student's t model — DIC_LST" />
+<meta property="og:description" content="Deviance information criterion is based on the deviance funcion
 \(D(\theta, y) = -2 log(f(y|\theta))\) but also incorporates a
 penalization factor of the complexity of the model" />
 <meta name="twitter:card" content="summary" />
@@ -84,19 +84,10 @@ penalization factor of the complexity of the model" />
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/BASSLINE.html">Get started</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/SMLN.html">Introduction to SMLN</a>
-    </li>
-  </ul>
+<li>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -119,18 +110,18 @@ penalization factor of the complexity of the model" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Deviance information criteria for the log-student's t model</h1>
+    <h1>Deviance information criterion for the log-student's t model</h1>
     <small class="dont-index">Source: <a href='https://github.com/nathansam/BASSLINE/blob/master/R/User_Codes.R'><code>R/User_Codes.R</code></a></small>
     <div class="hidden name"><code>DIC_LST.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Deviance information criteria is based on the deviance funcion
+    <p>Deviance information criterion is based on the deviance funcion
 \(D(\theta, y) = -2 log(f(y|\theta))\) but also incorporates a
 penalization factor of the complexity of the model</p>
     </div>
 
-    <pre class="usage"><span class='fu'>DIC_LST</span>(<span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>chain</span>, <span class='no'>set</span>, <span class='no'>eps_l</span>, <span class='no'>eps_r</span>)</pre>
+    <pre class="usage"><span class='fu'>DIC_LST</span>(<span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>chain</span>, <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -171,11 +162,41 @@ the number of observations and \(k\) is the number of covariates
     </table>
 
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>BASSLINE</span>)
+
+<span class='co'># Please note: N=1000 is not enough to reach convergence.</span>
+<span class='co'># This is only an illustration. Run longer chains for more accurate</span>
+<span class='co'># estimations.</span>
+
+<span class='no'>LST</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LST.html'>MCMC_LST</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
+                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
+#&gt; Initial beta 1 : 0.6 
+#&gt;  Initial beta 2 : -0.33 
+#&gt;  Initial beta 3 : -0.12 
+#&gt;  Initial beta 4 : -0.21 
+#&gt;  Initial beta 5 : 0.27 
+#&gt;  Initial beta 6 : 0.47 
+#&gt;  Initial beta 7 : -0.15 
+#&gt;  Initial beta 8 : -0.8 
+#&gt;  Initial beta 9 : 1.06 
+#&gt; 
+#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
+#&gt; Initial sigma^2 : 0.89 
+#&gt; 
+#&gt; Sampling initial nu from a Gamma(2, 2) distribution 
+#&gt; Initial nu : 0.48 
+#&gt; 
+#&gt; AR nu : 0.54 </div><div class='input'><span class='no'>LST.DIC</span> <span class='kw'>&lt;-</span> <span class='fu'>DIC_LST</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>],
+                   <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LST</span>)</div><div class='output co'>#&gt; Effective number of parameters : -6.5 
+#&gt; Actual number of parameters : 11 </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
@@ -184,7 +205,7 @@ the number of observations and \(k\) is the number of covariates
 
       <footer>
       <div class="copyright">
-  <p>Developed by Nathan Constantine-Cooke, Catalina Vallejos.</p>
+  <p>Developed by Catalina Vallejos, Nathan Constantine-Cooke.</p>
 </div>
 
 <div class="pkgdown">

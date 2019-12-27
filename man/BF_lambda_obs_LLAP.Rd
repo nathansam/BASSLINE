@@ -27,3 +27,15 @@ required as input. The user should expect long running times for the
 log-Student’s t model, in which case a reduced chain given
 \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
 }
+\examples{
+#' library(BASSLINE)
+
+# Please note: N=1000 is not enough to reach convergence.
+# This is only an illustration. Run longer chains for more accurate
+# estimations.
+
+LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                  Cens = cancer[,2], X = cancer[,3:11])
+LLAP.outlier <- BF_lambda_obs_LLAP(1,1, X = cancer[,3:11], chain = LLAP)
+
+}
