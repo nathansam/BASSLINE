@@ -4,7 +4,17 @@
 \alias{LML_LN}
 \title{Log-marginal Likelihood estimator for the log-normal model}
 \usage{
-LML_LN(thin, Time, Cens, X, chain, prior, set, eps_l, eps_r)
+LML_LN(
+  thin,
+  Time,
+  Cens,
+  X,
+  chain,
+  prior = 2,
+  set = 1,
+  eps_l = 0.5,
+  eps_r = 0.5
+)
 }
 \arguments{
 \item{thin}{Thinning period.}
@@ -33,4 +43,17 @@ the number of observations and \eqn{k} is the number of covariates
 }
 \description{
 Log-marginal Likelihood estimator for the log-normal model
+}
+\examples{
+library(BASSLINE)
+
+# Please note: N=1000 is not enough to reach convergence.
+# This is only an illustration. Run longer chains for more accurate
+# estimations.LM
+
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+              Cens = cancer[,2], X = cancer[,3:11])
+LN.LML <- LML_LN(thin = 20, Time = cancer[,1], Cens = cancer[,2],
+                         X = cancer[,3:11], chain = LN)
+
 }

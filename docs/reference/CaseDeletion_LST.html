@@ -37,7 +37,7 @@
 
 <meta property="og:title" content="Case deletion analysis for the log-student's t model — CaseDeletion_LST" />
 <meta property="og:description" content="Leave-one-out cross validation analysis. The function returns a
-matrix with n rows. Its first column contains the logarithm of the CPO
+matrix with n rows. The first column contains the logarithm of the CPO
 (Geisser and Eddy, 1979). Larger values of the CPO indicate better
 predictive accuracy of the model. The second and third columns contain
 the KL divergence between \(\pi(\beta, \sigma^2,  \theta | t_{-i})\)
@@ -88,19 +88,10 @@ and \(\pi(\beta, \sigma^2,  \theta | t)\) and its calibration index
   </a>
 </li>
 <li>
-  <a href="../reference/index.html">Reference</a>
+  <a href="../articles/BASSLINE.html">Get started</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/SMLN.html">Introduction to SMLN</a>
-    </li>
-  </ul>
+<li>
+  <a href="../reference/index.html">Reference</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -130,7 +121,7 @@ and \(\pi(\beta, \sigma^2,  \theta | t)\) and its calibration index
 
     <div class="ref-description">
     <p>Leave-one-out cross validation analysis. The function returns a
-matrix with n rows. Its first column contains the logarithm of the CPO
+matrix with n rows. The first column contains the logarithm of the CPO
 (Geisser and Eddy, 1979). Larger values of the CPO indicate better
 predictive accuracy of the model. The second and third columns contain
 the KL divergence between \(\pi(\beta, \sigma^2,  \theta | t_{-i})\)
@@ -138,7 +129,7 @@ and \(\pi(\beta, \sigma^2,  \theta | t)\) and its calibration index
 \(p_i\), respectively.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>CaseDeletion_LST</span>(<span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>chain</span>, <span class='no'>set</span>, <span class='no'>eps_l</span>, <span class='no'>eps_r</span>)</pre>
+    <pre class="usage"><span class='fu'>CaseDeletion_LST</span>(<span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='no'>chain</span>, <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -179,11 +170,176 @@ the number of observations and \(k\) is the number of covariates
     </table>
 
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>BASSLINE</span>)
+
+<span class='co'># Please note: N=1000 is not enough to reach convergence.</span>
+<span class='co'># This is only an illustration. Run longer chains for more accurate</span>
+<span class='co'># estimations.</span>
+
+<span class='no'>LST</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LST.html'>MCMC_LST</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
+                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
+#&gt; Initial beta 1 : 0.44 
+#&gt;  Initial beta 2 : 1.83 
+#&gt;  Initial beta 3 : -2.92 
+#&gt;  Initial beta 4 : 0.02 
+#&gt;  Initial beta 5 : 0.13 
+#&gt;  Initial beta 6 : 1.37 
+#&gt;  Initial beta 7 : 0.28 
+#&gt;  Initial beta 8 : -1.2 
+#&gt;  Initial beta 9 : -0.76 
+#&gt; 
+#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
+#&gt; Initial sigma^2 : 0.39 
+#&gt; 
+#&gt; Sampling initial nu from a Gamma(2, 2) distribution 
+#&gt; Initial nu : 1.82 
+#&gt; 
+#&gt; AR nu : 0.48 </div><div class='input'><span class='no'>LST.CD</span> <span class='kw'>&lt;-</span> <span class='fu'>CaseDeletion_LST</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
+                           <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LST</span>)</div><div class='output co'>#&gt; Numerical problems for observation: 1 
+#&gt; Numerical problems for observation: 2 
+#&gt; Numerical problems for observation: 3 
+#&gt; Numerical problems for observation: 4 
+#&gt; Numerical problems for observation: 5 
+#&gt; Numerical problems for observation: 6 
+#&gt; Numerical problems for observation: 7 
+#&gt; Numerical problems for observation: 8 
+#&gt; Numerical problems for observation: 9 
+#&gt; Numerical problems for observation: 10 
+#&gt; Numerical problems for observation: 11 
+#&gt; Numerical problems for observation: 12 
+#&gt; Numerical problems for observation: 13 
+#&gt; Numerical problems for observation: 14 
+#&gt; Numerical problems for observation: 15 
+#&gt; Numerical problems for observation: 16 
+#&gt; Numerical problems for observation: 17 
+#&gt; Numerical problems for observation: 18 
+#&gt; Numerical problems for observation: 19 
+#&gt; Numerical problems for observation: 20 
+#&gt; Numerical problems for observation: 21 
+#&gt; Numerical problems for observation: 22 
+#&gt; Numerical problems for observation: 23 
+#&gt; Numerical problems for observation: 24 
+#&gt; Numerical problems for observation: 25 
+#&gt; Numerical problems for observation: 26 
+#&gt; Numerical problems for observation: 27 
+#&gt; Numerical problems for observation: 28 
+#&gt; Numerical problems for observation: 29 
+#&gt; Numerical problems for observation: 30 
+#&gt; Numerical problems for observation: 31 
+#&gt; Numerical problems for observation: 32 
+#&gt; Numerical problems for observation: 33 
+#&gt; Numerical problems for observation: 34 
+#&gt; Numerical problems for observation: 35 
+#&gt; Numerical problems for observation: 36 
+#&gt; Numerical problems for observation: 37 
+#&gt; Numerical problems for observation: 38 
+#&gt; Numerical problems for observation: 39 
+#&gt; Numerical problems for observation: 40 
+#&gt; Numerical problems for observation: 41 
+#&gt; Numerical problems for observation: 42 
+#&gt; Numerical problems for observation: 43 
+#&gt; Numerical problems for observation: 44 
+#&gt; Numerical problems for observation: 45 
+#&gt; Numerical problems for observation: 46 
+#&gt; Numerical problems for observation: 47 
+#&gt; Numerical problems for observation: 48 
+#&gt; Numerical problems for observation: 49 
+#&gt; Numerical problems for observation: 50 
+#&gt; Numerical problems for observation: 51 
+#&gt; Numerical problems for observation: 52 
+#&gt; Numerical problems for observation: 53 
+#&gt; Numerical problems for observation: 54 
+#&gt; Numerical problems for observation: 55 
+#&gt; Numerical problems for observation: 56 
+#&gt; Numerical problems for observation: 57 
+#&gt; Numerical problems for observation: 58 
+#&gt; Numerical problems for observation: 59 
+#&gt; Numerical problems for observation: 60 
+#&gt; Numerical problems for observation: 61 
+#&gt; Numerical problems for observation: 62 
+#&gt; Numerical problems for observation: 63 
+#&gt; Numerical problems for observation: 64 
+#&gt; Numerical problems for observation: 65 
+#&gt; Numerical problems for observation: 66 
+#&gt; Numerical problems for observation: 67 
+#&gt; Numerical problems for observation: 68 
+#&gt; Numerical problems for observation: 69 
+#&gt; Numerical problems for observation: 70 
+#&gt; Numerical problems for observation: 71 
+#&gt; Numerical problems for observation: 72 
+#&gt; Numerical problems for observation: 73 
+#&gt; Numerical problems for observation: 74 
+#&gt; Numerical problems for observation: 75 
+#&gt; Numerical problems for observation: 76 
+#&gt; Numerical problems for observation: 77 
+#&gt; Numerical problems for observation: 78 
+#&gt; Numerical problems for observation: 79 
+#&gt; Numerical problems for observation: 80 
+#&gt; Numerical problems for observation: 81 
+#&gt; Numerical problems for observation: 82 
+#&gt; Numerical problems for observation: 83 
+#&gt; Numerical problems for observation: 84 
+#&gt; Numerical problems for observation: 85 
+#&gt; Numerical problems for observation: 86 
+#&gt; Numerical problems for observation: 87 
+#&gt; Numerical problems for observation: 88 
+#&gt; Numerical problems for observation: 89 
+#&gt; Numerical problems for observation: 90 
+#&gt; Numerical problems for observation: 91 
+#&gt; Numerical problems for observation: 92 
+#&gt; Numerical problems for observation: 93 
+#&gt; Numerical problems for observation: 94 
+#&gt; Numerical problems for observation: 95 
+#&gt; Numerical problems for observation: 96 
+#&gt; Numerical problems for observation: 97 
+#&gt; Numerical problems for observation: 98 
+#&gt; Numerical problems for observation: 99 
+#&gt; Numerical problems for observation: 100 
+#&gt; Numerical problems for observation: 101 
+#&gt; Numerical problems for observation: 102 
+#&gt; Numerical problems for observation: 103 
+#&gt; Numerical problems for observation: 104 
+#&gt; Numerical problems for observation: 105 
+#&gt; Numerical problems for observation: 106 
+#&gt; Numerical problems for observation: 107 
+#&gt; Numerical problems for observation: 108 
+#&gt; Numerical problems for observation: 109 
+#&gt; Numerical problems for observation: 110 
+#&gt; Numerical problems for observation: 111 
+#&gt; Numerical problems for observation: 112 
+#&gt; Numerical problems for observation: 113 
+#&gt; Numerical problems for observation: 114 
+#&gt; Numerical problems for observation: 115 
+#&gt; Numerical problems for observation: 116 
+#&gt; Numerical problems for observation: 117 
+#&gt; Numerical problems for observation: 118 
+#&gt; Numerical problems for observation: 119 
+#&gt; Numerical problems for observation: 120 
+#&gt; Numerical problems for observation: 121 
+#&gt; Numerical problems for observation: 122 
+#&gt; Numerical problems for observation: 123 
+#&gt; Numerical problems for observation: 124 
+#&gt; Numerical problems for observation: 125 
+#&gt; Numerical problems for observation: 126 
+#&gt; Numerical problems for observation: 127 
+#&gt; Numerical problems for observation: 128 
+#&gt; Numerical problems for observation: 129 
+#&gt; Numerical problems for observation: 130 
+#&gt; Numerical problems for observation: 131 
+#&gt; Numerical problems for observation: 132 
+#&gt; Numerical problems for observation: 133 
+#&gt; Numerical problems for observation: 134 
+#&gt; Numerical problems for observation: 135 
+#&gt; Numerical problems for observation: 136 
+#&gt; Numerical problems for observation: 137 </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
       <li><a href="#arguments">Arguments</a></li>
+      <li><a href="#examples">Examples</a></li>
     </ul>
 
   </div>
@@ -192,7 +348,7 @@ the number of observations and \(k\) is the number of covariates
 
       <footer>
       <div class="copyright">
-  <p>Developed by Nathan Constantine-Cooke, Catalina Vallejos.</p>
+  <p>Developed by Catalina Vallejos, Nathan Constantine-Cooke.</p>
 </div>
 
 <div class="pkgdown">

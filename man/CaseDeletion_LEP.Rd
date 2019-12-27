@@ -4,7 +4,7 @@
 \alias{CaseDeletion_LEP}
 \title{Case deletion analysis for the log-exponential power model}
 \usage{
-CaseDeletion_LEP(Time, Cens, X, chain, set, eps_l, eps_r)
+CaseDeletion_LEP(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5)
 }
 \arguments{
 \item{Time}{Vector containing the survival times.}
@@ -28,10 +28,23 @@ the number of observations and \eqn{k} is the number of covariates
 }
 \description{
 Leave-one-out cross validation analysis. The function returns a
-matrix with n rows. Its first column contains the logarithm of the CPO
+matrix with n rows. The first column contains the logarithm of the CPO
 (Geisser and Eddy, 1979). Larger values of the CPO indicate better
 predictive accuracy of the model. The second and third columns contain
 the KL divergence between \eqn{\pi(\beta, \sigma^2,  \theta | t_{-i})}
 and \eqn{\pi(\beta, \sigma^2,  \theta | t)} and its calibration index
 \eqn{p_i}, respectively.
+}
+\examples{
+library(BASSLINE)
+
+# Please note: N=1000 is not enough to reach convergence.
+# This is only an illustration. Run longer chains for more accurate
+# estimations (especially for the log-exponential power model).
+
+LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                Cens = cancer[,2], X = cancer[,3:11])
+LEP.CD <- CaseDeletion_LEP(Time = cancer[,1], Cens = cancer[,2],
+                           X = cancer[,3:11], chain = LEP)
+
 }

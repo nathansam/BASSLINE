@@ -1,0 +1,355 @@
+---
+title: "Introduction to BASSLINE"
+date: '`r Sys.Date()`'
+author:
+  - name: Nathan Constantine-Cooke
+    email: nathan.constantine-cooke@ed.ac.uk
+  - name: Catalina Vallejos
+    email: catalina.vallejos@igmm.ed.ac.uk
+
+output:
+  rmarkdown::html_vignette:
+    toc: true
+    number_sections: false
+    toc_depth: 2
+    includes:
+      after_body: footer.html
+    fig_width: 6
+    fig_height: 4
+
+bibliography: library.bib
+
+vignette: >
+  %\VignetteIndexEntry{Introduction to BASSLINE}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  dev="png"
+)
+```
+
+
+## Introduction
+
+<img src = "./sticker.png" align = "right" style="width:150px;border:none;">
+
+```{r setup}
+library(BASSLINE)
+``` 
+
+
+BASSLINE (**BA**ye**S**ian **S**urvival ana**L**ys**I**s usi**N**g shap**E**
+mixtures of log-normal distributions) uses shape mixtures of log-normal 
+distributions to fit data with fat tails and has been adapted from code produced
+for *Objective Bayesian Survival Analysis Using Shape Mixtures of Log-Normal 
+*Distributions [@Vallejos2015]. Some of the functions have been rewritten 
+in C++ for increased performance.
+
+5 distributions from the log-normal family are supported by `BASSLINE`:
+
+* The log-normal distribution
+* The log student's T distribution
+* The log-logistic distribution
+* The log-Laplace distribution
+* The log-exponential power distribution
+
+As well as MCMC (Markov chain Monte Carlo) algorithms for the 5
+distributions, additional functions which allow log-marginal likelihood
+estimators and deviance information  criteria to be calculated are provided.
+Case deletion analysis and outlier detection are also supported.
+
+This vignette demonstrates how to use the `BASSLINE` package to carry out
+survival analysis using the included `cancer` data-set from the veterans
+administration lung cancer trial. 
+
+
+## Quick Start
+
+Essential parameters for running the MCMC are : 
+
+* `N`: total number of iterations
+* `thin`: length of the thinning period (i.e. only every `thin` 
+iterations will be stored in the output)
+* `burn`: length of burn-in period (i.e. the initial `burn` 
+iterations that will be discarded from the output)
+* `Time`: Vector of survival times
+* `Cens`: Vector indicating if observations are censored
+* `X`: Matrix of covariates for each observation
+
+Starting values for the $\beta$s and $\sigma^2$ are randomly sampled
+from an appropriate distribution if not given by the user as arguments.
+Additional arguments allow the type of prior to be specified, and the
+observations to be specified as set or point observations. See the documentation
+for any of the MCMC functions included with `BASSLINE` for more information on
+these additional arguments.
+
+```{r MCMC Help, eval = FALSE}
+?MCMC_LN()
+```
+
+Note that BASSLINE does not support factors/ levels. Factors should be converted
+to separate variables for each level. For example:
+
+```{r Original Table, echo = F}
+df <- data.frame(Time = c(10,15,24,21), Cens = c(1,1,0,1),
+                 treatment = as.factor(c("A", "B", "C", "A")))
+knitr::kable(df)
+```
+
+should be converted to: 
+
+```{r Converted Table, echo = F}
+### RUN FOR EXAMPLE TABLE ###
+df.2 <- df
+n.obs <- nrow(df.2)
+
+treatment.A <- rep(0, n.obs)
+treatment.B <- rep(0, n.obs)
+treatment.C <- rep(0, n.obs)
+
+for(i in 1:n.obs){
+  if(df.2$treatment[i] == "A") treatment.A[i] <- 1
+  if(df.2$treatment[i] == "B") treatment.B[i] <- 1 
+  if(df.2$treatment[i] == "C") treatment.C[i] <- 1
+}
+
+df.2 <- cbind(df.2, treatment.A, treatment.B, treatment.C)
+df.2$treatment <- NULL
+
+mat.2 <- as.matrix(df.2)
+knitr::kable(mat.2)
+```
+
+Which can be obtained by running the following R code
+
+```{r Factor Convert}
+n.obs <- nrow(df)
+
+treatment.A <- rep(0, n.obs)
+treatment.B <- rep(0, n.obs)
+treatment.C <- rep(0, n.obs)
+
+for(i in 1:n.obs){
+  if(df$treatment[i] == "A") treatment.A[i] <- 1
+  if(df$treatment[i] == "B") treatment.B[i] <- 1
+  if(df$treatment[i] == "C") treatment.C[i] <- 1
+}
+df <- cbind(df, treatment.A, treatment.B, treatment.C)
+df$treatment <- NULL
+mat <- as.matrix(df)
+```
+
+## The Cancer Data Set
+
+Included with `BASSLINE` is an example data set, `cancer`. This data has been
+obtained from a study conducted by the US Veterans Administration where male
+patients with advanced inoperable lung cancer were given either standard or
+experimental chemotherapy treatment [@VACancerTrial]. 137 patients took part in
+the trial, 9 of whom left the study before their death and are thus right
+censored. Various covariates were also documented for each patient.
+
+Viewing the first 5 observations shows the data set's format:
+
+```{r Cancer View,  eval = F}
+data(cancer)
+head(cancer, 5)
+```
+
+```{r Cancer Table, echo = F}
+knitr::kable(cancer[1:5, ])
+```
+
+The first column of `cancer` denotes the survival time for the observation. 
+The second column denotes the censored status for the observation (0 for right
+censored; 1 for not censored ). All remaining columns are covariates. 
+Additional information can be found in the documentation for `cancer`. 
+
+```{r Cancer Help, eval = F}
+?cancer
+```
+
+```{r Time and Cens}
+Time <- cancer[,"Time"]
+Cens <- cancer[,"Cens"]
+```
+
+## MCMC chains 
+
+MCMC chains can be easily generated by providing the aforementioned essential
+parameters. As previous discussed, starting values are randomly sampled if not
+provided by the user. The user will possibly obtain improved results from 
+experimenting with these starting values. 
+
+Please note N = 1000, as used in these examples, is not enough to reach
+convergence and is only used as a demonstration. The user is advised to run
+longer chains with a longer burn-in period for more accurate estimations
+(especially for the log-exponential power model).
+
+```{r MCMC}
+# Log-normal
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = Time,
+              Cens = Cens, X = cancer[,3:11])
+
+# Log-student's T
+LST <- MCMC_LST(N = 1000, thin = 20, burn = 40 , Time = Time, Cens = Cens,
+                X = cancer[,3:11])
+
+# Log-Laplace
+LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40,  Time = Time, Cens = Cens,
+                  X = cancer[,3:11])
+
+#Log-exponential power
+LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = Time, Cens = Cens,
+                X = cancer[,3:11])
+
+#Log-logistic
+LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = Time, Cens = Cens,
+                  X = cancer[,3:11])
+```
+
+### Diagnostics
+
+After generating MCMC chains, their suitability should be assessed. This can be 
+done, in part, via the `Trace_Plot` function included with `BASSLINE` which will
+plot a chain for an observation across (non-discarded) iterations. We will 
+investigate the chain for the first observation from the log-normal model. 
+
+```{r Trace Plot, fig.retina=2}
+Trace_Plot(1, LN)
+```
+
+In this case, the plot provides evidence for using an increased burn-in period
+due to it's profile for the first few iterations. 
+
+The user is also advised to plot the auto-correlation function which can be done
+via the `forecast` and `ggplot2` packages.
+
+```{r ACF plot, message = F, fig.retina= 2}
+library(ggplot2)
+library(forecast)
+p <- ggAcf(LN[1,]) + ggplot2::theme_bw()
+p <- p + ggplot2::ggtitle("ACF of MCMC Chain for First Observation")
+p
+```
+
+## Deviance Information Criterion
+
+The deviance information criterion (DIC), a hierarchical
+modeling generalization of the Akaike information criterion [@DIC], can be
+easily calculated for the 5 models.
+
+If the deviance is defined as 
+
+ $$D\left(\theta, y\right) = -2 \log\left(f\left(y|\theta\right)\right)$$
+ 
+ then
+ 
+ $$ DIC = D\left(\bar{\theta}\right) + 2p_D $$
+ 
+ Where $p_D$ is the number of effective parameters. 
+ 
+Each member of the log-normal family has a function to calculate DIC. We will 
+present an example using the log-normal distribution and compare two models with
+differing covariates (all of the available covariates vs. only the last 4
+covariates).  
+ 
+```{r DIC}
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = Time,
+              Cens = Cens, X = cancer[,3:11])
+DIC_LN(Time = Time, Cens = Cens, X = cancer[,3:11], chain = LN)
+
+# Reduced model
+LN.2 <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = Time,
+              Cens = Cens, X = cancer[,8:11])
+DIC_LN(Time = Time, Cens = Cens, X = cancer[,8:11], chain = LN.2)
+```
+
+## Log-Marginal Likelihood
+
+The log-marginal likelihood is given by:
+
+$$ \log\left(m\left(t\right)\right) = 
+\log\left(  
+\int_{-\infty}^{\infty}
+\int_{0}^{\infty}
+\int_\Theta 
+f\left(t \mid \beta, \sigma^2, \theta \right)
+\pi\left(\beta, \sigma^2, \theta\right)
+d\beta \: d\sigma^2 \: d\theta \right)$$
+
+And can be easily estimated using the supplied function for each distribution
+which is based on the work of Chib [@chib] and Chib and Jeliaskov [@chib2].
+The function will return a list which includes the log-marginal likelihood
+estimation, the log-likelihood ordinate, the log-prior ordinate, and the
+log-posterior ordinates. Messages detailing the progress of the algorithm are
+provided to the user.
+
+```{r LML}
+LML_LN(thin = 20, Time, Cens = Cens, X = cancer[,3:11], chain = LN) 
+```
+
+
+## Leave-One-Out Cross-Validation Analysis 
+
+Leave-one-out cross-validation analysis is also available for all 5 of the 
+supported distributions. The functions returns matrices with $n$ rows.
+
+Its first column contains the logarithm of the conditional predictive ordinate
+(CPO) [@cpo]. Larger values of the CPO indicate better predictive accuracy.
+
+The second and third columns contain the Kullback–Leibler (KL) divergence
+between $$ \pi\left(\beta, \sigma^2, \theta \mid t_{-i}\right)$$ and 
+$$ \pi\left(\beta, \sigma^2, \theta \mid t\right)$$ and its calibration index
+$p_i$ [@CI] respectively. The later is used in order to evaluate the existence
+of influential observations. If $p_i$ is substantially larger than
+0.5, observation $i$ is declared influential. Suggested cut-off values are
+0.8 and 0.9.
+
+```{r Case Deletion}
+LN.CD <- CaseDeletion_LN(Time, Cens = Cens, X = cancer[,3:11], chain = LN)
+```
+
+```{r}
+knitr::kable(LN.CD[1:5,])
+```
+
+It is sensible to report the number of observations which are deemed
+influential for a given cutoff which can be easily found by the user. 
+
+```{r}
+sum(LN.CD[,3] > 0.8)
+```
+
+
+## Outlier Detection
+
+Outlier detection is available for a specified observation (obs) for the 
+log-student's T, log-Laplace, log-logistic, log-exponential power models.
+This returns a unique number corresponding to the Bayes Factor associated with
+the test $M_0 : \Lambda_\text{obs} = \lambda_\text{ref}$ versus
+$M_0 : \Lambda_\text{obs} \neq \lambda_\text{ref}$ (with all other
+$\Lambda_j,  j \neq \text{obs}$ free). The value of $\lambda_\text{ref}$ is 
+required as input.
+
+The recommended value of $\lambda_\text{ref}$ is 1 with the exception of the
+log-logistic model where we recommend 0.4 instead. The calculations which 
+support these recommendations can be found in the original paper
+[@Vallejos2015]. 
+
+
+```{r}
+OD.LST <- rep(0, 5)
+for(i in 1 : 5)
+{
+	OD.LST[i] <- BF_lambda_obs_LST(N = 100, thin = 20 , burn = 1, ref = 1,
+	                               obs = i, Time = Time, Cens = Cens,
+	                               X = cancer[,3:11], chain = LST)
+}
+```
+
+## References

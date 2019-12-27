@@ -14,7 +14,7 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
   int k = beta.size();
 
   if (prior == 1){
-     p = 1.0 + k / 2.0;
+    p = 1.0 + k / 2.0;
   }
 
   if (prior == 2){
@@ -36,29 +36,21 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
 }
 
 // [[Rcpp::export]]
-NumericVector J_alpha(NumericVector alpha, int k){
-  NumericVector aux = pow(alpha * (alpha - 1) *
-                              Rcpp::gamma(1.0 - 1.0 / alpha) /
-                                Rcpp::gamma (1.0 / alpha) , 2) *
-                                  (1 / alpha) *
-                      sqrt((1 + 1 / alpha) * Rcpp::trigamma( 1 + 1 / alpha) -1);
+double J_alpha(double alpha, int k){
+  double aux = pow(alpha * (alpha - 1) *
+                   ::tgamma(1.0 - 1.0 / alpha) /
+                     ::tgamma (1.0 / alpha) , k / 2) *
+                       (1 / alpha) *
+                       sqrt((1 + 1 / alpha) * R::trigamma( 1 + 1 / alpha) -1);
 
   return aux;
-}
-
-
-// [[Rcpp::export]]
-NumericVector II_alpha(NumericVector alpha) {
-  NumericVector aux = (1.0 / alpha) * sqrt((1 + 1 / alpha) *
-    Rcpp::trigamma(1 + 1 / alpha) - 1);
-  return(aux);
 }
 
 // [[Rcpp::export]]
 NumericVector IIJ_nu(NumericVector nu){
   NumericVector aux = sqrt(nu / (nu + 3)) *
-          sqrt (Rcpp::trigamma(nu / 2) - Rcpp::trigamma((nu + 1) / 2) -
-                 (2 * (nu + 3)) / (nu * pow(nu + 1,2)));
+    sqrt (Rcpp::trigamma(nu / 2) - Rcpp::trigamma((nu + 1) / 2) -
+    (2 * (nu + 3)) / (nu * pow(nu + 1,2)));
   return aux;
 }
 
@@ -78,6 +70,21 @@ NumericVector r_GIG(double r,  int n = 1) {
       aux[i] = r * y[i];
     }
   }
-  return(aux);
+  return aux;
+}
+
+
+// [[Rcpp::export]]
+NumericVector II_alpha (NumericVector alpha){
+  NumericVector aux = (1 / alpha) * sqrt((1 + 1 / alpha) * Rcpp::trigamma(1 + 1 / alpha) - 1);
+  return aux;
+}
+
+
+// [[Rcpp::export]]
+NumericVector I_alpha (NumericVector alpha) {
+  NumericVector aux = sqrt(1 / pow(alpha, 3)) * sqrt((1 + 1 / alpha) *
+    Rcpp::trigamma(1 + 1 / alpha) + pow(1 + Rcpp::digamma(1 + 1 / alpha), 2)  - 1);
+  return aux;
 }
 
