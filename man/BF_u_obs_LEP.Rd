@@ -14,10 +14,10 @@ BF_u_obs_LEP(
   Cens,
   X,
   chain,
-  prior,
-  set,
-  eps_l,
-  eps_r,
+  prior = 2,
+  set = 1,
+  eps_l = 0.5,
+  eps_r = 0.5,
   ar = 0.44
 )
 }
@@ -28,7 +28,7 @@ BF_u_obs_LEP(
 
 \item{burn}{Burn-in period}
 
-\item{ref}{Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}}
+\item{ref}{Reference value \eqn{u_{ref}}}
 
 \item{obs}{Indicates the number of the observation under analysis}
 
@@ -65,4 +65,20 @@ associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
 required as input. The user should expect long running times for the
 log-Student’s t model, in which case a reduced chain given
 \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
+}
+\examples{
+library(BASSLINE)
+
+# Please note: N=1000 is not enough to reach convergence.
+# This is only an illustration. Run longer chains for more accurate
+# estimations (especially for the log-exponential power model).
+
+LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                Cens = cancer[,2], X = cancer[,3:11])
+alpha <- median(LEP[,11])
+uref <- 1 + 1 / alpha + 0.6
+LEP.Outlier <- BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref,
+                            obs = 1, Time = cancer[,1], Cens = cancer[,2],
+                            cancer[,3:11], chain = LEP)
+
 }

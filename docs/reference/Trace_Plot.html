@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>MCMC algorithm for the log-logistic model — MCMC_LLOG • BASSLINE</title>
+<title>Produce a trace plot of an observation's MCMC chain — Trace_Plot • BASSLINE</title>
 
 
 <!-- jquery -->
@@ -35,9 +35,9 @@
 
 
 
-<meta property="og:title" content="MCMC algorithm for the log-logistic model — MCMC_LLOG" />
-<meta property="og:description" content="Adaptive Metropolis-within-Gibbs algorithm with univariate
-Gaussian random walk proposals for the log-logistic model" />
+<meta property="og:title" content="Produce a trace plot of an observation's MCMC chain — Trace_Plot" />
+<meta property="og:description" content="Plots the chain across (non-discarded) iterations for a
+specified observation" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -109,113 +109,34 @@ Gaussian random walk proposals for the log-logistic model" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>MCMC algorithm for the log-logistic model</h1>
+    <h1>Produce a trace plot of an observation's MCMC chain</h1>
     <small class="dont-index">Source: <a href='https://github.com/nathansam/BASSLINE/blob/master/R/User_Codes.R'><code>R/User_Codes.R</code></a></small>
-    <div class="hidden name"><code>MCMC_LLOG.Rd</code></div>
+    <div class="hidden name"><code>Trace_Plot.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Adaptive Metropolis-within-Gibbs algorithm with univariate
-Gaussian random walk proposals for the log-logistic model</p>
+    <p>Plots the chain across (non-discarded) iterations for a
+specified observation</p>
     </div>
 
-    <pre class="usage"><span class='fu'>MCMC_LLOG</span>(
-  <span class='no'>N</span>,
-  <span class='no'>thin</span>,
-  <span class='no'>burn</span>,
-  <span class='no'>Time</span>,
-  <span class='no'>Cens</span>,
-  <span class='no'>X</span>,
-  <span class='kw'>Q</span> <span class='kw'>=</span> <span class='fl'>10</span>,
-  <span class='kw'>beta0</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>sigma20</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
-  <span class='kw'>N.AKS</span> <span class='kw'>=</span> <span class='fl'>3</span>
-)</pre>
+    <pre class="usage"><span class='fu'>Trace_Plot</span>(<span class='no'>obs</span>, <span class='no'>chain</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>N</th>
-      <td><p>Total number of iterations.</p></td>
+      <th>obs</th>
+      <td><p>Indicates the number of the observation under analysis</p></td>
     </tr>
     <tr>
-      <th>thin</th>
-      <td><p>Thinning period.</p></td>
-    </tr>
-    <tr>
-      <th>burn</th>
-      <td><p>Burn-in period.</p></td>
-    </tr>
-    <tr>
-      <th>Time</th>
-      <td><p>Vector containing the survival times.</p></td>
-    </tr>
-    <tr>
-      <th>Cens</th>
-      <td><p>Censoring indication (1: observed, 0: right-censored).</p></td>
-    </tr>
-    <tr>
-      <th>X</th>
-      <td><p>Design matrix with dimensions \(n\) x  \(k\) where \(n\) is
-the number of observations and \(k\) is the number of covariates
-(including the intercept).</p></td>
-    </tr>
-    <tr>
-      <th>Q</th>
-      <td><p>Update period for the \(\lambda_{i}\)’s</p></td>
-    </tr>
-    <tr>
-      <th>beta0</th>
-      <td><p>Starting values for \(\beta\). If not provided, they will
-be randomly generated from a normal distribution.</p></td>
-    </tr>
-    <tr>
-      <th>sigma20</th>
-      <td><p>Starting value for \(\sigma^2\). If not provided, it
-will be randomly generated from a gamma distribution.</p></td>
-    </tr>
-    <tr>
-      <th>prior</th>
-      <td><p>Indicator of prior (1: Jeffreys, 2: Type I Ind. Jeffreys,
-3: Ind. Jeffreys).</p></td>
-    </tr>
-    <tr>
-      <th>set</th>
-      <td><p>Indicator for the use of set observations (1: set observations,
-0: point observations).</p></td>
-    </tr>
-    <tr>
-      <th>eps_l</th>
-      <td><p>Lower imprecision \((\epsilon_l)\) for set observations
-(default value: 0.5).</p></td>
-    </tr>
-    <tr>
-      <th>eps_r</th>
-      <td><p>Upper imprecision \((\epsilon_r)\) for set observations
-(default value: 0.5)</p></td>
-    </tr>
-    <tr>
-      <th>N.AKS</th>
-      <td><p>Maximum number of terms of the Kolmogorov-Smirnov density used
-for the rejection sampling when updating mixing parameters (default
-value: 3)</p></td>
+      <th>chain</th>
+      <td><p>MCMC chains generated by a BASSLINE MCMC function</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A matrix with \(N / thin + 1\) rows. The columns are the MCMC
-chains for \(\beta\) (\(k\) columns), \(\sigma^2\) (1 column),
-\(\theta\) (1 column, if appropriate), \(\lambda\) (\(n\) columns,
-not provided for log-normal model), \(\log(t)\) (\(n\) columns,
-simulated via data augmentation) and the logarithm of the adaptive
-variances (the number varies among models). The latter allows the user to
-evaluate if the adaptive variances have been stabilized.</p>
+    <p>A ggplot2 object</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>BASSLINE</span>)
@@ -224,21 +145,21 @@ evaluate if the adaptive variances have been stabilized.</p>
 <span class='co'># This is only an illustration. Run longer chains for more accurate</span>
 <span class='co'># estimations.</span>
 
-<span class='no'>LLOG</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LLOG</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
-                  <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
-#&gt; Initial beta 1 : 1.22 
-#&gt;  Initial beta 2 : 0.65 
-#&gt;  Initial beta 3 : -0.76 
-#&gt;  Initial beta 4 : -0.49 
-#&gt;  Initial beta 5 : -0.67 
-#&gt;  Initial beta 6 : -0.35 
-#&gt;  Initial beta 7 : 2.03 
-#&gt;  Initial beta 8 : 0.47 
-#&gt;  Initial beta 9 : 0.66 
+<span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LN.html'>MCMC_LN</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
+              <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
+#&gt; Initial beta 1 : 0.06 
+#&gt;  Initial beta 2 : -2.04 
+#&gt;  Initial beta 3 : -0.39 
+#&gt;  Initial beta 4 : -0.86 
+#&gt;  Initial beta 5 : 0.02 
+#&gt;  Initial beta 6 : -0.99 
+#&gt;  Initial beta 7 : 0.11 
+#&gt;  Initial beta 8 : -0.25 
+#&gt;  Initial beta 9 : -0.6 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
-#&gt; Initial sigma^2 : 0.78 
-#&gt; </div><div class='input'>
+#&gt; Initial sigma^2 : 2.23 
+#&gt; </div><div class='input'><span class='fu'>Trace_Plot</span>(<span class='fl'>1</span>, <span class='no'>LN</span>)</div><div class='img'><img src='Trace_Plot-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

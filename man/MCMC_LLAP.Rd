@@ -8,14 +8,14 @@ MCMC_LLAP(
   N,
   thin,
   burn,
-  Q,
   Time,
   Cens,
   X,
+  Q = 1,
   beta0 = NULL,
   sigma20 = NULL,
-  prior,
-  set,
+  prior = 2,
+  set = 1,
   eps_l = 0.5,
   eps_r = 0.5
 )
@@ -27,8 +27,6 @@ MCMC_LLAP(
 
 \item{burn}{Burn-in period.}
 
-\item{Q}{Update period for the \eqn{\lambda_{i}}’s}
-
 \item{Time}{Vector containing the survival times.}
 
 \item{Cens}{Censoring indication (1: observed, 0: right-censored).}
@@ -36,6 +34,8 @@ MCMC_LLAP(
 \item{X}{Design matrix with dimensions \eqn{n} x  \eqn{k} where \eqn{n} is
 the number of observations and \eqn{k} is the number of covariates
 (including the intercept).}
+
+\item{Q}{Update period for the \eqn{\lambda_{i}}’s}
 
 \item{beta0}{Starting values for \eqn{\beta}. If not provided, they will
 be randomly generated from a normal distribution.}
@@ -70,32 +70,12 @@ Gaussian random walk proposals for the log-Laplace model
 }
 \examples{
 library(BASSLINE)
-n <- dim(cancer)[1]
-# Building the Design Matrix
-Intercept <- rep(1, times = n) # Intercept
-x1 <- rep(0, times = n) # Treat (1 dummy variable)
-for(i in 1 : n) {if(cancer$treat[i] == 2) x1[i] <- 1}
-# Type (3 dummy variables)
-x2 <- rep(0, times = n)
-x3 <- rep(0, times = n)
-x4 <- rep(0, times = n)
-
-for(i in 1 : n) {if(cancer$type[i] == 1) x2[i] <- 1
-if(cancer$type[i] == 2) x3[i] <- 1
-if(cancer$type[i] == 3) x4[i] <- 1}
-x5 <- cancer$status # Status
-x6 <- cancer$mfd # Months from diagnosis
-x7 <- cancer$age # Age
-x8 <- rep(0, times = n) # Prior (Dummy variable)
-for(i in 1 : n) {if(cancer$prior[i] == 10) x8[i] <- 1}
-X <- cbind(Intercept, x1, x2, x3, x4, x5, x6, x7, x8)
-Time <- cancer$time; Cens <- cancer$censor
-
 
 # Please note: N=1000 is not enough to reach convergence.
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40,  Q = 1, Time, Cens, X,
-                  prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5)
+LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                  Cens = cancer[,2], X = cancer[,3:11])
+
 }
