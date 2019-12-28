@@ -38,10 +38,12 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
 // [[Rcpp::export]]
 double J_alpha(double alpha, int k){
   double aux = pow(alpha * (alpha - 1) *
-                   ::tgamma(1.0 - 1.0 / alpha) /
-                     ::tgamma (1.0 / alpha) , k / 2) *
-                       (1 / alpha) *
-                       sqrt((1 + 1 / alpha) * R::trigamma( 1 + 1 / alpha) -1);
+
+                              ::tgamma(1.0 - 1.0 / alpha) /
+                                ::tgamma (1.0 / alpha) , k / 2) *
+                                  (1 / alpha) *
+                      sqrt((1 + 1 / alpha) * R::trigamma( 1 + 1 / alpha) -1);
+
 
   return aux;
 }
@@ -87,4 +89,8 @@ NumericVector I_alpha (NumericVector alpha) {
     Rcpp::trigamma(1 + 1 / alpha) + pow(1 + Rcpp::digamma(1 + 1 / alpha), 2)  - 1);
   return aux;
 }
+
+
+
+
 
