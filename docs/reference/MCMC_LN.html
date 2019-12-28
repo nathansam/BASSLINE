@@ -71,7 +71,7 @@ Gaussian random walk proposals for the log-normal model
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9002</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9003</span>
       </span>
     </div>
 
@@ -84,19 +84,13 @@ Gaussian random walk proposals for the log-normal model
   </a>
 </li>
 <li>
+  <a href="../articles/BASSLINE.html">Get started</a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
-    Articles
-     
-    <span class="caret"></span>
-  </a>
-  <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/SMLN.html">Introduction to SMLN</a>
-    </li>
-  </ul>
+<li>
+  <a href="../news/index.html">Changelog</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -139,8 +133,8 @@ Gaussian random walk proposals for the log-normal model
   <span class='no'>X</span>,
   <span class='kw'>beta0</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
   <span class='kw'>sigma20</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='no'>prior</span>,
-  <span class='no'>set</span>,
+  <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>,
+  <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>,
   <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
   <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>
 )</pre>
@@ -217,33 +211,27 @@ evaluate if the adaptive variances have been stabilized.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='fu'><a href='https://rdrr.io/r/base/library.html'>library</a></span>(<span class='no'>BASSLINE</span>)
-<span class='no'>n</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/dim.html'>dim</a></span>(<span class='no'>cancer</span>)[<span class='fl'>1</span>]
-<span class='co'># Building the Design Matrix</span>
-<span class='no'>Intercept</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>1</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='no'>n</span>) <span class='co'># Intercept</span>
-<span class='no'>x1</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='no'>n</span>) <span class='co'># Treat (1 dummy variable)</span>
-<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span> : <span class='no'>n</span>) {<span class='kw'>if</span>(<span class='no'>cancer</span>$<span class='no'>treat</span>[<span class='no'>i</span>] <span class='kw'>==</span> <span class='fl'>2</span>) <span class='no'>x1</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='fl'>1</span>}
-<span class='co'># Type (3 dummy variables)</span>
-<span class='no'>x2</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='no'>n</span>)
-<span class='no'>x3</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='no'>n</span>)
-<span class='no'>x4</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='no'>n</span>)
-
-<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span> : <span class='no'>n</span>) {<span class='kw'>if</span>(<span class='no'>cancer</span>$<span class='no'>type</span>[<span class='no'>i</span>] <span class='kw'>==</span> <span class='fl'>1</span>) <span class='no'>x2</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='kw'>if</span>(<span class='no'>cancer</span>$<span class='no'>type</span>[<span class='no'>i</span>] <span class='kw'>==</span> <span class='fl'>2</span>) <span class='no'>x3</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='fl'>1</span>
-<span class='kw'>if</span>(<span class='no'>cancer</span>$<span class='no'>type</span>[<span class='no'>i</span>] <span class='kw'>==</span> <span class='fl'>3</span>) <span class='no'>x4</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='fl'>1</span>}
-<span class='no'>x5</span> <span class='kw'>&lt;-</span> <span class='no'>cancer</span>$<span class='no'>status</span> <span class='co'># Status</span>
-<span class='no'>x6</span> <span class='kw'>&lt;-</span> <span class='no'>cancer</span>$<span class='no'>mfd</span> <span class='co'># Months from diagnosis</span>
-<span class='no'>x7</span> <span class='kw'>&lt;-</span> <span class='no'>cancer</span>$<span class='no'>age</span> <span class='co'># Age</span>
-<span class='no'>x8</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span>(<span class='fl'>0</span>, <span class='kw'>times</span> <span class='kw'>=</span> <span class='no'>n</span>) <span class='co'># Prior (Dummy variable)</span>
-<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span> : <span class='no'>n</span>) {<span class='kw'>if</span>(<span class='no'>cancer</span>$<span class='no'>prior</span>[<span class='no'>i</span>] <span class='kw'>==</span> <span class='fl'>10</span>) <span class='no'>x8</span>[<span class='no'>i</span>] <span class='kw'>&lt;-</span> <span class='fl'>1</span>}
-<span class='no'>X</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/cbind.html'>cbind</a></span>(<span class='no'>Intercept</span>, <span class='no'>x1</span>, <span class='no'>x2</span>, <span class='no'>x3</span>, <span class='no'>x4</span>, <span class='no'>x5</span>, <span class='no'>x6</span>, <span class='no'>x7</span>, <span class='no'>x8</span>)
-<span class='no'>Time</span> <span class='kw'>&lt;-</span> <span class='no'>cancer</span>$<span class='no'>time</span>; <span class='no'>Cens</span> <span class='kw'>&lt;-</span> <span class='no'>cancer</span>$<span class='no'>censor</span>
 
 <span class='co'># Please note: N=1000 is not enough to reach convergence.</span>
 <span class='co'># This is only an illustration. Run longer chains for more accurate</span>
 <span class='co'># estimations.</span>
 
-<span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LN</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='no'>Time</span>, <span class='no'>Cens</span>, <span class='no'>X</span>, <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-              <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>, <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>)</div></pre>
+<span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LN</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
+              <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
+#&gt; Initial beta 1 : 0.42 
+#&gt;  Initial beta 2 : 0.58 
+#&gt;  Initial beta 3 : 2.28 
+#&gt;  Initial beta 4 : -0.57 
+#&gt;  Initial beta 5 : 2.36 
+#&gt;  Initial beta 6 : -1.1 
+#&gt;  Initial beta 7 : 0.5 
+#&gt;  Initial beta 8 : -0.47 
+#&gt;  Initial beta 9 : -0.77 
+#&gt; 
+#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
+#&gt; Initial sigma^2 : 0.4 
+#&gt; </div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
@@ -259,7 +247,7 @@ evaluate if the adaptive variances have been stabilized.</p>
 
       <footer>
       <div class="copyright">
-  <p>Developed by Nathan Constantine-Cooke, Catalina Vallejos.</p>
+  <p>Developed by Catalina Vallejos, Nathan Constantine-Cooke.</p>
 </div>
 
 <div class="pkgdown">

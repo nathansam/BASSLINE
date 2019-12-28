@@ -53,30 +53,30 @@ prior.LST <- function(beta, sigma2, nu, prior, log) {
 
 ############### PRIOR FOR (BETA,SIGMA2,ALPHA) (LOG-EXPONENTIAL POWER MODEL ONLY)
 
-J.alpha <- function(alpha, k) {
-    aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
-               gamma(1 / alpha)) ^ (k / 2)) * (1 / alpha) *
-                  sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-    return(aux)
-}
-II.alpha <- function(alpha) {
-    aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-    return(aux)
-}
-I.alpha <- function(alpha) {
-    aux <- sqrt(1 / alpha ^ 3) * sqrt((1 + 1 / alpha) *
-                 trigamma(1 + 1 / alpha) + (1 + digamma(1 + 1 / alpha))^ 2  - 1)
-    return(aux)
-}
+#J.alpha <- function(alpha, k) {
+#    aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
+#               gamma(1 / alpha)) ^ (k / 2)) * (1 / alpha) *
+#                  sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
+#    return(aux)
+#}
+#II.alpha <- function(alpha) {
+#    aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
+#    return(aux)
+#}
+#I.alpha <- function(alpha) {
+#    aux <- sqrt(1 / alpha ^ 3) * sqrt((1 + 1 / alpha) *
+#                 trigamma(1 + 1 / alpha) + (1 + digamma(1 + 1 / alpha))^ 2  - 1)
+#    return(aux)
+#}
 prior.alpha <- function(alpha, k, prior) {
     if (prior == 1)
-        aux <- J.alpha(alpha, k) / stats::integrate(J.alpha, lower = 1,
+        aux <- J_alpha(alpha, k) / stats::integrate(J_alpha, lower = 1,
                                                     upper = 2, k = k)$value
     if (prior == 2)
-        aux <- II.alpha(alpha) / stats::integrate(II.alpha, lower = 1,
+        aux <- II_alpha(alpha) / stats::integrate(II_alpha, lower = 1,
                                                   upper = 2)$value
     if (prior == 3)
-        aux <- I.alpha(alpha) / stats::integrate(I.alpha, lower = 1,
+        aux <- I_alpha(alpha) / stats::integrate(I_alpha, lower = 1,
                                                  upper = 2)$value
     return(aux)
 }
@@ -262,7 +262,7 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0,
             logt[iter/thin + 1, ] <- logt.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
@@ -429,11 +429,11 @@ MCMC.LST.NonAdapt = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
             lambda[iter/thin + 1, ] <- lambda.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR nu :", round(accept.nu/N, 2)))
+    cat(paste("AR nu :", round(accept.nu/N, 2), "\n"))
 
     chain <- cbind(beta, sigma2, nu, lambda, logt)
     return(chain)
@@ -506,11 +506,11 @@ MCMCR.nu.LST <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0, logt0,
             lambda[iter/thin + 1, ] <- lambda.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR nu :", round(accept.nu / N, 2)))
+    cat(paste("AR nu :", round(accept.nu / N, 2), "\n"))
 
     chain <- cbind(beta, sigma2, lambda, logt)
     return(chain)
@@ -574,11 +574,11 @@ MCMCR.sigma2.nu.LST <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
             lambda[iter/thin + 1, ] <- lambda.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR nu :", round(accept.nu/N, 2)))
+    cat(paste("AR nu :", round(accept.nu/N, 2), "\n"))
 
     chain <- cbind(beta, lambda, logt)
     return(chain)
@@ -680,11 +680,11 @@ MCMCR.LST.lambda.obs <- function(ref, obs, N, thin, Q, Time, Cens, X, beta0,
             ls.nu[iter/thin + 1] <- ls.nu.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR nu :", round(accept.nu/N, 2)))
+    cat(paste("AR nu :", round(accept.nu/N, 2), "\n"))
 
     chain <- cbind(beta, sigma2, nu, lambda, logt, ls.nu)
     return(chain)
@@ -719,7 +719,8 @@ Post.lambda.obs.LST <- function(obs, ref, X, chain) {
 CFP.obs.LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain, prior,
                         set, eps_l, eps_r, ar = 0.44) {
     N.aux <- dim(chain)[1]
-    k <- dim(X)[2]
+    k <- ncol(X)
+    n <- nrow(X)
     chain1 <- MCMCR.LST.lambda.obs(ref, obs, N, thin, Q, Time, Cens, X,
                                    beta0 = t(chain[N.aux, 1:k]),
                                    sigma20 = chain[N.aux, (k + 1)],
@@ -833,7 +834,7 @@ MCMCR.sigma2.LLAP <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, logt0,
             lambda[iter/thin + 1, ] <- lambda.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(iter)
+            cat(iter)
         }
     }
 
@@ -862,17 +863,17 @@ MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
         if (is.na(aux)) {
             beta[i.b + 1, ] <- beta[i.b, ]
             ind[i.b + 1] <- 0
-            print("NA.beta")
+            cat("NA.beta \n")
         }
         if (is.na(aux) == FALSE && aux == -Inf) {
             beta[i.b + 1, ] <- beta[i.b, ]
             ind[i.b + 1] <- 0
-            print("-Inf.beta")
+            cat("-Inf.beta \n")
         }
         if (is.na(aux) == FALSE && aux == Inf) {
             beta[i.b + 1, ] <- y.aux
             ind[i.b + 1] <- 1
-            print("Inf.beta")
+            cat("Inf.beta \n")
         }
         if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
             beta[i.b + 1, ] <- y.aux
@@ -934,17 +935,17 @@ MH.marginal.sigma2 <- function(N = 1, omega2, logt, X, beta, alpha,
             if (is.na(aux)) {
                 sigma2[i.s + 1] <- sigma2[i.s]
                 ind[i.s + 1] <- 0
-                print("NA.sigma2")
+                cat("NA.sigma2 \n")
             }
             if (is.na(aux) == FALSE && aux == -Inf) {
                 sigma2[i.s + 1] <- sigma2[i.s]
                 ind[i.s + 1] <- 0
-                print("-Inf.sigma2")
+                cat("-Inf.sigma2 \n")
             }
             if (is.na(aux) == FALSE && aux == Inf) {
                 sigma2[i.s + 1] <- y.aux
                 ind[i.s + 1] <- 1
-                print("Inf.sigma2")
+                cat("Inf.sigma2 \n")
             }
 
             if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
@@ -1017,17 +1018,17 @@ MH.marginal.alpha <- function(N = 1, omega2, logt, X, beta, sigma2,
             if (is.na(aux)) {
                 alpha[i.a + 1] <- alpha[i.a]
                 ind[i.a + 1] <- 0
-                print("NA.alpha")
+                cat("NA.alpha \n")
             }
             if (is.na(aux) == FALSE && aux == -Inf) {
                 alpha[i.a + 1] <- alpha[i.a]
                 ind[i.a + 1] <- 0
-                print("-Inf.alpha")
+                cat("-Inf.alpha \n")
             }
             if (is.na(aux) == FALSE && aux == Inf) {
                 alpha[i.a + 1] <- y.aux
                 ind[i.a + 1] <- 1
-                print("Inf.alpha")
+                cat("Inf.alpha \n")
             }
 
             if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
@@ -1228,13 +1229,13 @@ MCMC.LEP.NonAdapt <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             U[iter/thin + 1, ] <- U.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR beta", 1:k, ":", round(accept.beta/N, 2)))
-    print(paste("AR sigma2 :", round(accept.sigma2/N, 2)))
-    print(paste("AR alpha :", round(accept.alpha/N, 2)))
+    cat(paste("AR beta", 1:k, ":", round(accept.beta/N, 2), "\n"))
+    cat(paste("AR sigma2 :", round(accept.sigma2/N, 2), "\n"))
+    cat(paste("AR alpha :", round(accept.alpha/N, 2), "\n"))
 
     chain = cbind(beta, sigma2, alpha, U, logt)
     return(chain)
@@ -1314,13 +1315,13 @@ MCMCR.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             U[iter/thin + 1, ] <- U.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR beta", 1:k, ":", round(accept.beta/N, 2)))
-    print(paste("AR sigma2 :", round(accept.sigma2/N, 2)))
-    print(paste("AR alpha :", round(accept.alpha/N, 2)))
+    cat(paste("AR beta", 1:k, ":", round(accept.beta/N, 2), "\n"))
+    cat(paste("AR sigma2 :", round(accept.sigma2/N, 2), "\n"))
+    cat(paste("AR alpha :", round(accept.alpha/N, 2), "\n"))
 
     chain <- cbind(beta, sigma2, U, logt)
     return(chain)
@@ -1389,13 +1390,13 @@ MCMCR.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
             U[iter / thin + 1, ] <- U.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+           cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR beta", 1:k, ":", round(accept.beta/N, 2)))
-    print(paste("AR sigma2 :", round(accept.sigma2/N, 2)))
-    print(paste("AR alpha :", round(accept.alpha/N, 2)))
+    cat(paste("AR beta", 1:k, ":", round(accept.beta/N, 2), "\n"))
+    cat(paste("AR sigma2 :", round(accept.sigma2/N, 2), "\n"))
+    cat(paste("AR alpha :", round(accept.alpha/N, 2), "\n"))
 
     chain <- cbind(beta, U, logt)
     return(chain)
@@ -1468,13 +1469,13 @@ MCMCR.betaJ.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
             U[iter / thin + 1, ] <- U.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR beta", 1:k, ":", round(accept.beta / N, 2)))
-    print(paste("AR sigma2 :", round(accept.sigma2 / N, 2)))
-    print(paste("AR alpha :", round(accept.alpha / N, 2)))
+    cat(paste("AR beta", 1:k, ":", round(accept.beta / N, 2), "\n"))
+    cat(paste("AR sigma2 :", round(accept.sigma2 / N, 2), "\n"))
+    cat(paste("AR alpha :", round(accept.alpha / N, 2), "\n"))
 
     chain <- cbind(beta, U, logt)
     return(chain)
@@ -1606,13 +1607,13 @@ MCMCR.LEP.u.i = function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
             ls.alpha[iter / thin + 1] <- ls.alpha.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
-    print(paste("AR beta", 1 : k, ":", round(accept.beta / N, 2)))
-    print(paste("AR sigma2 :", round(accept.sigma2 / N, 2)))
-    print(paste("AR alpha :", round(accept.alpha / N, 2)))
+    cat(paste("AR beta", 1 : k, ":", round(accept.beta / N, 2), "\n"))
+    cat(paste("AR sigma2 :", round(accept.sigma2 / N, 2), "\n"))
+    cat(paste("AR alpha :", round(accept.alpha / N, 2), "\n"))
 
     chain <- cbind(beta, sigma2, alpha, U, logt, ls.beta, ls.sigma2, ls.alpha)
     return(chain)
@@ -1658,7 +1659,8 @@ Post.u.obs.LEP <- function(obs, ref, X, chain) {
 CFP.obs.LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain, prior,
                         set, eps_l, eps_r, ar = 0.44) {
     N.aux <- dim(chain)[1]
-    k <- dim(X)[2]
+    k <- ncol(X)
+    n <- nrow(X)
     chain1 <- MCMCR.LEP.u.i(ref, obs, N, thin, Time, Cens, X,
                             beta0 = as.vector(chain[N.aux, 1:k]),
                             sigma20 = chain[N.aux, (k + 1)],
@@ -1862,7 +1864,7 @@ MCMCR.sigma2.LLOG <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, logt0,
             lambda[iter / thin + 1, ] <- lambda.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
-            print(paste("Iteration :", iter))
+            cat(paste("Iteration :", iter, "\n"))
         }
     }
 
@@ -1881,8 +1883,6 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
     if (is.matrix(X) == F){
         stop("X is not a matrix. \n")
     }
-
-
 
     # Check N is a  0 < integer{
     if (N <= 0 | N %% 1 != 0 ){
@@ -1911,7 +1911,6 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
         stop ("Cens is not the correct length. \n")
     }
 
-
     if (length(beta0) != num.covariates){
         stop ("beta0 is not the correct length. \n")
     }
@@ -1929,4 +1928,34 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
     if (thin == 0){cat(paste0("Note! No thinning period is being used! \n"))}
     if (burn == 0){cat(paste0("Note! No burn-in period is being used! \n"))}
 
+}
+
+beta.sample <- function(n){
+    cat("Sampling initial betas from a Normal(0, 1) distribution \n")
+    betas <- stats::rnorm(n, 0, 1)
+    cat(paste("Initial beta", 1:length(betas), ":", round(betas, 2), "\n"))
+    cat("\n")
+    return(betas)
+}
+
+sigma2.sample <- function(){
+    cat("Sampling initial sigma^2 from a Gamma(2, 2) distribution \n")
+    sigma2 <- stats::rgamma(1, 2, 2)
+    cat(paste("Initial sigma^2 :", round(sigma2, 2), "\n\n"))
+    return(sigma2)
+}
+
+nu.sample <- function(){
+    cat("Sampling initial nu from a Gamma(2, 2) distribution \n")
+    nu <- stats::rgamma(1, 2, 2)
+    cat(paste("Initial nu :", round(nu, 2), "\n\n"))
+    return(nu)
+
+}
+
+alpha.sample <- function(){
+    cat("Sampling initial alpha from a Uniform(1, 2) distribution \n")
+    alpha <- stats::runif(1, 1, 2)
+    cat(paste("Initial alpha :", round(alpha, 2), "\n\n"))
+    return(alpha)
 }

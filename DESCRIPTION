@@ -1,20 +1,17 @@
 Package: BASSLINE
 Type: Package
-Title: BAyeSian Survival anaLysIs usiNg shapE mixtures of log-normal distributions
-Version: 0.0.0.9002
-Authors@R: c(person("Nathan","Constantine-Cooke",
-  email="nathan.constantine-cooke@ed.ac.uk", role = c("cre","aut")),
-  person("Catalina", "Vallejos", role = c("aut"),
-        email="catalina.vallejos@igmm.ed.ac.uk"))
+Title: Bayesian Survival Analysis Using Shape Mixtures of Log-Normal Distributions
+Version: 0.0.0.9003
+Authors@R: c(person("Catalina", "Vallejos", role = c("aut"),
+        email="catalina.vallejos@igmm.ed.ac.uk"),
+        person("Nathan","Constantine-Cooke", role = c("cre","aut"),
+        email="nathan.constantine-cooke@ed.ac.uk"))
 Description: Mixtures of life distributions provide a convienient framework for
-    survival analysis: particularly when standard models such as the Weibull or
-    the log-normal are unable to capture some features from the data. These
-    mixtures can also account for unobserved heterogeneity or outlying
-    observations.
-    BASSLINE uses shape mixtures of log-normal distributions to fit data with
-    various tail behaviour. Accelerated failure time (AFT) regressions are used
-    over proportional hazard models as AFT provides a clearer interpretation of
-    the regression parameters.  
+    survival analysis: particularly when standard models such as the Weibull 
+    are unable to capture some features from the data. These mixtures can also
+    account for unobserved heterogeneity or outlying observations.
+    BASSLINE uses shape mixtures of log-normal distributions and has particular 
+    applicability to data with fat tails. 
 License: GPL-3
 Depends: R (>= 3.5.0)
 Imports: 
@@ -23,11 +20,13 @@ Imports:
     VGAM,
     MCMCpack,
     mvtnorm,
-    Rcpp
+    Rcpp,
+    ggplot2
 Suggests: 
     testthat,
     knitr,
-    rmarkdown
+    rmarkdown,
+    forecast
 LazyData: true
 URL: https://github.com/nathansam/BASSLINE
 BugReports: https://github.com/nathansam/BASSLINE/issues
