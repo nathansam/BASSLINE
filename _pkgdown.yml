@@ -4,3 +4,53 @@ template:
 destination: docs
 development:
   mode: auto
+reference:
+- title: "Log-Normal Model"
+  desc: "Functions for the log-normal model"
+  contents:
+    - MCMC_LN
+    - LML_LN
+    - DIC_LN
+    - CaseDeletion_LN
+
+- title: "Log-Student's t Model"
+  desc: "Functions for the log-student's t model"
+  contents:
+    - MCMC_LST
+    - LML_LST
+    - DIC_LST
+    - CaseDeletion_LST
+    - BF_lambda_obs_LST
+
+- title: "Log-Laplace Model"
+  desc: "Functions for the log-Laplace model"
+  contents:
+    - MCMC_LLAP
+    - LML_LLAP
+    - DIC_LLAP
+    - CaseDeletion_LLAP
+    - BF_lambda_obs_LLAP
+
+- title: "Log-Exponential Power Model"
+  desc: "Functions for the log-exponential power model"
+  contents:
+    - MCMC_LEP
+    - LML_LEP
+    - DIC_LEP
+    - CaseDeletion_LEP
+    - BF_u_obs_LEP
+  
+- title: "Log-Logistic Model"
+  desc: "Functions for the log-logistic model"
+  contents:
+    - MCMC_LLOG
+    - LML_LLOG
+    - DIC_LLOG
+    - CaseDeletion_LLOG
+    - BF_lambda_obs_LLOG
+    
+- title: "Miscellaneous"
+  desc: "Additional documentation"
+  contents:
+    - Trace_Plot
+    - cancer
