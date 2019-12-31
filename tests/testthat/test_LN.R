@@ -1,5 +1,6 @@
 test_that("MCMC_LN Converges",{
-  set.seed(123)
+  set.seed(123, kind = "Mersenne-Twister", normal.kind = "Inversion",
+           sample.kind = "Rejection")
 
   LN.chain <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = c(5,10),
                       Cens = c(1,0), X = matrix(c(1,2,3,4), nrow = 2))
@@ -9,7 +10,8 @@ test_that("MCMC_LN Converges",{
 
 
 test_that("LML_LN Returns Expected Result",{
-  set.seed(123)
+  set.seed(123, kind = "Mersenne-Twister", normal.kind = "Inversion",
+           sample.kind = "Rejection")
   LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                 Cens = cancer[,2], X = cancer[,3:11])
   LN.LML <- LML_LN(thin = 20, Time = cancer[,1], Cens = cancer[,2],
@@ -20,16 +22,18 @@ test_that("LML_LN Returns Expected Result",{
 })
 
 test_that("DIC_LN Returns Expected Result",{
-  set.seed(123)
+  set.seed(123, kind = "Mersenne-Twister", normal.kind = "Inversion",
+           sample.kind = "Rejection")
   LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                 Cens = cancer[,2], X = cancer[,3:11])
   LN.DIC <- DIC_LN(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
                    chain = LN)
-  testthat::expect_equal(LN.DIC, 1445.12159675862)
+  testthat::expect_equal(round(LN.DIC, 4), 1445.1216)
 })
 
 test_that("CaseDeletion_LN Returns Expected Result",{
-  set.seed(123)
+  set.seed(123, kind = "Mersenne-Twister", normal.kind = "Inversion",
+           sample.kind = "Rejection")
   LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                 Cens = cancer[,2], X = cancer[,3:11])
   LN.CD <- CaseDeletion_LN(Time = cancer[,1], Cens = cancer[,2],
