@@ -47,13 +47,13 @@ Log-marginal likelihood estimator for the log-exponential power model
 \examples{
 library(BASSLINE)
 
-# Please note: N=1000 is not enough to reach convergence.
+# Please note: N=100 is not enough to reach convergence.
 # This is only an illustration. Run longer chains for more accurate
 # estimations (especially for the log-exponential power model).
 
-LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+LEP <- MCMC_LEP(N = 100, thin = 2, burn = 20, Time = cancer[,1],
                 Cens = cancer[,2], X = cancer[,3:11])
-LEP.LML <- LML_LEP(thin = 20, Time = cancer[,1], Cens = cancer[,2],
+LEP.LML <- LML_LEP(thin = 2, Time = cancer[,1], Cens = cancer[,2],
                    X = cancer[,3:11], chain = LEP)
 
 }
