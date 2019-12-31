@@ -21,11 +21,23 @@ test_that("Prior_LN returns expected value for prior = 2",{
 
 })
 
+test_that("Prior_LN returns expected value for prior = 3 & logs = FALSE",{
+
+  beta <- c(4,1,4)
+  sigma2 <- 0.1
+  p <- 1
+  aux <- -p * sigma2
+  expect_equivalent(prior_LN(beta = c(4,1,4), sigma2 = 0.1, prior = 3,
+                             logs = F), aux )
+
+})
+
+
 
 test_that("IIJ_nu same result in C++ as in R",{
   nu <- seq(1,10)
   aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) -trigamma((nu + 1) / 2) -
-          (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
+                                     (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
   expect_equivalent(IIJ_nu(nu), aux)
 })
 
