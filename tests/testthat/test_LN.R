@@ -8,7 +8,8 @@ test_that("MCMC_LN Converges",{
 
 
 test_that("LML_LN Returns Expected Result",{
-  if(.Machine$sizeof.pointer == 8){
+  if(.Machine$sizeof.pointer == 8 && .Platform$OS.type != "unix"){
+
     set.seed(123)
     LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
@@ -21,9 +22,9 @@ test_that("LML_LN Returns Expected Result",{
 })
 
 test_that("DIC_LN Returns Expected Result",{
-  if(.Machine$sizeof.pointer == 8){
+  if(.Machine$sizeof.pointer == 8 && .Platform$OS.type != "unix"){
     set.seed(123)
-    
+
     LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
     LN.DIC <- DIC_LN(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
@@ -33,7 +34,8 @@ test_that("DIC_LN Returns Expected Result",{
 })
 
 test_that("CaseDeletion_LN Returns Expected Result",{
-  if(.Machine$sizeof.pointer == 8){
+
+  if(.Machine$sizeof.pointer == 8 && .Platform$OS.type != "unix"){
     set.seed(123)
     LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
@@ -42,5 +44,5 @@ test_that("CaseDeletion_LN Returns Expected Result",{
     means <- round(c(mean(LN.CD[,1]), mean(LN.CD[,2]), mean(LN.CD[,3])), 4)
     testthat::expect_equal(means, c(-5.312, 0.0487, 0.6068))}
 })
-  
+
 
