@@ -1,3 +1,11 @@
+## BASSLINE 0.0.0.9004 (YYYY-MM-DD)
+
+### Patch notes 
+
+* Changed N = 1000 to N = 100 (and thin to 2 and burn to 20) in example for
+`LML_LEP` to reduce running times. 
+* Added additonal tests
+
 ## BASSLINE 0.0.0.9003 (2019-12-28)
 
 The main focus of this update has been to improve documentation and ease of use. 
