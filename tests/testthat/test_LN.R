@@ -42,3 +42,5 @@ test_that("CaseDeletion_LN Returns Expected Result",{
     means <- round(c(mean(LN.CD[,1]), mean(LN.CD[,2]), mean(LN.CD[,3])), 4)
     testthat::expect_equal(means, c(-5.312, 0.0487, 0.6068))}
 })
+  
+
