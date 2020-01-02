@@ -20,8 +20,8 @@ the number of observations and \eqn{k} is the number of covariates
 \description{
 This returns a unique number corresponding to the Bayes Factor
 associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
-\eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
-\eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+\eqn{M_1: \Lambda_{obs}\neq \lambda_{ref}} (with all other
+\eqn{\Lambda_j,\neq obs} free). The value of \eqn{\lambda_{ref}} is
 required as input. The user should expect long running times for the
 log-Student’s t model, in which case a reduced chain given
 \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated

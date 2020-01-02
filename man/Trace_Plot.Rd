@@ -4,7 +4,7 @@
 \alias{Trace_Plot}
 \title{Produce a trace plot of an observation's MCMC chain}
 \usage{
-Trace_Plot(obs, chain)
+Trace_Plot(obs = NULL, chain = NULL)
 }
 \arguments{
 \item{obs}{Indicates the number of the observation under analysis}

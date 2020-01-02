@@ -5,7 +5,7 @@ test_that("Check for when N is negative",{
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r =1),
-                         "N should be an integer greater than zero. \n")
+                         "N should be an integer greater than zero.\n")
 })
 
 test_that("Check for when N is zero",{
@@ -15,7 +15,7 @@ test_that("Check for when N is zero",{
                                           beta0 = c(0.2, 0.2), sigma20 = 1,
                                            prior = 1, set = 1,
                                           eps_l = 0.5, eps_r = 0.5),
-                         "N should be an integer greater than zero. \n")
+                         "N should be an integer greater than zero.\n")
 })
 
 test_that("Check for when N is not an integer",{
@@ -25,7 +25,7 @@ test_that("Check for when N is not an integer",{
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 = 1, prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "N should be an integer greater than zero. \n")
+                         "N should be an integer greater than zero.\n")
 })
 
 
@@ -36,7 +36,7 @@ test_that("Check for when thin is negative",{
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 =  1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "thin should be a integer > 2. \n")
+                         "thin should be a integer > 2.\n")
 })
 
 test_that("Check for when N is less than thin",{
@@ -46,7 +46,7 @@ test_that("Check for when N is less than thin",{
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 =  1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "N is less than thin \n")
+                         "N is less than thin\n")
 })
 
 
@@ -58,7 +58,7 @@ test_that("Check for when burn is negative",{
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "burn should be a non-negative integer. \n")
+                         "burn should be a non-negative integer.\n")
 })
 
 test_that("Check for when Time is negative",{
@@ -68,7 +68,7 @@ test_that("Check for when Time is negative",{
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "All values in Time should be non-negative. \n")
+                         "All values in Time should be non-negative.\n")
 })
 
 
@@ -79,7 +79,7 @@ test_that("Check for when Time is not of correct length",{
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
                                           set = 1, eps_l =1, eps_r =1),
-                         "Time is not the correct length. \n")
+                         "Time is not the correct length.\n")
 })
 
 
@@ -90,7 +90,7 @@ test_that("Check for when Cens is not 0/1",{
                                           beta0 = c(0.2, 0.2), sigma20 = 1,
                                           prior = 1, set = 1,
                                           eps_l = 0.5, eps_r = 0.5),
-                         "Cens should be either 0 or 1 for each observation \n")
+                         "Cens should be either 0 or 1 for each observation\n")
 })
 
 test_that("Check for when Cens is not of correct length",{
@@ -100,7 +100,7 @@ test_that("Check for when Cens is not of correct length",{
                                           X = mat, beta0 =  c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "Cens is not the correct length. \n")
+                         "Cens is not the correct length.\n")
 })
 
 
@@ -110,7 +110,7 @@ test_that("Check for when X is not a matrix",{
                                           X = c(0,1,0,0,1), beta0 = c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "X is not a matrix. \n")
+                         "X is not a matrix.\n")
 })
 
 test_that("Check for when beta0 is not of correct length",{
@@ -120,7 +120,7 @@ test_that("Check for when beta0 is not of correct length",{
                                           beta0 = c(0.2,0.2,0.3), sigma20 = 1,
                                           prior = 1, set = 1,
                                           eps_l = 0.5, eps_r = 0.5),
-                         "beta0 is not the correct length. \n")
+                         "beta0 is not the correct length.\n")
 })
 
 test_that("Check for when prior is not an expected value",{
@@ -130,7 +130,7 @@ test_that("Check for when prior is not an expected value",{
                                           beta0 = c(0.2, 0.2), sigma20 = 1,
                                           prior = 4, set = 1,
                                           eps_l = 0.5, eps_r = 0.5),
-                         "prior should be 1, 2 or 3. See documentation \n")
+                         "prior should be 1, 2 or 3. See documentation\n")
 })
 
 test_that("Check for when set is not an expected value",{
@@ -140,7 +140,7 @@ test_that("Check for when set is not an expected value",{
                                           beta0 =  c(0.2, 0.2), sigma20 = 1,
                                           prior = 1, set = 4,
                                           eps_l = 0.5, eps_r = 0.5),
-                         "set should be 1 or 2. See documentation \n")
+                         "set should be 1 or 2. See documentation\n")
 })
 
 test_that("Check for all values are correct",{

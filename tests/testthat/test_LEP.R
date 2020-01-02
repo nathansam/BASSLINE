@@ -1,3 +1,14 @@
+test_that("expected value for prior.LEP when log = FALSE",{
+  prior.val <- prior.LEP(0.5, 1, 1, 2, F)
+  expect_equivalent(round(prior.val, 4), -1.3209)
+})
+
+test_that("expected value for prior.LEP when log = TRUE",{
+  prior.val <- prior.LEP(0.5, 1, 1, 2, T)
+  expect_equivalent(round(prior.val, 4), 0.2783)
+})
+
+
 test_that("II_alpha same result in C++ as in R",{
   set.seed(1)
   II.alpha <- function(alpha) {

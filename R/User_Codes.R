@@ -149,12 +149,12 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1 , eps_l = 0.5,
     # LIKELIHOOD ORDINATE
     LL.ord <- log.lik.LN(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
                         set, eps_l, eps_r)
-    cat("Likelihood ordinate ready! \n")
+    cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
     LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
                       logs = TRUE)
-    cat("Prior ordinate ready! \n")
+    cat("Prior ordinate ready!\n")
 
     # POSTERIOR ORDINATE - sigma2
     shape <- (n + 2 * p - 2)/2
@@ -167,7 +167,7 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1 , eps_l = 0.5,
                                            scale = rate.aux)
     }
     PO.sigma2 <- mean(po.sigma2)
-    cat("Posterior ordinate sigma2 ready! \n")
+    cat("Posterior ordinate sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - beta
     chain.beta <- MCMCR.sigma2.LN(N = N * thin, thin = thin, Time, Cens, X,
@@ -184,7 +184,7 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1 , eps_l = 0.5,
                              sigma = sigma2.star * aux1.beta)
     }
     PO.beta <- mean(po.beta)
-    cat("Posterior ordinate beta ready! \n")
+    cat("Posterior ordinate beta ready!\n")
 
     # TAKING LOGARITHM
     LPO.sigma2 <- log(PO.sigma2)
@@ -496,12 +496,12 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     # Log-LIKELIHOOD ORDINATE
     LL.ord <- log.lik.LST(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
                           nu = nu.star, set, eps_l, eps_r)
-    cat("Likelihood ordinate ready! \n")
+    cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
     LP.ord <- prior.LST(beta = beta.star, sigma2 = sigma2.star, nu = nu.star,
                        prior, log = TRUE)
-    cat("Prior ordinate ready! \n")
+    cat("Prior ordinate ready!\n")
 
 
     logt0 <- t(chain.nonadapt[N, (n + k + 3):(2 * n + k + 2)])
@@ -513,7 +513,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                                  nu0 = nu.star, logt0 = logt0,
                                  lambda0 = lambda0, prior = prior, set, eps_l,
                                  eps_r)
-    cat("Reduced chain.sigma2 ready! \n")
+    cat("Reduced chain.sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - nu
     # USING AN ADAPTATION of the CHIB AND JELIAZKOV (2001) METHODOLOGY
@@ -536,7 +536,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                               k = k, prior = prior)
     }
     PO.nu <- mean(po1.nu)/mean(po2.nu)
-    cat("Posterior ordinate nu ready! \n")
+    cat("Posterior ordinate nu ready!\n")
 
     # POSTERIOR ORDINATE - sigma 2
     shape <- (n + 2 * p - 2)/2
@@ -550,7 +550,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                                             scale = rate.aux)
     }
     PO.sigma2 <- mean(po.sigma2)
-    cat("Posterior ordinate sigma2 ready! \n")
+    cat("Posterior ordinate sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - beta
     logt0 <- t(chain.nonadapt[N, (n + k + 3):(2 * n + k + 2)])
@@ -563,7 +563,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                                       logt0 = logt0, lambda0 = lambda0, prior,
                                       set, eps_l, eps_r)
 
-    cat("Reduced chain.beta ready! \n")
+    cat("Reduced chain.beta ready!\n")
     po.beta <- rep(0, times = N)
     for (i in 1:N) {
         aux0.beta <- diag(as.vector(t(chain.beta[(i + 1), (k + 1):(k + n)])))
@@ -576,7 +576,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                                        log = FALSE)
     }
     PO.beta <- mean(po.beta)
-    cat("Posterior ordinate beta ready! \n")
+    cat("Posterior ordinate beta ready!\n")
 
     # TAKING LOGARITHM
     LPO.nu <- log(PO.nu)
@@ -693,8 +693,8 @@ CaseDeletion_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' @title Outlier detection for observation for the log-student's t model
 #' @description This returns a unique number corresponding to the Bayes Factor
 #'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     \eqn{M_1: \Lambda_{obs}\neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j,\neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
 #'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
@@ -886,12 +886,12 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     # LIKELIHOOD ORDINATE
     LL.ord <- log.lik.LLAP(Time, Cens, X, beta = beta.star,
                            sigma2 = sigma2.star, set, eps_l, eps_r)
-    cat("Likelihood ordinate ready! \n")
+    cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
     LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star,
                        prior = prior, logs = TRUE)
-    cat("Prior ordinate ready! \n")
+    cat("Prior ordinate ready!\n")
 
     # POSTERIOR ORDINATE - sigma 2
     shape <- (n + 2 * p - 2)/2
@@ -906,7 +906,7 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                                             scale = rate.aux)
     }
     PO.sigma2 <- mean(po.sigma2)
-    cat("Posterior ordinate sigma2 ready! \n")
+    cat("Posterior ordinate sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - beta
     logt0 <- t(chain[N, (n + k + 2):(2 * n + k + 1)])
@@ -916,7 +916,7 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                                     logt0 = logt0,
                                     lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
                                     prior = prior,set, eps_l, eps_r)
-    cat("Reduced chain.beta ready! \n")
+    cat("Reduced chain.beta ready!\n")
 
     po.beta <- rep(0, times = N)
     for (i in 1:N) {
@@ -929,7 +929,7 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                                       sigma = sigma2.star * aux1.beta)
     }
     PO.beta <- mean(po.beta)
-    cat("Posterior ordinate beta ready! \n")
+    cat("Posterior ordinate beta ready!\n")
 
     # TAKING LOGARITHM
     LPO.sigma2 <- log(PO.sigma2)
@@ -1045,8 +1045,8 @@ CaseDeletion_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' @title Outlier detection for observation for the log-Laplace model
 #' @description This returns a unique number corresponding to the Bayes Factor
 #'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     \eqn{M_1: \Lambda_{obs}\neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j,\neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
 #'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
@@ -1328,12 +1328,12 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
     # Log-LIKELIHOOD ORDINATE
     LL.ord <- log.lik.LEP(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
                           alpha = alpha.star, set, eps_l, eps_r)
-    cat("Likelihood ordinate ready! \n")
+    cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
     LP.ord <- prior.LEP(beta = beta.star, sigma2 = sigma2.star,
                        alpha = alpha.star, prior, log = TRUE)
-    cat("Prior ordinate ready! \n")
+    cat("Prior ordinate ready!\n")
 
     chain.sigma2 <- MCMCR.alpha.LEP(N = N * thin, thin = thin, Time, Cens, X,
                                     beta0 = as.vector(chain.nonadapt[N, 1:k]),
@@ -1345,7 +1345,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                                           (k + 3):(k + 2 + n)]),
                                     prior, set, eps_l, eps_r,
                                     omega2.beta, omega2.sigma2)
-    cat("Reduced chain.sigma2 ready! \n")
+    cat("Reduced chain.sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - alpha
     # USING AN ADAPTATION of the CHIB AND JELIAZKOV (2001) METHODOLOGY
@@ -1374,7 +1374,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                     prior = prior)
     }
     PO.alpha <- mean(po1.alpha)/mean(po2.alpha)
-    cat("Posterior ordinate alpha ready! \n")
+    cat("Posterior ordinate alpha ready!\n")
 
     chain.beta <- MCMCR.sigma2.alpha.LEP(N = N * thin, thin = thin, Time, Cens,
                                         X,
@@ -1386,7 +1386,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                         u0 = t(chain.nonadapt[N, (k + 3) :
                                                                   (k + 2 + n)]),
                                         prior, set, eps_l, eps_r, omega2.beta)
-    cat("Reduced chain.beta ready \n!")
+    cat("Reduced chain.beta ready\n!")
 
     # POSTERIOR ORDINATE - sigma2
     po1.sigma2 <- rep(0, times = N)
@@ -1417,7 +1417,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                       prior = prior)
     }
     PO.sigma2 <- mean(po1.sigma2)/mean(po2.sigma2)
-    cat("Posterior ordinate sigma2 ready! \n")
+    cat("Posterior ordinate sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - beta
     chain.prev <- chain.beta
@@ -1470,7 +1470,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
 
         chain.prev <- chain.next
     }
-    cat("Posterior ordinate beta ready! \n")
+    cat("Posterior ordinate beta ready!\n")
 
     # TAKING LOGARITHM
     LPO.alpha <- log(PO.alpha)
@@ -1589,8 +1589,8 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' @title Outlier detection for observation for the log-exponential power model
 #' @description This returns a unique number corresponding to the Bayes Factor
 #'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     \eqn{M_1: \Lambda_{obs}\neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j,\neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
 #'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
@@ -1787,12 +1787,12 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
     # LIKELIHOOD ORDINATE
     LL.ord <- log.lik.LLOG(Time, Cens, X, beta = beta.star,
                            sigma2 = sigma2.star, set, eps_l, eps_r)
-    cat("Likelihood ordinate ready! \n")
+    cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
     LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
                       logs = TRUE)
-    cat("Prior ordinate ready! \n")
+    cat("Prior ordinate ready!\n")
 
     # POSTERIOR ORDINATE - sigma 2
     shape <- (n + 2 * p - 2)/2
@@ -1806,7 +1806,7 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
                                             scale = rate.aux)
     }
     PO.sigma2 <- mean(po.sigma2)
-    cat("Posterior ordinate sigma2 ready! \n")
+    cat("Posterior ordinate sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - beta
     chain.beta <- MCMCR.sigma2.LLOG(N = N * thin, thin = thin, Q, Time, Cens, X,
@@ -1816,7 +1816,7 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
                                                             (2 * n + k + 1)]),
                                     lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
                                     prior = prior, set, eps_l, eps_r, N.AKS)
-    cat("Reduced chain.beta ready! \n")
+    cat("Reduced chain.beta ready!\n")
 
     po.beta <- rep(0, times = N)
     for (i in 1:N) {
@@ -1830,7 +1830,7 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
                                        sigma = sigma2.star * aux1.beta)
     }
     PO.beta <- mean(po.beta)
-    cat("Posterior ordinate beta ready! \n")
+    cat("Posterior ordinate beta ready!\n")
 
     # TAKING LOGARITHM
     LPO.sigma2 <- log(PO.sigma2)
@@ -1944,8 +1944,8 @@ CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' @title Outlier detection for observation for the log-logisitc model
 #' @description This returns a unique number corresponding to the Bayes Factor
 #'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
-#'     \eqn{M_1: \Lambda_{obs} \neq \lambda_{ref}} (with all other
-#'     \eqn{\Lambda_j, \neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     \eqn{M_1: \Lambda_{obs}\neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j,\neq obs} free). The value of \eqn{\lambda_{ref}} is
 #'     required as input. The user should expect long running times for the
 #'     log-Student’s t model, in which case a reduced chain given
 #'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
@@ -2005,7 +2005,9 @@ BF_lambda_obs_LLOG <- function(ref, obs, X, chain) {
 #' Trace_Plot(1, LN)
 #'
 #' @export
-Trace_Plot <- function(obs, chain){
+Trace_Plot <- function(obs = NULL, chain = NULL){
+    if (is.null(obs) | is.null(chain)) stop("obs and chain must be provided\n")
+
     Iteration <- Value <- NULL
     df <- data.frame(Iteration = seq(ncol(chain)), Value = chain[obs,])
     p <- ggplot2::ggplot(ggplot2::aes(x = Iteration, y = Value), data = df)
