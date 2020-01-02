@@ -1884,14 +1884,19 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
         stop("X is not a matrix. \n")
     }
 
-    # Check N is a  0 < integer{
+    # Check N is a  0 < integer
     if (N <= 0 | N %% 1 != 0 ){
         stop("N should be an integer greater than zero. \n")
     }
 
-    if (thin < 0 | thin %% 1 != 0){
-        stop ("thin should be a non-negative integer. \n")
+    if (thin < 2 | thin %% 1 != 0){
+        stop ("thin should be a integer > 2. \n")
     }
+
+    if (N < thin){
+        stop ("N is less than thin \n")
+    }
+
 
     if (burn < 0 | burn %% 1 != 0){
         stop ("burn should be a non-negative integer. \n")
@@ -1923,9 +1928,6 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
         stop("set should be 1 or 2. See documentation \n")
     }
 
-
-
-    if (thin == 0){cat(paste0("Note! No thinning period is being used! \n"))}
     if (burn == 0){cat(paste0("Note! No burn-in period is being used! \n"))}
 
 }
