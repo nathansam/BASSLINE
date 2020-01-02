@@ -255,7 +255,7 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0,
         Sigma.aux <- sigma2.aux * solve(t(X) %*% X)
         beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
 
-        logt.aux = logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
+        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
                                     eps_l, eps_r)
 
         if (iter%%thin == 0) {
@@ -358,7 +358,7 @@ log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
 #### VALUES FOR THE VARIANCES OF THE GAUSSIAN PROPOSALS (REQUIRED FOR ML.LST
 #### FUNCTION ONLY)
 
-MCMC.LST.NonAdapt = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
+MCMC.LST.NonAdapt <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
                              prior, set, eps_l, eps_r, omega2.nu) {
     k <- length(beta0)
     n <- length(Time)
@@ -1379,7 +1379,7 @@ MCMCR.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
             }
         }
 
-        a = ((abs(logt.aux - X %*% beta.aux)) / sqrt(sigma2.aux)) ^ alpha.aux
+        a <- ((abs(logt.aux - X %*% beta.aux)) / sqrt(sigma2.aux)) ^ alpha.aux
         U.aux <- -log(1 - stats::runif(n)) + a
 
         logt.aux <- logt.update.LEP(Time, Cens, X, beta.aux, sigma2.aux,
@@ -1485,7 +1485,7 @@ MCMCR.betaJ.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
 #### REDUCED CHAIN GIVEN A FIXED VALUE OF U[i]
 #### (REQUIRED FOR BF.lambda.i.LEP ONLY)
 
-MCMCR.LEP.u.i = function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
+MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
                          alpha0, u0, prior, set, eps_l, eps_r, ar = 0.44) {
     k <- length(beta0)
     n <- length(Time)

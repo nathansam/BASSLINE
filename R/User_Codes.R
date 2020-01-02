@@ -218,7 +218,7 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1 , eps_l = 0.5,
 #'
 #' @export
 
-DIC_LN = function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
+DIC_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
@@ -773,7 +773,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     n <- length(Time)
     N.aux <- round(N/thin, 0)
     if (prior == 1) {
-        p = 1 + k/2
+        p <- 1 + k/2
     }
     if (prior == 2) {
         p <- 1
@@ -1135,13 +1135,13 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
     n <- length(Time)
     N.aux <- round(N/thin, 0)
     if (prior == 1) {
-        p = 1 + k/2
+        p <- 1 + k/2
     }
     if (prior == 2) {
-        p = 1
+        p <- 1
     }
     if (prior == 3) {
-        p = 1
+        p <- 1
     }
 
     beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
@@ -1504,7 +1504,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
 #'                    chain = LEP)
 #'
 #' @export
-DIC_LEP = function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
+DIC_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
@@ -1581,7 +1581,7 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
         }
     }
     KL <- abs(KL.aux - logCPO)
-    CALIBRATION = 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
+    CALIBRATION <- 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
     return(cbind(logCPO, KL, CALIBRATION))
 }
 
@@ -1721,14 +1721,14 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
             }
         }
 
-        logt.aux = logt.update.SMLN(Time, Cens, X, beta.aux,
-                                    sigma2.aux/lambda.aux, set, eps_l, eps_r)
+        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux,
+                                     sigma2.aux/lambda.aux, set, eps_l, eps_r)
 
         if (iter%%thin == 0) {
-            beta[iter/thin + 1, ] = beta.aux
-            sigma2[iter/thin + 1] = sigma2.aux
-            logt[iter/thin + 1, ] = logt.aux
-            lambda[iter/thin + 1, ] = lambda.aux
+            beta[iter/thin + 1, ] <- beta.aux
+            sigma2[iter/thin + 1] <- sigma2.aux
+            logt[iter/thin + 1, ] <- logt.aux
+            lambda[iter/thin + 1, ] <- lambda.aux
         }
         if ((iter - 1)%%1e+05 == 0) {
             cat(paste("Iteration :", iter, '\n'))
