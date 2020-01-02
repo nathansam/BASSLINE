@@ -120,3 +120,4 @@ test_that("log.lik.LN returns expected values for set = 1",{
     expect_equal(round(lik,4), -1926.7085)
   }
 })
+
