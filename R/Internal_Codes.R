@@ -34,10 +34,11 @@
 #    return(aux)
 #}
 prior.nu <- function(nu, prior) {
-    if (prior == 2)
+    if (prior == 2){
         aux <- IIJ_nu(nu) / stats::integrate(IIJ_nu, lower = 0,
                                              upper = Inf)$value
-    return(aux)
+        return(aux)
+    }
 }
 prior.LST <- function(beta, sigma2, nu, prior, log) {
     if (log == FALSE) {
@@ -254,7 +255,7 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0,
         Sigma.aux <- sigma2.aux * solve(t(X) %*% X)
         beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
 
-        logt.aux = logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
+        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
                                     eps_l, eps_r)
 
         if (iter%%thin == 0) {
@@ -357,7 +358,7 @@ log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
 #### VALUES FOR THE VARIANCES OF THE GAUSSIAN PROPOSALS (REQUIRED FOR ML.LST
 #### FUNCTION ONLY)
 
-MCMC.LST.NonAdapt = function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
+MCMC.LST.NonAdapt <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
                              prior, set, eps_l, eps_r, omega2.nu) {
     k <- length(beta0)
     n <- length(Time)
@@ -863,17 +864,17 @@ MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
         if (is.na(aux)) {
             beta[i.b + 1, ] <- beta[i.b, ]
             ind[i.b + 1] <- 0
-            cat("NA.beta \n")
+            cat("NA.beta\n")
         }
         if (is.na(aux) == FALSE && aux == -Inf) {
             beta[i.b + 1, ] <- beta[i.b, ]
             ind[i.b + 1] <- 0
-            cat("-Inf.beta \n")
+            cat("-Inf.beta\n")
         }
         if (is.na(aux) == FALSE && aux == Inf) {
             beta[i.b + 1, ] <- y.aux
             ind[i.b + 1] <- 1
-            cat("Inf.beta \n")
+            cat("Inf.beta\n")
         }
         if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
             beta[i.b + 1, ] <- y.aux
@@ -935,17 +936,17 @@ MH.marginal.sigma2 <- function(N = 1, omega2, logt, X, beta, alpha,
             if (is.na(aux)) {
                 sigma2[i.s + 1] <- sigma2[i.s]
                 ind[i.s + 1] <- 0
-                cat("NA.sigma2 \n")
+                cat("NA.sigma2\n")
             }
             if (is.na(aux) == FALSE && aux == -Inf) {
                 sigma2[i.s + 1] <- sigma2[i.s]
                 ind[i.s + 1] <- 0
-                cat("-Inf.sigma2 \n")
+                cat("-Inf.sigma2\n")
             }
             if (is.na(aux) == FALSE && aux == Inf) {
                 sigma2[i.s + 1] <- y.aux
                 ind[i.s + 1] <- 1
-                cat("Inf.sigma2 \n")
+                cat("Inf.sigma2\n")
             }
 
             if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
@@ -1018,17 +1019,17 @@ MH.marginal.alpha <- function(N = 1, omega2, logt, X, beta, sigma2,
             if (is.na(aux)) {
                 alpha[i.a + 1] <- alpha[i.a]
                 ind[i.a + 1] <- 0
-                cat("NA.alpha \n")
+                cat("NA.alpha\n")
             }
             if (is.na(aux) == FALSE && aux == -Inf) {
                 alpha[i.a + 1] <- alpha[i.a]
                 ind[i.a + 1] <- 0
-                cat("-Inf.alpha \n")
+                cat("-Inf.alpha\n")
             }
             if (is.na(aux) == FALSE && aux == Inf) {
                 alpha[i.a + 1] <- y.aux
                 ind[i.a + 1] <- 1
-                cat("Inf.alpha \n")
+                cat("Inf.alpha\n")
             }
 
             if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
@@ -1378,7 +1379,7 @@ MCMCR.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
             }
         }
 
-        a = ((abs(logt.aux - X %*% beta.aux)) / sqrt(sigma2.aux)) ^ alpha.aux
+        a <- ((abs(logt.aux - X %*% beta.aux)) / sqrt(sigma2.aux)) ^ alpha.aux
         U.aux <- -log(1 - stats::runif(n)) + a
 
         logt.aux <- logt.update.LEP(Time, Cens, X, beta.aux, sigma2.aux,
@@ -1484,7 +1485,7 @@ MCMCR.betaJ.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
 #### REDUCED CHAIN GIVEN A FIXED VALUE OF U[i]
 #### (REQUIRED FOR BF.lambda.i.LEP ONLY)
 
-MCMCR.LEP.u.i = function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
+MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
                          alpha0, u0, prior, set, eps_l, eps_r, ar = 0.44) {
     k <- length(beta0)
     n <- length(Time)
@@ -1881,57 +1882,59 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
     num.covariates <- ncol(X)
 
     if (is.matrix(X) == F){
-        stop("X is not a matrix. \n")
+        stop("X is not a matrix.\n")
     }
 
-    # Check N is a  0 < integer{
+    # Check N is a  0 < integer
     if (N <= 0 | N %% 1 != 0 ){
-        stop("N should be an integer greater than zero. \n")
+        stop("N should be an integer greater than zero.\n")
     }
 
-    if (thin < 0 | thin %% 1 != 0){
-        stop ("thin should be a non-negative integer. \n")
+    if (thin < 2 | thin %% 1 != 0){
+        stop ("thin should be a integer > 2.\n")
     }
+
+    if (N < thin){
+        stop ("N is less than thin\n")
+    }
+
 
     if (burn < 0 | burn %% 1 != 0){
-        stop ("burn should be a non-negative integer. \n")
+        stop ("burn should be a non-negative integer.\n")
     }
 
     if (all (Time > 0) == F){
-        stop ("All values in Time should be non-negative. \n")
+        stop ("All values in Time should be non-negative.\n")
     }
     if (length(Time) != num.obs){
-    stop ("Time is not the correct length. \n")
+    stop ("Time is not the correct length.\n")
         }
 
     if ( all(Cens == 1 | Cens == 0) == F){
-        stop ("Cens should be either 0 or 1 for each observation \n")
+        stop ("Cens should be either 0 or 1 for each observation\n")
     }
     if (length(Cens) != num.obs){
-        stop ("Cens is not the correct length. \n")
+        stop ("Cens is not the correct length.\n")
     }
 
     if (length(beta0) != num.covariates){
-        stop ("beta0 is not the correct length. \n")
+        stop ("beta0 is not the correct length.\n")
     }
 
     if (prior %in% c(1,2,3) == F){
-        stop("prior should be 1, 2 or 3. See documentation \n")
+        stop("prior should be 1, 2 or 3. See documentation\n")
     }
 
     if (set %in% c(1,2) == F){
-        stop("set should be 1 or 2. See documentation \n")
+        stop("set should be 1 or 2. See documentation\n")
     }
 
-
-
-    if (thin == 0){cat(paste0("Note! No thinning period is being used! \n"))}
-    if (burn == 0){cat(paste0("Note! No burn-in period is being used! \n"))}
+    if (burn == 0){cat(paste0("Note! No burn-in period is being used!\n"))}
 
 }
 
 beta.sample <- function(n){
-    cat("Sampling initial betas from a Normal(0, 1) distribution \n")
+    cat("Sampling initial betas from a Normal(0, 1) distribution\n")
     betas <- stats::rnorm(n, 0, 1)
     cat(paste("Initial beta", 1:length(betas), ":", round(betas, 2), "\n"))
     cat("\n")
@@ -1939,14 +1942,14 @@ beta.sample <- function(n){
 }
 
 sigma2.sample <- function(){
-    cat("Sampling initial sigma^2 from a Gamma(2, 2) distribution \n")
+    cat("Sampling initial sigma^2 from a Gamma(2, 2) distribution\n")
     sigma2 <- stats::rgamma(1, 2, 2)
     cat(paste("Initial sigma^2 :", round(sigma2, 2), "\n\n"))
     return(sigma2)
 }
 
 nu.sample <- function(){
-    cat("Sampling initial nu from a Gamma(2, 2) distribution \n")
+    cat("Sampling initial nu from a Gamma(2, 2) distribution\n")
     nu <- stats::rgamma(1, 2, 2)
     cat(paste("Initial nu :", round(nu, 2), "\n\n"))
     return(nu)
@@ -1954,7 +1957,7 @@ nu.sample <- function(){
 }
 
 alpha.sample <- function(){
-    cat("Sampling initial alpha from a Uniform(1, 2) distribution \n")
+    cat("Sampling initial alpha from a Uniform(1, 2) distribution\n")
     alpha <- stats::runif(1, 1, 2)
     cat(paste("Initial alpha :", round(alpha, 2), "\n\n"))
     return(alpha)

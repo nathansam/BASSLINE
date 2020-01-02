@@ -21,12 +21,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // J_alpha
-double J_alpha(double alpha, int k);
+NumericVector J_alpha(NumericVector alpha, int k);
 RcppExport SEXP _BASSLINE_J_alpha(SEXP alphaSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< int >::type k(kSEXP);
     rcpp_result_gen = Rcpp::wrap(J_alpha(alpha, k));
     return rcpp_result_gen;
