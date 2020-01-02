@@ -34,10 +34,11 @@
 #    return(aux)
 #}
 prior.nu <- function(nu, prior) {
-    if (prior == 2)
+    if (prior == 2){
         aux <- IIJ_nu(nu) / stats::integrate(IIJ_nu, lower = 0,
                                              upper = Inf)$value
-    return(aux)
+        return(aux)
+    }
 }
 prior.LST <- function(beta, sigma2, nu, prior, log) {
     if (log == FALSE) {

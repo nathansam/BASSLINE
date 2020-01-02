@@ -1,3 +1,7 @@
+################################################################################
+############################## INTERNAL FUNCTIONS ##############################
+################################################################################
+
 test_that("expected value for prior.LEP when log = FALSE",{
   prior.val <- prior.LEP(0.5, 1, 1, 2, F)
   expect_equivalent(round(prior.val, 4), -1.3209)
@@ -38,4 +42,5 @@ test_that("J_alpha same result in C++ as in R",{
   }
   expect_equivalent(J_alpha(2, 2), J.alpha(2, 2))
 })
+
 

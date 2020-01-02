@@ -1,40 +1,11 @@
-test_that("Prior_LN returns expect value for prior = 1",{
-
-  beta <- c(4,1,4)
-  sigma2 <- 0.1
-
-  p <- 1 + length(beta) / 2
-  aux <- -p * log(sigma2)
-  expect_equivalent(prior_LN(beta = c(4,1,4), sigma2 = 0.1, prior = 1,
-                             logs = T), aux )
-
-})
-
-test_that("Prior_LN returns expected value for prior = 2",{
-
-  beta <- c(4,1,4)
-  sigma2 <- 0.1
-  p <- 1
-  aux <- -p * log(sigma2)
-  expect_equivalent(prior_LN(beta = c(4,1,4), sigma2 = 0.1, prior = 2,
-                             logs = T), aux )
-
-})
-
-test_that("Prior_LN returns expected value for prior = 3 & logs = FALSE",{
-
-  beta <- c(4,1,4)
-  sigma2 <- 0.1
-  p <- 1
-  aux <- -p * sigma2
-  expect_equivalent(prior_LN(beta = c(4,1,4), sigma2 = 0.1, prior = 3,
-                             logs = F), aux )
-
-})
-
 test_that("prior.nu returns expected value for nu = 1 & prior = 2",{
   prior.val <- prior.nu(1,2)
   expect_equal(round(prior.val,4), 0.1914)
+})
+
+test_that("prior.alpha returns expected value for alpha = 1, k = 1, prior = 1",{
+  prior.val <- prior.alpha(1,1,1)
+  expect_equal(round(prior.val,4), 1.3209)
 })
 
 test_that("prior.alpha returns expected value for alpha = 1, k = 1, prior = 2",{
