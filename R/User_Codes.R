@@ -102,6 +102,10 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
 
     chain <- cbind(beta, sigma2, logt)
 
+    beta.cols <- paste("beta.", seq(ncol(beta)) , sep = "")
+    logt.cols <- paste("logt.", seq(ncol(logt)) , sep = "")
+    colnames(chain) <- c(beta.cols, "sigma2", logt.cols)
+
     if (burn > 0){
         burn.period <- 1 : burn
         chain <- chain [-burn.period, ]
@@ -438,6 +442,13 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     cat(paste("AR nu :", round(accept.nu/N, 2), "\n"))
 
     chain <- cbind(beta, sigma2, nu, lambda, logt, ls.nu)
+
+    beta.cols <- paste("beta.", seq(ncol(beta)) , sep = "")
+    lambda.cols <- paste("lambda.", seq(ncol(lambda)) , sep = "")
+    logt.cols <- paste("logt.", seq(ncol(logt)) , sep = "")
+
+    colnames(chain) <- c(beta.cols, "sigma2", "nu", lambda.cols, logt.cols,
+                         "ls.nu")
 
     if (burn > 0){
         burn.period <- 1 : burn
@@ -838,7 +849,15 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
         }
     }
 
+
+
     chain <- cbind(beta, sigma2, lambda, logt)
+
+    beta.cols <- paste("beta.", seq(ncol(beta)) , sep = "")
+    lambda.cols <- paste("lambda.", seq(ncol(lambda)) , sep = "")
+    logt.cols <- paste("logt.", seq(ncol(logt)) , sep = "")
+
+    colnames(chain) <- c(beta.cols, "sigma2", lambda.cols, logt.cols)
 
     if (burn > 0){
         burn.period <- 1 : burn
@@ -1260,6 +1279,16 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
     cat(paste("AR alpha :", round(accept.alpha / N, 2), "\n"))
 
     chain <- cbind(beta, sigma2, alpha, U, logt, ls.beta, ls.sigma2, ls.alpha)
+
+    beta.cols <- paste("beta.", seq(ncol(beta)) , sep = "")
+    alpha.cols <- paste("alpha.", seq(ncol(alpha)) , sep = "")
+    U.cols <- paste("U.", seq(ncol(U)) , sep = "")
+    logt.cols <- paste("logt.", seq(ncol(logt)) , sep = "")
+    ls.beta.cols <- paste("ls.beta.", seq(ncol(ls.beta)) , sep = "")
+
+    colnames(chain) <- c(beta.cols, "sigma2", alpha.cols, U.cols, logt.cols,
+                         ls.beta.cols, "ls.sigma2", "ls.alpha")
+
 
     if (burn > 0){
         burn.period <- 1 : burn
@@ -1736,6 +1765,14 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
     }
 
     chain <- cbind(beta, sigma2, lambda, logt)
+
+    beta.cols <- paste("beta.", seq(ncol(beta)) , sep = "")
+    lambda.cols <- paste("lambda.", seq(ncol(lambda)) , sep = "")
+    logt.cols <- paste("logt.", seq(ncol(logt)) , sep = "")
+
+    colnames(chain) <- c(beta.cols, "sigma2", lambda.cols, logt.cols)
+
+
     if (burn > 0){
         burn.period <- 1 : burn
         chain <- chain [-burn.period, ]
