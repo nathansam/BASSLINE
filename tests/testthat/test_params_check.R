@@ -39,26 +39,25 @@ test_that("Check for when thin is negative",{
                          "thin should be a integer > 2.\n")
 })
 
-test_that("Check for when N is less than thin",{
+test_that("Check for when burn is negative",{
   mat <- matrix(seq(4), nrow = 2)
-  testthat::expect_error(MCMC.param.check(N = 100, thin = 110, burn = 1,
+  testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = -10,
                                           Time = c(1,2), Cens = c(0,1),
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 =  1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "N is less than thin\n")
+                         "burn should be a non-negative integer.\n")
 })
 
 
-
-test_that("Check for when burn is negative",{
+test_that("Check for when N / thin is less than burn",{
   mat <- matrix(seq(4), nrow = 2)
-  testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = -1,
+  testthat::expect_error(MCMC.param.check(N = 100, thin = 20, burn = 10,
                                           Time = c(1,2), Cens = c(0,1),
                                           X = mat, beta0 = c(0.2, 0.2),
-                                          sigma20 = 1,  prior = 1,
+                                          sigma20 =  1,  prior = 1,
                                           set = 1, eps_l = 0.5, eps_r = 0.5),
-                         "burn should be a non-negative integer.\n")
+                         "The number of non-discarded iterations will be zero!\n Adjust N, thin or burn.\n")
 })
 
 test_that("Check for when Time is negative",{

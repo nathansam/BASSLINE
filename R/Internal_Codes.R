@@ -3,7 +3,7 @@
 #####################################PRIORS#####################################
 ################################################################################
 
-###################### ################################ PRIOR FOR (BETA,SIGMA2)
+###################################################### PRIOR FOR (BETA,SIGMA2)
 
 #prior.LN <- function(beta, sigma2, prior, log) {
 #    k = length(beta)
@@ -1891,16 +1891,15 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
     }
 
     if (thin < 2 | thin %% 1 != 0){
-        stop ("thin should be a integer > 2.\n")
+        stop("thin should be a integer > 2.\n")
     }
-
-    if (N < thin){
-        stop ("N is less than thin\n")
-    }
-
 
     if (burn < 0 | burn %% 1 != 0){
-        stop ("burn should be a non-negative integer.\n")
+        stop("burn should be a non-negative integer.\n")
+    }
+
+    if (N / thin  < burn ){
+        stop("The number of non-discarded iterations will be zero!\n Adjust N, thin or burn.\n")
     }
 
     if (all (Time > 0) == F){
@@ -1911,14 +1910,14 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
         }
 
     if ( all(Cens == 1 | Cens == 0) == F){
-        stop ("Cens should be either 0 or 1 for each observation\n")
+        stop("Cens should be either 0 or 1 for each observation\n")
     }
     if (length(Cens) != num.obs){
-        stop ("Cens is not the correct length.\n")
+        stop("Cens is not the correct length.\n")
     }
 
     if (length(beta0) != num.covariates){
-        stop ("beta0 is not the correct length.\n")
+        stop("beta0 is not the correct length.\n")
     }
 
     if (prior %in% c(1,2,3) == F){
