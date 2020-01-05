@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
       </span>
     </div>
 
@@ -193,19 +193,19 @@ the number of observations and \(k\) is the number of covariates
 <span class='co'># estimations.</span>
 
 <span class='no'>LLAP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LLAP.html'>MCMC_LLAP</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
-                  <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
-#&gt; Initial beta 1 : -0.42 
-#&gt;  Initial beta 2 : 0.77 
-#&gt;  Initial beta 3 : -1.7 
-#&gt;  Initial beta 4 : 0.12 
-#&gt;  Initial beta 5 : -0.22 
-#&gt;  Initial beta 6 : -0.74 
-#&gt;  Initial beta 7 : 0.11 
-#&gt;  Initial beta 8 : -1.84 
-#&gt;  Initial beta 9 : 1.12 
+                  <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
+#&gt; Initial beta 1 : 0.13 
+#&gt;  Initial beta 2 : 0.65 
+#&gt;  Initial beta 3 : -0.15 
+#&gt;  Initial beta 4 : 0.62 
+#&gt;  Initial beta 5 : 1.23 
+#&gt;  Initial beta 6 : 1.79 
+#&gt;  Initial beta 7 : -0.87 
+#&gt;  Initial beta 8 : -0.34 
+#&gt;  Initial beta 9 : 0.33 
 #&gt; 
-#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
-#&gt; Initial sigma^2 : 1.17 
+#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
+#&gt; Initial sigma^2 : 2.35 
 #&gt; </div><div class='input'>
 </div></pre>
   </div>

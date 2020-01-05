@@ -69,7 +69,7 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
       </span>
     </div>
 
@@ -193,35 +193,35 @@ the number of observations and \(k\) is the number of covariates
 <span class='co'># estimations.</span>
 
 <span class='no'>LST</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LST.html'>MCMC_LST</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
-                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
-#&gt; Initial beta 1 : -0.85 
-#&gt;  Initial beta 2 : 0.11 
-#&gt;  Initial beta 3 : 0.4 
-#&gt;  Initial beta 4 : 0.06 
-#&gt;  Initial beta 5 : -0.35 
-#&gt;  Initial beta 6 : -1.07 
-#&gt;  Initial beta 7 : 0.33 
-#&gt;  Initial beta 8 : 0.87 
-#&gt;  Initial beta 9 : 1.69 
+                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
+#&gt; Initial beta 1 : 0.19 
+#&gt;  Initial beta 2 : -0.32 
+#&gt;  Initial beta 3 : -0.74 
+#&gt;  Initial beta 4 : -0.25 
+#&gt;  Initial beta 5 : 0.42 
+#&gt;  Initial beta 6 : -0.7 
+#&gt;  Initial beta 7 : -0.11 
+#&gt;  Initial beta 8 : -1.05 
+#&gt;  Initial beta 9 : -0.32 
 #&gt; 
-#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
-#&gt; Initial sigma^2 : 2.22 
+#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
+#&gt; Initial sigma^2 : 0.53 
 #&gt; 
-#&gt; Sampling initial nu from a Gamma(2, 2) distribution 
-#&gt; Initial nu : 1.91 
+#&gt; Sampling initial nu from a Gamma(2, 2) distribution
+#&gt; Initial nu : 0.44 
 #&gt; 
-#&gt; AR nu : 0.47 </div><div class='input'>
+#&gt; AR nu : 0.55 </div><div class='input'>
 <span class='no'>LST.LML</span> <span class='kw'>&lt;-</span> <span class='fu'>LML_LST</span>(<span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
-                   <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LST</span>)</div><div class='output co'>#&gt; AR nu : 0.63 
-#&gt; Likelihood ordinate ready! 
-#&gt; Prior ordinate ready! 
+                   <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LST</span>)</div><div class='output co'>#&gt; AR nu : 0.51 
+#&gt; Likelihood ordinate ready!
+#&gt; Prior ordinate ready!
 #&gt; AR nu : 0 
-#&gt; Reduced chain.sigma2 ready! 
-#&gt; Posterior ordinate nu ready! 
-#&gt; Posterior ordinate sigma2 ready! 
+#&gt; Reduced chain.sigma2 ready!
+#&gt; Posterior ordinate nu ready!
+#&gt; Posterior ordinate sigma2 ready!
 #&gt; AR nu : 0 
-#&gt; Reduced chain.beta ready! 
-#&gt; Posterior ordinate beta ready! </div><div class='input'>
+#&gt; Reduced chain.beta ready!
+#&gt; Posterior ordinate beta ready!</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

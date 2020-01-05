@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Produce a trace plot of an observation's MCMC chain — Trace_Plot • BASSLINE</title>
+<title>Produce a trace plot of a variable's MCMC chain — Trace_Plot • BASSLINE</title>
 
 
 <!-- jquery -->
@@ -35,7 +35,7 @@
 
 
 
-<meta property="og:title" content="Produce a trace plot of an observation's MCMC chain — Trace_Plot" />
+<meta property="og:title" content="Produce a trace plot of a variable's MCMC chain — Trace_Plot" />
 <meta property="og:description" content="Plots the chain across (non-discarded) iterations for a
 specified observation" />
 <meta name="twitter:card" content="summary" />
@@ -70,7 +70,7 @@ specified observation" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
       </span>
     </div>
 
@@ -112,7 +112,7 @@ specified observation" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Produce a trace plot of an observation's MCMC chain</h1>
+    <h1>Produce a trace plot of a variable's MCMC chain</h1>
     <small class="dont-index">Source: <a href='https://github.com/nathansam/BASSLINE/blob/master/R/User_Codes.R'><code>R/User_Codes.R</code></a></small>
     <div class="hidden name"><code>Trace_Plot.Rd</code></div>
     </div>
@@ -122,14 +122,14 @@ specified observation" />
 specified observation</p>
     </div>
 
-    <pre class="usage"><span class='fu'>Trace_Plot</span>(<span class='no'>obs</span>, <span class='no'>chain</span>)</pre>
+    <pre class="usage"><span class='fu'>Trace_Plot</span>(<span class='kw'>variable</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>chain</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>obs</th>
-      <td><p>Indicates the number of the observation under analysis</p></td>
+      <th>variable</th>
+      <td><p>Indicates the index of the variable</p></td>
     </tr>
     <tr>
       <th>chain</th>
@@ -149,19 +149,19 @@ specified observation</p>
 <span class='co'># estimations.</span>
 
 <span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LN.html'>MCMC_LN</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
-              <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
-#&gt; Initial beta 1 : 0.06 
-#&gt;  Initial beta 2 : -2.04 
-#&gt;  Initial beta 3 : -0.39 
-#&gt;  Initial beta 4 : -0.86 
-#&gt;  Initial beta 5 : 0.02 
-#&gt;  Initial beta 6 : -0.99 
-#&gt;  Initial beta 7 : 0.11 
-#&gt;  Initial beta 8 : -0.25 
-#&gt;  Initial beta 9 : -0.6 
+              <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
+#&gt; Initial beta 1 : -0.99 
+#&gt;  Initial beta 2 : -0.25 
+#&gt;  Initial beta 3 : 1.29 
+#&gt;  Initial beta 4 : 1.01 
+#&gt;  Initial beta 5 : 0.91 
+#&gt;  Initial beta 6 : 0.17 
+#&gt;  Initial beta 7 : 1.75 
+#&gt;  Initial beta 8 : -0.11 
+#&gt;  Initial beta 9 : -2.07 
 #&gt; 
-#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
-#&gt; Initial sigma^2 : 2.23 
+#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
+#&gt; Initial sigma^2 : 0.87 
 #&gt; </div><div class='input'><span class='fu'>Trace_Plot</span>(<span class='fl'>1</span>, <span class='no'>LN</span>)</div><div class='img'><img src='Trace_Plot-1.png' alt='' width='700' height='433' /></div><div class='input'>
 </div></pre>
   </div>

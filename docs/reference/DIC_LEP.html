@@ -71,7 +71,7 @@ penalization factor of the complexity of the model" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9003</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
       </span>
     </div>
 
@@ -173,7 +173,7 @@ the number of observations and \(k\) is the number of covariates
 <span class='co'># estimations (especially for the log-exponential power model).</span>
 
 <span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LEP.html'>MCMC_LEP</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
-                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution 
+                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
 #&gt; Initial beta 1 : -0.63 
 #&gt;  Initial beta 2 : 0.66 
 #&gt;  Initial beta 3 : -0.29 
@@ -184,10 +184,10 @@ the number of observations and \(k\) is the number of covariates
 #&gt;  Initial beta 8 : -1.19 
 #&gt;  Initial beta 9 : 1.06 
 #&gt; 
-#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution 
+#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
 #&gt; Initial sigma^2 : 0.71 
 #&gt; 
-#&gt; Sampling initial alpha from a Uniform(1, 2) distribution 
+#&gt; Sampling initial alpha from a Uniform(1, 2) distribution
 #&gt; Initial alpha : 1.03 
 #&gt; 
 #&gt; AR beta 1 : 0.57 
