@@ -216,25 +216,20 @@ LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = Time, Cens = Cens,
 
 After generating MCMC chains, their suitability should be assessed. This can be 
 done, in part, via the `Trace_Plot` function included with `BASSLINE` which will
-plot a chain for an observation across (non-discarded) iterations. We will 
-investigate the chain for the first observation from the log-normal model. 
+plot a chain for a variable across (non-discarded) iterations. We will 
+investigate the chain for $\beta_1$ from the log-normal model. 
 
 ```{r Trace Plot, fig.retina=2}
 Trace_Plot(1, LN)
 ```
 
-In this case, the plot provides evidence for using an increased burn-in period
-due to it's profile for the first few iterations. 
 
-The user is also advised to plot the auto-correlation function which can be done
-via the `forecast` and `ggplot2` packages.
+For additional analysis of chains, the `coda` package is recommended which
+offers many different functions for assessing the suitability of chains. 
 
-```{r ACF plot, message = F, fig.retina= 2}
-library(ggplot2)
-library(forecast)
-p <- ggAcf(LN[1,]) + ggplot2::theme_bw()
-p <- p + ggplot2::ggtitle("ACF of MCMC Chain for First Observation")
-p
+```{r ACF plot, message = F, fig.retina= 2, fig.height=9}
+library(coda)
+plot(as.mcmc(LN[,1:10])) 
 ```
 
 ## Deviance Information Criterion

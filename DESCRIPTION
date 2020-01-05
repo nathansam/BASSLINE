@@ -26,7 +26,7 @@ Suggests:
     testthat,
     knitr,
     rmarkdown,
-    forecast
+    coda
 LazyData: true
 URL: https://github.com/nathansam/BASSLINE
 BugReports: https://github.com/nathansam/BASSLINE/issues

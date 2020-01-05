@@ -2,14 +2,16 @@
 ################################ USER FUNCTIONS ################################
 ################################################################################
 
-test_that("MCMC_LN Converges",{
-  set.seed(123)
-  LN.chain <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = c(5,10),
-                      Cens = c(1,0), X = matrix(c(1,2,3,4), nrow = 2))
 
-  testthat::expect_true(abs(LN.chain[10,5] - LN.chain[11,5]) < 0.01)
+test_that("MCMC_LN returns expected number of rows when burn = 5,thin = 10",{
+
+  N <- 100
+  thin <- 10
+  burn <- 5
+  LN <- MCMC_LN(N = N, thin = thin, burn = burn, Time = cancer[,1],
+                  Cens = cancer[,2], X = cancer[,3:11])
+  expect_equal(nrow(LN), N / thin + 1 - burn)
 })
-
 
 test_that("LML_LN Returns Expected Result",{
   if(.Machine$sizeof.pointer == 8 && .Platform$OS.type != "unix"){
