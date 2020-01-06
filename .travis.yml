@@ -11,6 +11,9 @@ r:
 # Strict checks in place
 warnings_are_errors: false
 
+env:
+- R_REMOTES_NO_ERRORS_FROM_WARNINGS="true"
+
 cache:
   - packages: true
 
