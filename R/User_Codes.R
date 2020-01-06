@@ -2039,10 +2039,10 @@ BF_lambda_obs_LLOG <- function(ref, obs, X, chain) {
 #'
 #' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
 #'               Cens = cancer[,2], X = cancer[,3:11])
-#' Trace_Plot(1, LN)
+#' Trace_plot(1, LN)
 #'
 #' @export
-Trace_Plot <- function(variable = NULL, chain = NULL){
+Trace_plot <- function(variable = NULL, chain = NULL){
     if (is.null(variable) | is.null(chain)){
         stop("variable and chain must be provided\n")
     }
@@ -2055,4 +2055,54 @@ Trace_Plot <- function(variable = NULL, chain = NULL){
     title <- paste("Trace Plot for Variable", colnames(chain)[variable])
     p <- p + ggplot2::ggtitle(title)
     return(p)
+}
+
+#' @title Convert dataframe with mixed variables to a numeric matrix
+#' @description BASSLINE's functions require a numeric matrix be provided.
+#'   This function converts a dataframe of mixed variable types (numeric and
+#'    factors) to a matrix. A factor with $m$ levels is converted to $m$ columns
+#'    with binary values used to denote which level the observation belongs to.
+#' @param df A dataframe intended for conversion
+#' @return A numeric matrix suitable for BASSLINE functions
+#' @examples
+#' library(BASSLINE)
+#' Time <- c(5,15,15)
+#' Cens <- c(1,0,1)
+#' experiment <- as.factor(c("chem1", "chem2", "chem3"))
+#' age <- c(15,35,20)
+#' df <- data.frame(Time, Cens, experiment, age)
+#' converted <- BASSLINE_convert(df)
+#'
+#' @export
+BASSLINE_convert <- function(df){
+    n.obs <- nrow(df)
+    n.vars <- ncol(df)
+    # Init object to be returned
+    BASSLINE.mat <- c()
+
+    for (columns in (1:n.vars)){
+        original.var <- df[,columns]
+        if (is.factor(original.var) == F){
+            # If not a factor then add column to BASSLINE.mat
+            BASSLINE.mat <- cbind(BASSLINE.mat, original.var)
+            colnames(BASSLINE.mat)[ncol(BASSLINE.mat)] <- colnames(df[columns])
+        } else{
+            # if factor then add column for each level
+            for (levels in unique(df[,columns])){
+
+                level.binary <- rep(0, n.obs)
+
+                for (i in 1:n.obs){
+                    if(df[i,columns] == levels) level.binary[i] <- 1
+                }
+
+                BASSLINE.mat <- cbind(BASSLINE.mat, level.binary)
+                level.name <- paste(colnames(df[columns]), ".", levels,
+                                    sep = "")
+                colnames(BASSLINE.mat)[ncol(BASSLINE.mat)] <- level.name
+            }
+        }
+    }
+    row.names(BASSLINE.mat) <- 1:n.obs
+    return(as.matrix(BASSLINE.mat))
 }

@@ -52,5 +52,6 @@ reference:
 - title: "Miscellaneous"
   desc: "Additional documentation"
   contents:
-    - Trace_Plot
+    - Trace_plot
     - cancer
+    - BASSLINE_convert

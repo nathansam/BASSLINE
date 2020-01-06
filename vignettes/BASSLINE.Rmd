@@ -93,56 +93,28 @@ these additional arguments.
 ```
 
 Note that BASSLINE does not support factors/ levels. Factors should be converted
-to separate variables for each level. For example:
+to separate binary variables for each level which can be easily done via the
+provided `BASSLINE_convert` function. For example:
 
 ```{r Original Table, echo = F}
 df <- data.frame(Time = c(10,15,24,21), Cens = c(1,1,0,1),
                  treatment = as.factor(c("A", "B", "C", "A")))
+```
+
+```{r, echo = FALSE}
 knitr::kable(df)
 ```
 
-should be converted to: 
+can be converted by simply passing the dataframe object to the function.  
 
-```{r Converted Table, echo = F}
-### RUN FOR EXAMPLE TABLE ###
-df.2 <- df
-n.obs <- nrow(df.2)
-
-treatment.A <- rep(0, n.obs)
-treatment.B <- rep(0, n.obs)
-treatment.C <- rep(0, n.obs)
-
-for(i in 1:n.obs){
-  if(df.2$treatment[i] == "A") treatment.A[i] <- 1
-  if(df.2$treatment[i] == "B") treatment.B[i] <- 1 
-  if(df.2$treatment[i] == "C") treatment.C[i] <- 1
-}
-
-df.2 <- cbind(df.2, treatment.A, treatment.B, treatment.C)
-df.2$treatment <- NULL
-
-mat.2 <- as.matrix(df.2)
-knitr::kable(mat.2)
+```{r Converted Table}
+converted <- BASSLINE_convert(df)
 ```
 
-Which can be obtained by running the following R code
-
-```{r Factor Convert}
-n.obs <- nrow(df)
-
-treatment.A <- rep(0, n.obs)
-treatment.B <- rep(0, n.obs)
-treatment.C <- rep(0, n.obs)
-
-for(i in 1:n.obs){
-  if(df$treatment[i] == "A") treatment.A[i] <- 1
-  if(df$treatment[i] == "B") treatment.B[i] <- 1
-  if(df$treatment[i] == "C") treatment.C[i] <- 1
-}
-df <- cbind(df, treatment.A, treatment.B, treatment.C)
-df$treatment <- NULL
-mat <- as.matrix(df)
+```{r echo = FALSE}
+knitr::kable(converted)
 ```
+
 
 ## The Cancer Data Set
 
@@ -220,12 +192,11 @@ plot a chain for a variable across (non-discarded) iterations. We will
 investigate the chain for $\beta_1$ from the log-normal model. 
 
 ```{r Trace Plot, fig.retina=2}
-Trace_Plot(1, LN)
+Trace_plot(1, LN)
 ```
 
-
 For additional analysis of chains, the `coda` package is recommended which
-offers many different functions for assessing the suitability of chains. 
+offers many different functions for assessing chains. 
 
 ```{r ACF plot, message = F, fig.retina= 2, fig.height=9}
 library(coda)
