@@ -21,7 +21,10 @@
 #' @param prior Indicator of prior (1: Jeffreys, 2: Type I Ind. Jeffreys,
 #'     3: Ind. Jeffreys).
 #' @param set Indicator for the use of set observations (1: set observations,
-#'     0: point observations).
+#'     0: point observations). The former is strongly recommended over the
+#'     latter as point observations cause problems in the context of Bayesian
+#'     inference (due to continuous sampling models assigning zero probability
+#'     to a point).
 #' @param eps_l Lower imprecision \eqn{(\epsilon_l)} for set observations
 #'     (default value: 0.5).
 #' @param eps_r Upper imprecision \eqn{(\epsilon_r)} for set observations

@@ -33,7 +33,10 @@ the number of observations and \eqn{k} is the number of covariates
 3: Ind. Jeffreys).}
 
 \item{set}{Indicator for the use of set observations (1: set observations,
-0: point observations).}
+0: point observations). The former is strongly recommended over the
+latter as point observations cause problems in the context of Bayesian
+inference (due to continuous sampling models assigning zero probability
+to a point).}
 
 \item{eps_l}{Lower imprecision \eqn{(\epsilon_l)} for set observations
 (default value: 0.5).}
