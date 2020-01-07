@@ -1625,7 +1625,8 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
 #' @inheritParams MCMC_LN
 #' @param burn Burn-in period
-#' @param ref Reference value \eqn{u_{ref}}
+#' @param ref Reference value \eqn{u_{ref}}. Vallejos & Steel recommends this
+#'     value be set to \eqn{1.6 +1_\alpha} for the LEP model.
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
 #' @param obs Indicates the number of the observation under analysis
@@ -1639,8 +1640,8 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'
 #' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
 #'                 Cens = cancer[,2], X = cancer[,3:11])
-#' alpha <- median(LEP[,11])
-#' uref <- 1 + 1 / alpha + 0.6
+#' alpha <- mean(LEP[,11])
+#' uref <- 1.6 + 1 / alpha
 #' LEP.Outlier <- BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref,
 #'                             obs = 1, Time = cancer[,1], Cens = cancer[,2],
 #'                             cancer[,3:11], chain = LEP)

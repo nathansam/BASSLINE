@@ -28,7 +28,8 @@ BF_u_obs_LEP(
 
 \item{burn}{Burn-in period}
 
-\item{ref}{Reference value \eqn{u_{ref}}}
+\item{ref}{Reference value \eqn{u_{ref}}. Vallejos & Steel recommends this
+value be set to \eqn{1.6 +1_\alpha} for the LEP model.}
 
 \item{obs}{Indicates the number of the observation under analysis}
 
@@ -75,8 +76,8 @@ library(BASSLINE)
 
 LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                 Cens = cancer[,2], X = cancer[,3:11])
-alpha <- median(LEP[,11])
-uref <- 1 + 1 / alpha + 0.6
+alpha <- mean(LEP[,11])
+uref <- 1.6 + 1 / alpha
 LEP.Outlier <- BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref,
                             obs = 1, Time = cancer[,1], Cens = cancer[,2],
                             cancer[,3:11], chain = LEP)

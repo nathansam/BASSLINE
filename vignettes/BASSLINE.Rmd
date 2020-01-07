@@ -196,11 +196,17 @@ Trace_plot(1, LN)
 ```
 
 For additional analysis of chains, the `coda` package is recommended which
-offers many different functions for assessing chains. 
+offers many different functions:  
 
 ```{r ACF plot, message = F, fig.retina= 2, fig.height=9}
 library(coda)
 plot(as.mcmc(LN[,1:10])) 
+```
+
+ACF plots are also available via `coda`:
+
+```{r}
+acfplot(as.mcmc(LN[,1:10]))
 ```
 
 ## Deviance Information Criterion
