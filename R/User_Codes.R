@@ -110,7 +110,7 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", logt.cols)
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -454,7 +454,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
                          "ls.nu")
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -535,7 +535,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     po2.nu <- rep(0, times = N)
     for (i in 1:N) {
         lambda.po1 <- t(chain.nonadapt[i, (k + 3):(k + 2 + n)])
-        mean <- as.numeric(chain.nonadapt[i,(k + 2)])
+        mean <- as.numeric(chain.nonadapt[i, (k + 2)])
         po1.nu[i] <- alpha.nu(nu0 = as.numeric(chain.nonadapt[i, (k + 2)]),
                               nu1 = nu.star,
                               lambda = lambda.po1, k = k,
@@ -555,7 +555,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     # POSTERIOR ORDINATE - sigma 2
     shape <- (n + 2 * p - 2)/2
     po.sigma2 <- rep(0, times = N)
-    for (i in 1 : N) {
+    for (i in 1:N) {
         aux1 <- (chain.sigma2[i, (k + 2 + n):(k + 1 + 2 * n)]) - X %*%
                     (chain.sigma2[i, 1:k])
         aux2 <- diag(as.vector(t(chain.sigma2[i, (k + 2):(k + 1 + n)])))
@@ -572,7 +572,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
 
     chain.beta <- MCMCR.sigma2.nu.LST(N = N * thin, thin = thin, Q, Time,
                                       Cens, X,
-                                      beta0 = t(chain.nonadapt[N, 1 : k]),
+                                      beta0 = t(chain.nonadapt[N, 1:k]),
                                       sigma20 = sigma2.star, nu0 = nu.star,
                                       logt0 = logt0, lambda0 = lambda0, prior,
                                       set, eps_l, eps_r)
@@ -863,7 +863,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", lambda.cols, logt.cols)
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -1294,7 +1294,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -1778,7 +1778,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
     return(chain)
