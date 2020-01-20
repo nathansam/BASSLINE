@@ -3,97 +3,6 @@
 #####################################PRIORS#####################################
 ################################################################################
 
-###################################################### PRIOR FOR (BETA,SIGMA2)
-
-#prior.LN <- function(beta, sigma2, prior, log) {
-#    k = length(beta)
-#    if (prior == 1) {
-#        p <- 1 + k / 2
-#    }
-#    if (prior == 2) {
-#        p <- 1
-#    }
-#    if (prior == 3) {
-#        p <- 1
-#   }
-#    if (log == FALSE) {
-#        aux <- sigma2 ^ (-p)
-#    }
-#    if (log == TRUE) {
-#        aux <- -p * log(sigma2)
-#    }
-#    return(aux)
-#}
-
-#########################PRIOR FOR (BETA,SIGMA2,NU) (LOG-STUDENT'S T MODEL ONLY)
-
-#IIJ.nu <- function(nu) {
-#    aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) -
-#                                       trigamma((nu + 1) / 2) -
-#                                            (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
-#    return(aux)
-#}
-prior.nu <- function(nu, prior) {
-    if (prior == 2){
-        aux <- IIJ_nu(nu) / stats::integrate(IIJ_nu, lower = 0,
-                                             upper = Inf)$value
-        return(aux)
-    }
-}
-prior.LST <- function(beta, sigma2, nu, prior, log) {
-    if (log == FALSE) {
-        aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
-          prior.nu(nu, prior)
-    }
-    if (log == TRUE) {
-        aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
-          log(prior.nu(nu, prior))
-    }
-    return(aux)
-}
-
-############### PRIOR FOR (BETA,SIGMA2,ALPHA) (LOG-EXPONENTIAL POWER MODEL ONLY)
-
-#J.alpha <- function(alpha, k) {
-#    aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
-#               gamma(1 / alpha)) ^ (k / 2)) * (1 / alpha) *
-#                  sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-#    return(aux)
-#}
-#II.alpha <- function(alpha) {
-#    aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-#    return(aux)
-#}
-#I.alpha <- function(alpha) {
-#    aux <- sqrt(1 / alpha ^ 3) * sqrt((1 + 1 / alpha) *
-#                 trigamma(1 + 1 / alpha) + (1 + digamma(1 + 1 / alpha))^ 2  - 1)
-#    return(aux)
-#}
-prior.alpha <- function(alpha, k, prior) {
-    if (prior == 1)
-        aux <- J_alpha(alpha, k) / stats::integrate(J_alpha, lower = 1,
-                                                    upper = 2, k = k)$value
-    if (prior == 2)
-        aux <- II_alpha(alpha) / stats::integrate(II_alpha, lower = 1,
-                                                  upper = 2)$value
-    if (prior == 3)
-        aux <- I_alpha(alpha) / stats::integrate(I_alpha, lower = 1,
-                                                 upper = 2)$value
-    return(aux)
-}
-prior.LEP <- function(beta, sigma2, alpha, prior, log) {
-    if (log == FALSE) {
-        aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
-                  prior.alpha(alpha, length(beta), prior)
-    }
-    if (log == TRUE) {
-        aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
-                  log(prior.alpha(alpha, length(beta), prior))
-    }
-    return(aux)
-}
-
-
 ############# DATA AUGMENTATION UPDATE FOR RIGHT-CENSORED AND SET OBSERVATIONS
 ############# (LOGARITHMIC SCALE)
 
@@ -171,8 +80,9 @@ logt.update.LEP <- function(Time, Cens, X, beta, sigma2, alpha, u, set, eps_l,
     }
 
     if (set == 0) {
-        a <- apply(cbind(MEAN - sqrt(sigma2) * u^(1/alpha), log(Time)), 1, max)
-        b <- as.vector(MEAN + sqrt(sigma2) * u^(1/alpha))
+        a <- apply(cbind(MEAN - sqrt(sigma2) * u ^ (1 / alpha), log(Time)),
+                   1, max)
+        b <- as.vector(MEAN + sqrt(sigma2) * u ^ (1 / alpha))
         aux <- Cens * log(Time) + (1 - Cens) * (as.numeric(I(a < b)) *
                       stats::runif(n, min = apply(cbind(a, b), 1, min),
                                    max = apply(cbind(a, b), 1, max)) +
@@ -234,7 +144,7 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0,
     n <- length(Time)
     N.aux <- round(N / thin, 0)
     if (prior == 1) {
-        p <- 1 + k/2
+        p <- 1 + k / 2
     }
     if (prior == 2) {
         p <- 1
@@ -258,9 +168,9 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0,
         logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
                                     eps_l, eps_r)
 
-        if (iter%%thin == 0) {
-            beta[iter/thin + 1, ] <- beta.aux
-            logt[iter/thin + 1, ] <- logt.aux
+        if (iter %% thin == 0) {
+            beta[iter / thin + 1, ] <- beta.aux
+            logt[iter / thin + 1, ] <- logt.aux
         }
         if ((iter - 1) %*% 1e+05 == 0) {
             cat(paste("Iteration :", iter, "\n"))
@@ -286,14 +196,24 @@ MH.nu.LST <- function(N = 1, omega2, beta, lambda, nu0, prior) {
         ind.aux <- I(y >= 0)
         y <- abs(y)
         u.aux <- stats::runif(1, min = 0, max = 1)
-        log.aux <- sum(stats::dgamma(lambda, shape = y/2, rate = y/2,
-                                     log = TRUE)) -
-                                  sum(stats::dgamma(lambda,
-                                                    shape = nu[j.nu] / 2,
-                                                    rate = nu[j.nu] / 2,
-                                                    log = TRUE)) +
-                                          log(prior.nu(y, prior) /
-                                                prior.nu(nu[j.nu], prior))
+
+
+
+       log.aux <- sum(stats::dgamma(lambda, shape = y/2, rate = y/2,
+                                    log = TRUE)) -
+                                 sum(stats::dgamma(lambda,
+                                                   shape = nu[j.nu] / 2,
+                                                   rate = nu[j.nu] / 2,
+                                                   log = TRUE)) +
+                                         log(prior_nu(y, prior) /
+                                               prior_nu(nu[j.nu], prior))
+
+        ### CONVERT RHS of + at a later date
+
+        # log.aux <- Log_aux(lambda, y, j.nu, nu, prior) +
+        #                                               log(prior.nu(y, prior) /
+        #                                                     prior.nu(nu[j.nu],
+        #                                                              prior))
         aux <- I(log(u.aux) < log.aux)
         aux <- as.numeric(aux) * as.numeric(ind.aux)
         nu[j.nu + 1] <- aux * y + (1 - aux) * nu[j.nu]
@@ -313,12 +233,12 @@ alpha.nu <- function(nu0, nu1, lambda, k, prior) {
     }
     if (nu1 > 0) {
         aux <- min(1, exp(sum(stats::dgamma(lambda, shape = nu1 / 2,
-                                            rate = nu1/2, log = TRUE))
+                                            rate = nu1 / 2, log = TRUE))
                           - sum(stats::dgamma(lambda,
                                               shape = nu0 / 2,
                                               rate = nu0 / 2,
                                               log = TRUE))) *
-                            (prior.nu(nu1, prior) / prior.nu(nu0, prior)))
+                            (prior_nu(nu1, prior) / prior_nu(nu0, prior)))
     }
     return(aux)
 }
@@ -341,8 +261,8 @@ log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
                         log(stats::pt((log(Time + eps_r) - MEAN) / sqrt(sigma2),
                                       df = nu) - 0)) +
                          (1 - Cens) *
-                              log(1 - stats::pt((log(Time) - MEAN)/sqrt(sigma2),
-                                                df = nu))
+                            log(1 - stats::pt((log(Time) - MEAN) / sqrt(sigma2),
+                                              df = nu))
     }
     if (set == 0) {
         aux <- Cens * (stats::dt((log(Time) - MEAN) / sqrt(sigma2),
@@ -362,9 +282,9 @@ MCMC.LST.NonAdapt <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
                              prior, set, eps_l, eps_r, omega2.nu) {
     k <- length(beta0)
     n <- length(Time)
-    N.aux <- round(N/thin, 0)
+    N.aux <- round(N / thin, 0)
     if (prior == 1) {
-        p <- 1 + k/2
+        p <- 1 + k / 2
     }
     if (prior == 2) {
         p <- 1
@@ -398,7 +318,7 @@ MCMC.LST.NonAdapt <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
             beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
-        shape.aux <- (n + 2 * p - 2)/2
+        shape.aux <- (n + 2 * p - 2) / 2
         rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
                              (logt.aux - X %*% beta.aux)
         if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
@@ -1011,8 +931,8 @@ MH.marginal.alpha <- function(N = 1, omega2, logt, X, beta, sigma2,
                         sum(abs((logt - X %*% beta) / sqrt(sigma2)) ^ y.aux)
             l0 <- n * log(alpha[i.a] / gamma(1/alpha[i.a])) -
                        sum(abs((logt - X %*% beta) / sqrt(sigma2)) ^ alpha[i.a])
-            aux <- l1 - l0 + log(prior.alpha(y.aux, k, prior) /
-                                   prior.alpha(alpha[i.a], k, prior))
+            aux <- l1 - l0 + log(prior_alpha(y.aux, k, prior) /
+                                   prior_alpha(alpha[i.a], k, prior))
             u.aux <- stats::runif(1, 0, 1)
 
             # THE FOLLOWING THREE LINES AVOID CRUSHES
@@ -1062,8 +982,8 @@ alpha.alpha <- function(alpha0, alpha1, logt, X, beta, sigma2, prior) {
         l0 <- n * log(alpha0 / gamma(1 / alpha0)) -
                  ((1 / sqrt(sigma2)) ^ alpha0) * sum((abs(logt - (X) %*%
                                                             (beta))) ^ alpha0)
-        aux <- min(1, exp(l1 - l0) * prior.alpha(alpha1, k, prior) /
-                                                 prior.alpha(alpha0, k, prior))
+        aux <- min(1, exp(l1 - l0) * prior_alpha(alpha1, k, prior) /
+                                                 prior_alpha(alpha0, k, prior))
     }
     return(aux)
 }
@@ -1715,7 +1635,7 @@ RS.lambda.obs.LLOG <- function(logt, X, beta, sigma2, obs, N.AKS) {
     while (OK == 0) {
         step <- step + 1
 
-        lambda <- rGIG(n = 1,
+        lambda <- r_GIG(n = 1,
                        r = abs(logt[obs] - X[obs, ] %*% beta) / sqrt(sigma2))
         if (lambda != 0 && lambda != Inf) {
             U <- stats::runif(1, min = 0, max = 1)

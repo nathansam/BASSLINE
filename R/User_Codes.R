@@ -54,7 +54,7 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
     if (is.null(sigma20)) sigma20 <- sigma2.sample()
 
     MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
-                                 prior, set, eps_l, eps_r)
+                     prior, set, eps_l, eps_r)
 
     k <- length(beta0)
     n <- length(Time)
@@ -84,14 +84,14 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
 
         shape.aux <- (n + 2 * p - 2)/2
         rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% (logt.aux - X %*%
-                                                               beta.aux)
+                                                                beta.aux)
         if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
             sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
                                          rate = rate.aux))^(-1)
         }
 
         logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
-                                    eps_l, eps_r)
+                                     eps_l, eps_r)
 
         if (iter%%thin == 0) {
             beta[iter/thin + 1, ] <- beta.aux
@@ -155,12 +155,12 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1 , eps_l = 0.5,
 
     # LIKELIHOOD ORDINATE
     LL.ord <- log.lik.LN(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
-                        set, eps_l, eps_r)
+                         set, eps_l, eps_r)
     cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
     LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
-                      logs = TRUE)
+                       logs = TRUE)
     cat("Prior ordinate ready!\n")
 
     # POSTERIOR ORDINATE - sigma2
@@ -168,27 +168,27 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1 , eps_l = 0.5,
     po.sigma2 <- rep(0, times = N)
     for (i in 1:N) {
         aux1 <- as.vector(as.vector(t(chain[i, (k + 2):(k + 1 + n)])) - X %*%
-                             as.vector(chain[i, 1:k]))
+                              as.vector(chain[i, 1:k]))
         rate.aux <- as.numeric(0.5 * t(aux1) %*% aux1)
         po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
-                                           scale = rate.aux)
+                                            scale = rate.aux)
     }
     PO.sigma2 <- mean(po.sigma2)
     cat("Posterior ordinate sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - beta
     chain.beta <- MCMCR.sigma2.LN(N = N * thin, thin = thin, Time, Cens, X,
-                                 beta0 = t(chain[N, 1:k]),
-                                 sigma20 = sigma2.star,
-                                 logt0 = t(chain[N, (k + 2):(k + 1 + n)]),
-                                 prior = prior, set, eps_l, eps_r)
+                                  beta0 = t(chain[N, 1:k]),
+                                  sigma20 = sigma2.star,
+                                  logt0 = t(chain[N, (k + 2):(k + 1 + n)]),
+                                  prior = prior, set, eps_l, eps_r)
     po.beta <- rep(0, times = N)
     aux1.beta <- solve(t(X) %*% X)
     aux2.beta <- aux1.beta %*% t(X)
     for (i in 1:N) {
         mu.aux <- as.vector(aux2.beta %*% chain.beta[(i + 1), (k + 1):(k + n)])
         po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
-                             sigma = sigma2.star * aux1.beta)
+                                       sigma = sigma2.star * aux1.beta)
     }
     PO.beta <- mean(po.beta)
     cat("Posterior ordinate beta ready!\n")
@@ -290,9 +290,9 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
         aux2 <- rep(0, times = N)
         for (ITER in 1:N) {
             aux2[ITER] <- log.lik.LN(Time[s], Cens[s], X[s, ],
-                                    beta = as.vector(chain[ITER, 1:k]),
-                                    sigma2 = chain[ITER, (k + 1)], set,
-                                    eps_l, eps_r)
+                                     beta = as.vector(chain[ITER, 1:k]),
+                                     sigma2 = chain[ITER, (k + 1)], set,
+                                     eps_l, eps_r)
             aux1[ITER] <- exp(-aux2[ITER])
         }
         logCPO[s] <- -log(mean(aux1))
@@ -338,8 +338,8 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'
 #' @export
 MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
-                    sigma20 = NULL, nu0 = NULL, prior = 2, set = 1, eps_l = 0.5,
-                    eps_r = 0.5, ar = 0.44) {
+                     sigma20 = NULL, nu0 = NULL, prior = 2, set = 1, eps_l = 0.5,
+                     eps_r = 0.5, ar = 0.44) {
 
     # Sample starting values if not given
     if (is.null(beta0)) beta0 <- beta.sample(n = ncol(X))
@@ -513,8 +513,8 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
-    LP.ord <- prior.LST(beta = beta.star, sigma2 = sigma2.star, nu = nu.star,
-                       prior, log = TRUE)
+    LP.ord <- prior_LST(beta = beta.star, sigma2 = sigma2.star, nu = nu.star,
+                        prior, logs = TRUE)
     cat("Prior ordinate ready!\n")
 
 
@@ -540,8 +540,8 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
                               nu1 = nu.star,
                               lambda = lambda.po1, k = k,
                               prior = prior) * stats::dnorm(x = nu.star,
-                                                     mean = mean,
-                                                     sd = sqrt(omega2.nu))
+                                                            mean = mean,
+                                                            sd = sqrt(omega2.nu))
         nu.aux <- stats::rnorm(n = 1, mean = nu.star, sd = sqrt(omega2.nu))
 
         lambda.po2 <- t(chain.sigma2[i + 1, (k + 2):(k + 1 + n)])
@@ -557,7 +557,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     po.sigma2 <- rep(0, times = N)
     for (i in 1:N) {
         aux1 <- (chain.sigma2[i, (k + 2 + n):(k + 1 + 2 * n)]) - X %*%
-                    (chain.sigma2[i, 1:k])
+            (chain.sigma2[i, 1:k])
         aux2 <- diag(as.vector(t(chain.sigma2[i, (k + 2):(k + 1 + n)])))
         rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
         po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
@@ -584,7 +584,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
         aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
         aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
         mu.aux <- as.vector(aux2.beta %*%
-                               ((chain.beta[(i + 1), (k + 1 + n):(k + 2 * n)])))
+                                ((chain.beta[(i + 1), (k + 1 + n):(k + 2 * n)])))
         po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
                                        sigma = sigma2.star * aux1.beta,
                                        log = FALSE)
@@ -923,7 +923,7 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     for (i in 1:N) {
         aux1 <- as.vector(t(chain[i,
                                   (k + 2 + n):(k + 1 + 2 * n)])) - X %*%
-                                      as.vector(chain[i, 1:k])
+            as.vector(chain[i, 1:k])
         aux2 <- diag(as.vector(t(chain[i, (k + 2):(k + 1 + n)])))
         rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
         po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
@@ -948,9 +948,9 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
         aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
         aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
         mu.aux <- as.vector(aux2.beta %*%
-                               ((chain.beta[(i + 1), (n + k + 1):(2 * n + k)])))
+                                ((chain.beta[(i + 1), (n + k + 1):(2 * n + k)])))
         po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
-                                      sigma = sigma2.star * aux1.beta)
+                                       sigma = sigma2.star * aux1.beta)
     }
     PO.beta <- mean(po.beta)
     cat("Posterior ordinate beta ready!\n")
@@ -1102,7 +1102,7 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
     for (j in 1:N) {
         aux1[j] <- stats::dnorm(chain[j, (obs + n + k + 1)],
                                 mean = (X[obs, ]) %*%
-                                   as.vector(chain[j, 1:k]),
+                                    as.vector(chain[j, 1:k]),
                                 sd = sqrt(chain[j, (k + 1)]/ref))
         aux2[j] <- VGAM::dlaplace(chain[j, (obs + n + k + 1)],
                                   location = (X[obs, ]) %*%
@@ -1249,15 +1249,15 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
             pbeta.aux <- pbeta.aux/50
             Pbeta.aux <- as.numeric(pbeta.aux < rep(ar, times = k))
             ls.beta.aux <- ls.beta.aux + ((-1)^Pbeta.aux) *
-                                                  min(0.01, 1/sqrt(iter))
+                min(0.01, 1/sqrt(iter))
             psigma2.aux <- psigma2.aux/50
             Psigma2.aux <- as.numeric(psigma2.aux < ar)
             ls.sigma2.aux <- ls.sigma2.aux + ((-1)^Psigma2.aux) *
-                                                  min(0.01, 1/sqrt(iter))
+                min(0.01, 1/sqrt(iter))
             palpha.aux <- palpha.aux/50
             Palpha.aux <- as.numeric(palpha.aux < ar)
             ls.alpha.aux <- ls.alpha.aux + ((-1)^Palpha.aux) *
-                                                  min(0.01, 1/sqrt(iter))
+                min(0.01, 1/sqrt(iter))
             i_batch <- 0
             pbeta.aux <- rep(0, times = k)
             psigma2.aux <- 0
@@ -1366,7 +1366,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
 
     # PRIOR ORDINATE
     LP.ord <- prior.LEP(beta = beta.star, sigma2 = sigma2.star,
-                       alpha = alpha.star, prior, log = TRUE)
+                        alpha = alpha.star, prior, log = TRUE)
     cat("Prior ordinate ready!\n")
 
     chain.sigma2 <- MCMCR.alpha.LEP(N = N * thin, thin = thin, Time, Cens, X,
@@ -1374,7 +1374,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                     sigma20 = chain.nonadapt[N, (k + 1)],
                                     alpha0 = alpha.star,
                                     logt0 = t(chain.nonadapt[N, (k +3 + n) :
-                                                              (2 * n + k + 2)]),
+                                                                 (2 * n + k + 2)]),
                                     u0 = t(chain.nonadapt[N,
                                                           (k + 3):(k + 2 + n)]),
                                     prior, set, eps_l, eps_r,
@@ -1387,20 +1387,20 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
     po2.alpha <- rep(0, times = N)
     for (i in 1:N) {
         po1.alpha[i] <- alpha.alpha(alpha0 = as.numeric(chain.nonadapt[i,
-                                                                      (k + 2)]),
+                                                                       (k + 2)]),
                                     alpha1 = alpha.star,
                                     logt = as.vector(chain.nonadapt[i, (k + 3 + n) :
-                                                              (2 * n + k + 2)]),
+                                                                        (2 * n + k + 2)]),
                                     X = X,
                                     beta = as.vector(chain.nonadapt[i, 1:k]),
                                     sigma2 = as.numeric(chain.nonadapt[i, (k + 1)]),
                                     prior = prior) * stats::dnorm(x = alpha.star,
-                                                           mean = as.numeric(chain.nonadapt[i, (k + 2)]),
-                                                           sd = sqrt(omega2.alpha))
+                                                                  mean = as.numeric(chain.nonadapt[i, (k + 2)]),
+                                                                  sd = sqrt(omega2.alpha))
         alpha.aux <- stats::rnorm(n = 1, mean = alpha.star, sd = sqrt(omega2.alpha))
         po2.alpha[i] <- alpha.alpha(alpha0 = alpha.star, alpha1 = alpha.aux,
                                     logt = as.vector(chain.sigma2[i, (k + 2 + n) :
-                                                              (2 * n + k + 1)]),
+                                                                      (2 * n + k + 1)]),
                                     X = X,
                                     beta = as.vector(chain.sigma2[i + 1, 1:k]),
                                     sigma2 = as.numeric(chain.sigma2[i +1,
@@ -1411,15 +1411,15 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
     cat("Posterior ordinate alpha ready!\n")
 
     chain.beta <- MCMCR.sigma2.alpha.LEP(N = N * thin, thin = thin, Time, Cens,
-                                        X,
-                                        beta0 = as.vector(chain.nonadapt[N, 1:k]),
-                                        sigma20 = sigma2.star,
-                                        alpha0 = alpha.star,
-                                        logt0 = t(chain.nonadapt[N, (k + 3 + n) :
-                                                              (2 * n + k + 2)]),
-                                        u0 = t(chain.nonadapt[N, (k + 3) :
-                                                                  (k + 2 + n)]),
-                                        prior, set, eps_l, eps_r, omega2.beta)
+                                         X,
+                                         beta0 = as.vector(chain.nonadapt[N, 1:k]),
+                                         sigma20 = sigma2.star,
+                                         alpha0 = alpha.star,
+                                         logt0 = t(chain.nonadapt[N, (k + 3 + n) :
+                                                                      (2 * n + k + 2)]),
+                                         u0 = t(chain.nonadapt[N, (k + 3) :
+                                                                   (k + 2 + n)]),
+                                         prior, set, eps_l, eps_r, omega2.beta)
     cat("Reduced chain.beta ready\n!")
 
     # POSTERIOR ORDINATE - sigma2
@@ -1427,11 +1427,11 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
     po2.sigma2 <- rep(0, times = N)
     for (i in 1:N) {
         po1.sigma2[i] <- alpha.sigma2(sigma2.0 = as.numeric(chain.sigma2[i + 1,
-                                                                      (k + 1)]),
+                                                                         (k + 1)]),
                                       sigma2.1 = sigma2.star,
                                       logt = as.vector(chain.sigma2[i,
-                                                                (k + 2 + n) :
-                                                              (2 * n + k + 1)]),
+                                                                    (k + 2 + n) :
+                                                                        (2 * n + k + 1)]),
                                       X = X,
                                       beta = as.vector(t(chain.sigma2[i + 1,
                                                                       1:k])),
@@ -1444,7 +1444,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
         po2.sigma2[i] <- alpha.sigma2(sigma2.0 = sigma2.star,
                                       sigma2.1 = sigma2.aux,
                                       logt = as.vector(chain.beta[i, (k + 1 + n):
-                                                                 (2 * n + k)]),
+                                                                      (2 * n + k)]),
                                       X = X,
                                       beta = as.vector(chain.beta[i + 1, 1:k]),
                                       alpha = alpha.star,
@@ -1467,7 +1467,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                                    alpha0 = alpha.star,
                                                    logt0 = as.vector(chain.nonadapt[N,
                                                                                     (k + 3 + n):
-                                                                                       (2 * n + k + 2)]),
+                                                                                        (2 * n + k + 2)]),
                                                    u0 = as.vector(chain.nonadapt[N,
                                                                                  (k + 3):
                                                                                      (k + 2 + n)]),
@@ -1483,7 +1483,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
             po1.beta[i] <- alpha.beta(beta.0 = beta.0, beta.1 = beta.1,
                                       logt = as.vector(chain.prev[i + 1,
                                                                   (k +1 + n) :
-                                                                  (2 * n + k)]),
+                                                                      (2 * n + k)]),
                                       X = X, sigma2 = sigma2.star,
                                       alpha = alpha.star) *
                 stats::dnorm(x = beta.star[j.beta +1],
@@ -1496,7 +1496,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
             po2.beta[i] <- alpha.beta(beta.0 = beta.star, beta.1 = beta.2,
                                       logt = as.vector(chain.next[i + 1, (k + 1
                                                                           + n):
-                                                                  (2 * n + k)]),
+                                                                      (2 * n + k)]),
                                       X = X, sigma2 = sigma2.star,
                                       alpha = alpha.star)
         }
@@ -1740,7 +1740,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
         shape.aux <- (n + 2 * p - 2)/2
         rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
-                                                     (logt.aux - X %*% beta.aux)
+            (logt.aux - X %*% beta.aux)
         if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
             sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
                                          rate = rate.aux))^(-1)
@@ -1834,7 +1834,7 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
 
     # PRIOR ORDINATE
     LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
-                      logs = TRUE)
+                       logs = TRUE)
     cat("Prior ordinate ready!\n")
 
     # POSTERIOR ORDINATE - sigma 2
@@ -1842,7 +1842,7 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
     po.sigma2 <- rep(0, times = N)
     for (i in 1:N) {
         aux1 <- as.vector(t(chain[i, (k + 2 + n):(k + 1 + 2 * n)])) - X %*%
-                                                        as.vector(chain[i, 1:k])
+            as.vector(chain[i, 1:k])
         aux2 <- diag(as.vector(t(chain[i, (k + 2):(k + 1 + n)])))
         rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
         po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
@@ -1856,7 +1856,7 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
                                     beta0 = t(chain[N, 1:k]),
                                     sigma20 = sigma2.star,
                                     logt0 = t(chain[N, (n + k + 2) :
-                                                            (2 * n + k + 1)]),
+                                                        (2 * n + k + 1)]),
                                     lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
                                     prior = prior, set, eps_l, eps_r, N.AKS)
     cat("Reduced chain.beta ready!\n")
@@ -2020,8 +2020,8 @@ BF_lambda_obs_LLOG <- function(ref, obs, X, chain) {
                                 mean = (X[obs, ]) %*% as.vector(chain[j, 1:k]),
                                 sd = sqrt(chain[j, (k + 1)]/ref))
         aux2[j] <- stats::dlogis(chain[j, (obs + n + k + 1)],
-                          location = (X[obs, ]) %*% as.vector(chain[j, 1:k]),
-                          scale = sqrt(chain[j, (k + 1)]))
+                                 location = (X[obs, ]) %*% as.vector(chain[j, 1:k]),
+                                 scale = sqrt(chain[j, (k + 1)]))
     }
 
     aux <- mean(aux1/aux2)

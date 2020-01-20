@@ -1,29 +1,14 @@
-test_that("prior.nu returns expected value for nu = 1 & prior = 2",{
-  prior.val <- prior.nu(1,2)
-  expect_equal(round(prior.val,4), 0.1914)
-})
-
-test_that("prior.alpha returns expected value for alpha = 1, k = 1, prior = 1",{
-  prior.val <- prior.alpha(1,1,1)
-  expect_equal(round(prior.val,4), 1.3209)
-})
-
-test_that("prior.alpha returns expected value for alpha = 1, k = 1, prior = 2",{
-  prior.val <- prior.alpha(1,1,2)
-  expect_equal(round(prior.val,4), 1.3209)
-})
-
-test_that("prior.alpha returns expected value for alpha = 1, k = 1, prior = 3",{
-  prior.val <- prior.alpha(1,1,3)
-  expect_equal(round(prior.val,4), 1.9031)
+test_that("prior_nu returns expected value for nu = 1 & prior = 2",{
+  prior.val <- prior_nu(1,2)
+  expect_equal(round(prior.val,4), 0.5679)
 })
 
 
-test_that("IIJ_nu same result in C++ as in R",{
+test_that("prior_nu same result in C++ as in R",{
   nu <- seq(1,10)
-  aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) -trigamma((nu + 1) / 2) -
+  aux <- sqrt(nu/ (nu + 3)) * sqrt(trigamma(nu / 2) - trigamma((nu + 1) / 2) -
                                      (2 * (nu + 3))/(nu * (nu + 1) ^ 2))
-  expect_equivalent(IIJ_nu(nu), aux)
+  expect_equivalent(prior_nu(nu, 2), aux)
 })
 
 test_that("r_GIG same result in C++ as in R",{
@@ -44,5 +29,42 @@ test_that("r_GIG same result in C++ as in R",{
   }
   set.seed(123)
   expect_equivalent(aux, r_GIG(4.5, 50))
+})
+
+test_that("prior_alpha same result in C++ as in R",{
+  prior.alpha <- function(alpha, k, prior) {
+    if (prior == 1)
+      aux <- J_alpha(alpha, k)
+    if (prior == 2)
+      aux <- II_alpha(alpha)
+    if (prior == 3)
+      aux <- I_alpha(alpha)
+    return(aux)
+  }
+
+  expect_equal(prior.alpha(c(1,2), 1, 1), prior_alpha(c(1,2), 1, 1))
+  expect_equal(prior.alpha(c(1,2), 1, 2), prior_alpha(c(1,2), 1, 2))
+  expect_equal(prior.alpha(c(1,2), 1, 3), prior_alpha(c(1,2), 1, 3))
+
+})
+
+test_that("prior_LEP same result in C++ as in R",{
+  prior.LEP <- function(beta, sigma2, alpha, prior, log) {
+    if (log == FALSE) {
+      aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
+        prior_alpha(alpha, length(beta), prior)
+    }
+    if (log == TRUE) {
+      aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
+        log(prior_alpha(alpha, length(beta), prior))
+    }
+    return(aux)
+  }
+
+  expect_equal(prior.LEP(c(1,2),1,c(1,2), 1, F),
+               prior_LEP(c(1,2),1,c(1,2), 1, F) )
+
+  expect_equal(prior.LEP(c(1,2),1,c(1,2), 1, T),
+               prior_LEP(c(1,2),1,c(1,2), 1, T))
 })
 
