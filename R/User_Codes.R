@@ -1365,8 +1365,8 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
     cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
-    LP.ord <- prior.LEP(beta = beta.star, sigma2 = sigma2.star,
-                        alpha = alpha.star, prior, log = TRUE)
+    LP.ord <- prior_LEP(beta = beta.star, sigma2 = sigma2.star,
+                        alpha = alpha.star, prior, logs = TRUE)
     cat("Prior ordinate ready!\n")
 
     chain.sigma2 <- MCMCR.alpha.LEP(N = N * thin, thin = thin, Time, Cens, X,
