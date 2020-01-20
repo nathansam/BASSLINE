@@ -806,9 +806,10 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     sigma2.aux <- sigma2[1]
     logt.aux <- logt[1, ]
     lambda.aux <- lambda[1, ]
+    lambda.aux.change <- TRUE
 
     for (iter in 2:(N + 1)) {
-        Lambda <- diag(lambda.aux)
+        if (lambda.aux.change == TRUE) {Lambda <- diag(lambda.aux)}
         AUX1 <- (t(X) %*% Lambda %*% X)
         if (det(AUX1) != 0) {
             AUX <- solve(AUX1)
@@ -835,7 +836,8 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
                                                 lambda = rep(1, times = n))
                 lambda.aux <- I(draw.aux > 0) * draw.aux +
                     (1 - I(draw.aux > 0)) * lambda.aux
-            }
+                lambda.aux.change <- TRUE
+            } else {lambda.aux.change <- FALSE}
         }
 
         logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux,
