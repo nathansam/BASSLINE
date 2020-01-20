@@ -28,7 +28,8 @@ BF_u_obs_LEP(
 
 \item{burn}{Burn-in period}
 
-\item{ref}{Reference value \eqn{u_{ref}}}
+\item{ref}{Reference value \eqn{u_{ref}}. Vallejos & Steel recommends this
+value be set to \eqn{1.6 +1_\alpha} for the LEP model.}
 
 \item{obs}{Indicates the number of the observation under analysis}
 
@@ -46,7 +47,10 @@ the number of observations and \eqn{k} is the number of covariates
 3: Ind. Jeffreys).}
 
 \item{set}{Indicator for the use of set observations (1: set observations,
-0: point observations).}
+0: point observations). The former is strongly recommended over the
+latter as point observations cause problems in the context of Bayesian
+inference (due to continuous sampling models assigning zero probability
+to a point).}
 
 \item{eps_l}{Lower imprecision \eqn{(\epsilon_l)} for set observations
 (default value: 0.5).}
@@ -75,8 +79,8 @@ library(BASSLINE)
 
 LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                 Cens = cancer[,2], X = cancer[,3:11])
-alpha <- median(LEP[,11])
-uref <- 1 + 1 / alpha + 0.6
+alpha <- mean(LEP[,11])
+uref <- 1.6 + 1 / alpha
 LEP.Outlier <- BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref,
                             obs = 1, Time = cancer[,1], Cens = cancer[,2],
                             cancer[,3:11], chain = LEP)

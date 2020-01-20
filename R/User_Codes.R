@@ -21,7 +21,10 @@
 #' @param prior Indicator of prior (1: Jeffreys, 2: Type I Ind. Jeffreys,
 #'     3: Ind. Jeffreys).
 #' @param set Indicator for the use of set observations (1: set observations,
-#'     0: point observations).
+#'     0: point observations). The former is strongly recommended over the
+#'     latter as point observations cause problems in the context of Bayesian
+#'     inference (due to continuous sampling models assigning zero probability
+#'     to a point).
 #' @param eps_l Lower imprecision \eqn{(\epsilon_l)} for set observations
 #'     (default value: 0.5).
 #' @param eps_r Upper imprecision \eqn{(\epsilon_r)} for set observations
@@ -107,7 +110,7 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", logt.cols)
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -451,7 +454,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
                          "ls.nu")
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -532,7 +535,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     po2.nu <- rep(0, times = N)
     for (i in 1:N) {
         lambda.po1 <- t(chain.nonadapt[i, (k + 3):(k + 2 + n)])
-        mean <- as.numeric(chain.nonadapt[i,(k + 2)])
+        mean <- as.numeric(chain.nonadapt[i, (k + 2)])
         po1.nu[i] <- alpha.nu(nu0 = as.numeric(chain.nonadapt[i, (k + 2)]),
                               nu1 = nu.star,
                               lambda = lambda.po1, k = k,
@@ -552,7 +555,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     # POSTERIOR ORDINATE - sigma 2
     shape <- (n + 2 * p - 2)/2
     po.sigma2 <- rep(0, times = N)
-    for (i in 1 : N) {
+    for (i in 1:N) {
         aux1 <- (chain.sigma2[i, (k + 2 + n):(k + 1 + 2 * n)]) - X %*%
                     (chain.sigma2[i, 1:k])
         aux2 <- diag(as.vector(t(chain.sigma2[i, (k + 2):(k + 1 + n)])))
@@ -569,7 +572,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
 
     chain.beta <- MCMCR.sigma2.nu.LST(N = N * thin, thin = thin, Q, Time,
                                       Cens, X,
-                                      beta0 = t(chain.nonadapt[N, 1 : k]),
+                                      beta0 = t(chain.nonadapt[N, 1:k]),
                                       sigma20 = sigma2.star, nu0 = nu.star,
                                       logt0 = logt0, lambda0 = lambda0, prior,
                                       set, eps_l, eps_r)
@@ -860,7 +863,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", lambda.cols, logt.cols)
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -1291,7 +1294,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
 
@@ -1625,7 +1628,8 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
 #' @inheritParams MCMC_LN
 #' @param burn Burn-in period
-#' @param ref Reference value \eqn{u_{ref}}
+#' @param ref Reference value \eqn{u_{ref}}. Vallejos & Steel recommends this
+#'     value be set to \eqn{1.6 +1_\alpha} for the LEP model.
 #' @param ar Optimal acceptance rate for the adaptive Metropolis-Hastings
 #'     updates
 #' @param obs Indicates the number of the observation under analysis
@@ -1639,8 +1643,8 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'
 #' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
 #'                 Cens = cancer[,2], X = cancer[,3:11])
-#' alpha <- median(LEP[,11])
-#' uref <- 1 + 1 / alpha + 0.6
+#' alpha <- mean(LEP[,11])
+#' uref <- 1.6 + 1 / alpha
 #' LEP.Outlier <- BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref,
 #'                             obs = 1, Time = cancer[,1], Cens = cancer[,2],
 #'                             cancer[,3:11], chain = LEP)
@@ -1774,7 +1778,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
 
     if (burn > 0){
-        burn.period <- 1 : burn
+        burn.period <- 1:burn
         chain <- chain [-burn.period, ]
     }
     return(chain)

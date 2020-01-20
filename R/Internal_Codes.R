@@ -727,7 +727,7 @@ CFP.obs.LST <- function(N, thin, Q, burn, ref, obs, Time, Cens, X, chain, prior,
                                    sigma20 = chain[N.aux, (k + 1)],
                                    nu0 = chain[N.aux, (k + 2)],
                                    lambda0 = t(chain[N.aux,
-                                                     (k + 3) : (k + 2 + n)]),
+                                                     (k + 3):(k + 2 + n)]),
                                    prior, set, eps_l, eps_r, ar)
     chain1 <- chain1[-(1:burn), ]
     N.aux2 <- dim(chain1)[1]
@@ -1612,7 +1612,7 @@ MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
         }
     }
 
-    cat(paste("AR beta", 1 : k, ":", round(accept.beta / N, 2), "\n"))
+    cat(paste("AR beta", 1:k, ":", round(accept.beta / N, 2), "\n"))
     cat(paste("AR sigma2 :", round(accept.sigma2 / N, 2), "\n"))
     cat(paste("AR alpha :", round(accept.alpha / N, 2), "\n"))
 
@@ -1645,7 +1645,7 @@ Post.u.obs.LEP <- function(obs, ref, X, chain) {
 
     for (iter in 1:N) {
         trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
-                            as.vector(chain[iter, 1 : k])) /
+                            as.vector(chain[iter, 1:k])) /
                         sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
 
         aux1[iter] <- dtexp(x = ref, rate = 1, trunc = trunc.aux)
@@ -1672,7 +1672,7 @@ CFP.obs.LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain, prior,
     N.aux2 <- dim(chain1)[1]
     aux1 <- rep(0, times = N.aux2)
 
-    for (iter in 1 : N.aux2) {
+    for (iter in 1:N.aux2) {
         aux1[iter] <- 1 / stats::dgamma(x = ref,
                                         shape = 1 + (1/chain1[iter, k + 2]),
                                         rate = 1)
@@ -1694,7 +1694,7 @@ rGIG <- function(n = 1, r) {
     y <- 1 + ((y - sqrt(y * (4 * r + y))) / (2 * r))
     u <- stats::runif(n)
     aux <- rep(0, times = n)
-    for (i in 1 : n) {
+    for (i in 1:n) {
         if (u[i] <= 1/(1 + y[i])) {
             aux[i] <- r/y[i]
         } else {
