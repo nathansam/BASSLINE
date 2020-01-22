@@ -33,11 +33,15 @@ prior_LEP <- function(beta, sigma2, alpha, prior, logs) {
     .Call(`_BASSLINE_prior_LEP`, beta, sigma2, alpha, prior, logs)
 }
 
-r_GIG <- function(r, n = 1L) {
-    .Call(`_BASSLINE_r_GIG`, r, n)
+r_GIG <- function(r) {
+    .Call(`_BASSLINE_r_GIG`, r)
 }
 
 Log_aux <- function(lambda, y, j_nu, nu, prior) {
     .Call(`_BASSLINE_Log_aux`, lambda, y, j_nu, nu, prior)
+}
+
+d_texp <- function(x, trunc) {
+    .Call(`_BASSLINE_d_texp`, x, trunc)
 }
 

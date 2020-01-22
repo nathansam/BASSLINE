@@ -110,14 +110,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // r_GIG
-NumericVector r_GIG(double r, int n);
-RcppExport SEXP _BASSLINE_r_GIG(SEXP rSEXP, SEXP nSEXP) {
+double r_GIG(double r);
+RcppExport SEXP _BASSLINE_r_GIG(SEXP rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< double >::type r(rSEXP);
-    Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    rcpp_result_gen = Rcpp::wrap(r_GIG(r, n));
+    rcpp_result_gen = Rcpp::wrap(r_GIG(r));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -136,6 +135,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// d_texp
+double d_texp(double x, double trunc);
+RcppExport SEXP _BASSLINE_d_texp(SEXP xSEXP, SEXP truncSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type x(xSEXP);
+    Rcpp::traits::input_parameter< double >::type trunc(truncSEXP);
+    rcpp_result_gen = Rcpp::wrap(d_texp(x, trunc));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_prior_LN", (DL_FUNC) &_BASSLINE_prior_LN, 4},
@@ -146,8 +157,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_I_alpha", (DL_FUNC) &_BASSLINE_I_alpha, 1},
     {"_BASSLINE_prior_alpha", (DL_FUNC) &_BASSLINE_prior_alpha, 3},
     {"_BASSLINE_prior_LEP", (DL_FUNC) &_BASSLINE_prior_LEP, 5},
-    {"_BASSLINE_r_GIG", (DL_FUNC) &_BASSLINE_r_GIG, 2},
+    {"_BASSLINE_r_GIG", (DL_FUNC) &_BASSLINE_r_GIG, 1},
     {"_BASSLINE_Log_aux", (DL_FUNC) &_BASSLINE_Log_aux, 5},
+    {"_BASSLINE_d_texp", (DL_FUNC) &_BASSLINE_d_texp, 2},
     {NULL, NULL, 0}
 };
 
