@@ -5,16 +5,16 @@ prior_LN <- function(beta, sigma2, prior, logs) {
     .Call(`_BASSLINE_prior_LN`, beta, sigma2, prior, logs)
 }
 
+prior_nu <- function(nu, prior) {
+    .Call(`_BASSLINE_prior_nu`, nu, prior)
+}
+
+prior_LST <- function(beta, sigma2, nu, prior, logs) {
+    .Call(`_BASSLINE_prior_LST`, beta, sigma2, nu, prior, logs)
+}
+
 J_alpha <- function(alpha, k) {
     .Call(`_BASSLINE_J_alpha`, alpha, k)
-}
-
-IIJ_nu <- function(nu) {
-    .Call(`_BASSLINE_IIJ_nu`, nu)
-}
-
-r_GIG <- function(r, n = 1L) {
-    .Call(`_BASSLINE_r_GIG`, r, n)
 }
 
 II_alpha <- function(alpha) {
@@ -23,5 +23,25 @@ II_alpha <- function(alpha) {
 
 I_alpha <- function(alpha) {
     .Call(`_BASSLINE_I_alpha`, alpha)
+}
+
+prior_alpha <- function(alpha, k, prior) {
+    .Call(`_BASSLINE_prior_alpha`, alpha, k, prior)
+}
+
+prior_LEP <- function(beta, sigma2, alpha, prior, logs) {
+    .Call(`_BASSLINE_prior_LEP`, beta, sigma2, alpha, prior, logs)
+}
+
+r_GIG <- function(r) {
+    .Call(`_BASSLINE_r_GIG`, r)
+}
+
+Log_aux <- function(lambda, y, j_nu, nu, prior) {
+    .Call(`_BASSLINE_Log_aux`, lambda, y, j_nu, nu, prior)
+}
+
+d_texp <- function(x, trunc) {
+    .Call(`_BASSLINE_d_texp`, x, trunc)
 }
 

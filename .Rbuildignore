@@ -8,3 +8,5 @@
 ^pkgdown$
 ^\.travis\.yml$
 ^appveyor\.yml$
+^man/BenchJournal$
+^\.vscode$

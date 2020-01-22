@@ -13,15 +13,7 @@ test_that("MCMC_LST returns expected number of rows when burn = 0",{
 ############################## INTERNAL FUNCTIONS ##############################
 ################################################################################
 
-test_that("Expected value for prior_LST when logs = FALSE",{
-  expect.val <- round( prior.LST(1,1,1,2,F),4)
-  expect_equal(expect.val,-0.1914)
-})
 
-test_that("Expected value for prior_LST when logs = TRUE",{
-  expect.val <- round( prior.LST(1,1,1,2,T),4)
-  expect_equal(expect.val, -1.6536)
-})
 
 test_that("Expected value for MH.nu.LST",{
   set.seed(123)
@@ -68,3 +60,22 @@ test_that("log.lik.LST returns expected values for set = 1",{
     expect_equal(round(lik,4), -1043.0675)
   }
 })
+
+test_that("prior_LST is the same in C++ as in R",{
+  prior.LST.R <- function(beta, sigma2, nu, prior, log) {
+    if (log == FALSE) {
+      aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
+        prior_nu(nu, prior)
+    }
+    if (log == TRUE) {
+      aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
+        log(prior_nu(nu, prior))
+    }
+    return(aux)
+  }
+
+  expect_equal(prior.LST.R(c(1,2),1,1,2,T), prior_LST(c(1,2),1,1,2,T))
+  expect_equal(prior.LST.R(c(1,2),1,1,2,F), prior_LST(c(1,2),1,1,2,F))
+})
+
+

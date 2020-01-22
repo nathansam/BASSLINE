@@ -15,15 +15,6 @@ test_that("MCMC_LEP returns expected number of rows when burn = 5,thin = 10",{
 ############################## INTERNAL FUNCTIONS ##############################
 ################################################################################
 
-test_that("expected value for prior.LEP when log = FALSE",{
-  prior.val <- prior.LEP(0.5, 1, 1, 2, F)
-  expect_equivalent(round(prior.val, 4), -1.3209)
-})
-
-test_that("expected value for prior.LEP when log = TRUE",{
-  prior.val <- prior.LEP(0.5, 1, 1, 2, T)
-  expect_equivalent(round(prior.val, 4), 0.2783)
-})
 
 
 test_that("II_alpha same result in C++ as in R",{
@@ -56,4 +47,16 @@ test_that("J_alpha same result in C++ as in R",{
   expect_equivalent(J_alpha(2, 2), J.alpha(2, 2))
 })
 
+test_that("d_texp same result in C++ as in R",{
 
+  dtexp <- function(x, rate, trunc) {
+    if (x >= trunc) {
+      aux <- rate * exp(-rate * (x - trunc))
+    } else {
+      aux <- 0
+    }
+    return(aux)
+  }
+  expect_equal(d_texp(x = 2.5,trunc = 1.5), dtexp(2.5, 1, 1.5))
+  expect_equal(d_texp(x = 1.5,trunc = 2.5), 0)
+})
