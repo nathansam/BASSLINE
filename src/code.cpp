@@ -56,6 +56,7 @@ NumericVector prior_nu(NumericVector nu, int prior){
     return aux;
   }
   return 1;
+
 }
 
 // Non vectorised version of prior_nu
