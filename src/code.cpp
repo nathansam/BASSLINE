@@ -55,7 +55,7 @@ NumericVector prior_nu(NumericVector nu, int prior){
       (2 * (nu + 3)) / (nu * pow(nu + 1,2)));
     return aux;
   }
-  return NULL;
+  return R_NaN;
 }
 
 // Non vectorised version of prior_nu
@@ -69,7 +69,7 @@ double prior_nu_single(double nu, int prior){
       (2 * (nu + 3)) / (nu * pow(nu + 1,2)));
     return aux;
   } else{
-    return NULL;
+    return R_NaN;
   }
 }
 
@@ -164,7 +164,7 @@ NumericVector prior_alpha(NumericVector alpha, int  k, int prior) {
     aux = I_alpha(alpha);
     return aux;
   }
-  return NULL;
+  return R_NaN;
 }
 
 // [[Rcpp::export]]
@@ -185,7 +185,7 @@ double prior_alpha_single(double alpha, int  k, int prior) {
     aux = I_alpha_single(alpha);
     return aux;
   }
-  return NULL;
+  return R_NaN;
 }
 
 // ##### PRIOR FOR (BETA,SIGMA2,ALPHA) (LOG-EXPONENTIAL POWER MODEL ONLY) ######
