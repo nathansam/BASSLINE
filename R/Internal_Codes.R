@@ -39,7 +39,7 @@ logt.update.SMLN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
 }
 
 ###### FOR MIXTURE OF UNIFORMS REPRESENTATION (LOG-EXPONENTIAL POWER MODEL ONLY)
-
+### POSSIBLE
 logt.update.LEP <- function(Time, Cens, X, beta, sigma2, alpha, u, set, eps_l,
                             eps_r) {
     n <- length(Time)
@@ -95,7 +95,7 @@ logt.update.LEP <- function(Time, Cens, X, beta, sigma2, alpha, u, set, eps_l,
 ###### (NO MIXTURE)
 
 ######LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL .LN FUNCTIONS)
-
+### POSSIBLE
 log.lik.LN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
     n <- length(Time)
     aux <- rep(0, times = n)
@@ -183,68 +183,8 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0,
 
 ### OTHER FUNCTIONS REQUIRED FOR THE IMPLEMENTATION OF THE LOG-STUDENT'S T MODEL
 
-########METROPOLIS-HASTINMCMC UPDATE OF NU (REQUIRED FOR SEVERAL .LST FUNCTIONS)
-
-MH.nu.LST <- function(N = 1, omega2, beta, lambda, nu0, prior) {
-    k <- length(beta)
-    ind <- rep(0, N)
-    nu <- rep(0, times = N + 1)
-    nu[1] <- nu0
-
-    for (j.nu in 1:N) {
-        y <- stats::rnorm(1, mean = nu[j.nu], sd = sqrt(omega2))
-        ind.aux <- I(y >= 0)
-        y <- abs(y)
-        u.aux <- stats::runif(1, min = 0, max = 1)
-
-
-
-       log.aux <- sum(stats::dgamma(lambda, shape = y / 2, rate = y / 2,
-                                    log = TRUE)) -
-                                 sum(stats::dgamma(lambda,
-                                                   shape = nu[j.nu] / 2,
-                                                   rate = nu[j.nu] / 2,
-                                                   log = TRUE)) +
-                                         log(prior_nu(y, prior) /
-                                               prior_nu(nu[j.nu], prior))
-
-        ### CONVERT RHS of + at a later date
-
-        # log.aux <- Log_aux(lambda, y, j.nu, nu, prior) +
-        #                                               log(prior.nu(y, prior) /
-        #                                                     prior.nu(nu[j.nu],
-        #                                                              prior))
-        aux <- I(log(u.aux) < log.aux)
-        aux <- as.numeric(aux) * as.numeric(ind.aux)
-        nu[j.nu + 1] <- aux * y + (1 - aux) * nu[j.nu]
-        ind[j.nu + 1] <- as.numeric(aux)
-    }
-    nu <- nu[-1]
-    ind <- ind[-1]
-    list(nu = nu, ind = ind)
-}
-
-#### ACEPTANCE PROBABILITY FOR METROPOLIS-HASTINMCMC UPDATE OF NU
-#### (REQUIRED FOR ML.LST FUNCTION ONLY)
-
-alpha.nu <- function(nu0, nu1, lambda, k, prior) {
-    if (nu1 <= 0) {
-        aux <- 0
-    }
-    if (nu1 > 0) {
-        aux <- min(1, exp(sum(stats::dgamma(lambda, shape = nu1 / 2,
-                                            rate = nu1 / 2, log = TRUE))
-                          - sum(stats::dgamma(lambda,
-                                              shape = nu0 / 2,
-                                              rate = nu0 / 2,
-                                              log = TRUE))) *
-                            (prior_nu(nu1, prior) / prior_nu(nu0, prior)))
-    }
-    return(aux)
-}
-
 ################## LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL .LST FUNCTIONS)
-
+### POSSIBLE
 log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
     n <- length(Time)
     aux <- rep(0, n)
@@ -326,7 +266,7 @@ MCMC.LST.NonAdapt <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        MH.nu <- MH.nu.LST(N = 1, omega2 = omega2.nu, beta.aux, lambda.aux,
+        MH.nu <- MH_nu_LST(N = 1, omega2 = omega2.nu, beta.aux, lambda.aux,
                            nu.aux, prior)
         nu.aux <- MH.nu$nu
         accept.nu <- accept.nu + MH.nu$ind
@@ -565,7 +505,7 @@ MCMCR.LST.lambda.obs <- function(ref, obs, N, thin, Q, Time, Cens, X, beta0,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        MH.nu <- MH.nu.LST(N = 1, omega2 = exp(ls.nu.aux), beta.aux,
+        MH.nu <- MH_nu_LST(N = 1, omega2 = exp(ls.nu.aux), beta.aux,
                            lambda.aux, nu.aux, prior)
         nu.aux <- MH.nu$nu
         accept.nu <- accept.nu + MH.nu$ind
@@ -612,7 +552,7 @@ MCMCR.LST.lambda.obs <- function(ref, obs, N, thin, Q, Time, Cens, X, beta0,
 }
 
 ######## MARGINAL POSTERIOR OF LAMBDA[obs] (REQUIRED FOR BF.lambda.obs.LST ONLY)
-
+### Possible
 Post.lambda.obs.LST <- function(obs, ref, X, chain) {
     N <- dim(chain)[1]
     n <- dim(X)[1]
@@ -769,6 +709,8 @@ MCMCR.sigma2.LLAP <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, logt0,
 #### METROPOLIS-HASTINMCMC UPDATE OF BETA[j]
 #### (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
 
+
+### POSSIBLE
 MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
                                beta0, j) {
     k <- length(beta0)
@@ -810,184 +752,6 @@ MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
     list(beta = beta, ind = ind)
 }
 
-#### ACEPTANCE PROBABILITY FOR METROPOLIS-HASTINMCMC UPDATE OF BETA[j]
-#### (REQUIRED FOR ML.LEP FUNCTION ONLY)
-
-alpha.beta <- function(beta.0, beta.1, logt, X, sigma2, alpha) {
-    l1 <- -sum(abs((logt - X %*% beta.1) / sqrt(sigma2)) ^ alpha)
-    l2 <- -sum(abs((logt - X %*% beta.0) / sqrt(sigma2)) ^ alpha)
-    aux <- min(1, exp(l1 - l2))
-
-    return(aux)
-}
-
-#### METROPOLIS-HASTINMCMC UPDATE OF SIGMA2
-#### (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
-
-MH.marginal.sigma2 <- function(N = 1, omega2, logt, X, beta, alpha,
-                               sigma20, prior) {
-    k <- length(beta)
-    n <- length(logt)
-    if (prior == 1) {
-        p <- 1 + k / 2
-    }
-    if (prior == 2) {
-        p <- 1
-    }
-    if (prior == 3) {
-        p <- 1
-    }
-    sigma2 <- rep(0, times = N + 1)
-    sigma2[1] <- sigma20
-    ind <- rep(0, times = N + 1)
-    for (i.s in 1:N) {
-        y.aux <- stats::rnorm(n = 1, mean = sigma2[i.s], sd = sqrt(omega2))
-        if (y.aux <= 0) {
-            sigma2[i.s + 1] <- sigma2[i.s]
-            ind[i.s + 1] <- 2
-        } else {
-            l1 <- - ((n / 2) + p) * log(y.aux / sigma2[i.s])
-            l2 <- - sum(abs(logt - X %*% beta) ^ alpha) *
-                      (y.aux ^ (-alpha / 2) - sigma2[i.s] ^ (-alpha / 2))
-            aux <- l1 + l2
-            u.aux <- stats::runif(1, 0, 1)
-
-            # THE FOLLOWING THREE LINES AVOID CRUSHES
-            if (is.na(aux)) {
-                sigma2[i.s + 1] <- sigma2[i.s]
-                ind[i.s + 1] <- 0
-                cat("NA.sigma2\n")
-            }
-            if (is.na(aux) == FALSE && aux == -Inf) {
-                sigma2[i.s + 1] <- sigma2[i.s]
-                ind[i.s + 1] <- 0
-                cat("-Inf.sigma2\n")
-            }
-            if (is.na(aux) == FALSE && aux == Inf) {
-                sigma2[i.s + 1] <- y.aux
-                ind[i.s + 1] <- 1
-                cat("Inf.sigma2\n")
-            }
-
-            if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
-                sigma2[i.s + 1] <- y.aux
-                ind[i.s + 1] <- 1
-            }
-            if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) >= aux) {
-                sigma2[i.s + 1] <- sigma2[i.s]
-                ind[i.s + 1] <- 0
-            }
-        }
-    }
-    sigma2 <- sigma2[-1]
-    ind <- ind[-1]
-    list(sigma2 = sigma2, ind = ind)
-}
-
-#### ACEPTANCE PROBABILITY FOR METROPOLIS-HASTINMCMC UPDATE OF SIGMA2
-#### (REQUIRED FOR ML.LEP FUNCTION ONLY)
-
-alpha.sigma2 <- function(sigma2.0, sigma2.1, logt, X, beta, alpha, prior) {
-    if (sigma2.1 <= 0) {
-        aux <- 0
-    } else {
-        k <- dim(X)[2]
-        n <- dim(X)[1]
-        if (prior == 1) {
-            p <- 1 + k / 2
-        }
-        if (prior == 2) {
-            p <- 1
-        }
-        if (prior == 3) {
-            p <- 1
-        }
-        l1 <- - ((n / 2) + p) * log(sigma2.1 / sigma2.0)
-        l2 <- - sum(abs(logt - X %*% (beta))^alpha) *
-                     (sigma2.1 ^ (-alpha / 2) - sigma2.0 ^ (-alpha / 2))
-        aux <- min(1, exp(l1 + l2))
-    }
-
-    return(aux)
-}
-
-#### METROPOLIS-HASTINMCMC UPDATE OF ALPHA (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
-
-MH.marginal.alpha <- function(N = 1, omega2, logt, X, beta, sigma2,
-                              alpha0, prior) {
-    k <- dim(X)[2]
-    n <- dim(X)[1]
-    alpha <- rep(0, times = N + 1)
-    alpha[1] <- alpha0
-    ind <- rep(0, times = N + 1)
-
-    for (i.a in 1:N) {
-        y.aux <- stats::rnorm(n = 1, mean = alpha[i.a], sd = sqrt(omega2))
-        if (y.aux >= 2 || y.aux <= 1) {
-            alpha[i.a + 1] <- alpha[i.a]
-            ind[i.a + 1] <- 0
-        } else {
-            l1 <- n * log(y.aux / gamma(1 / y.aux)) -
-                        sum(abs((logt - X %*% beta) / sqrt(sigma2)) ^ y.aux)
-            l0 <- n * log(alpha[i.a] / gamma(1 / alpha[i.a])) -
-                       sum(abs((logt - X %*% beta) / sqrt(sigma2)) ^ alpha[i.a])
-            aux <- l1 - l0 + log(prior_alpha(y.aux, k, prior) /
-                                   prior_alpha(alpha[i.a], k, prior))
-            u.aux <- stats::runif(1, 0, 1)
-
-            # THE FOLLOWING THREE LINES AVOID CRUSHES
-            if (is.na(aux)) {
-                alpha[i.a + 1] <- alpha[i.a]
-                ind[i.a + 1] <- 0
-                cat("NA.alpha\n")
-            }
-            if (is.na(aux) == FALSE && aux == -Inf) {
-                alpha[i.a + 1] <- alpha[i.a]
-                ind[i.a + 1] <- 0
-                cat("-Inf.alpha\n")
-            }
-            if (is.na(aux) == FALSE && aux == Inf) {
-                alpha[i.a + 1] <- y.aux
-                ind[i.a + 1] <- 1
-                cat("Inf.alpha\n")
-            }
-
-            if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
-                alpha[i.a + 1] <- y.aux
-                ind[i.a + 1] <- 1
-            }
-            if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) >= aux) {
-                alpha[i.a + 1] <- alpha[i.a]
-                ind[i.a + 1] <- 0
-            }
-        }
-    }
-    alpha <- alpha[-1]
-    ind <- ind[-1]
-    list(alpha = alpha, ind = ind)
-}
-
-#### ACEPTANCE PROBABILITY FOR METROPOLIS-HASTINMCMC UPDATE OF ALPHA
-#### (REQUIRED FOR ML.LEP FUNCTION ONLY)
-
-alpha.alpha <- function(alpha0, alpha1, logt, X, beta, sigma2, prior) {
-    k <- dim(X)[2]
-    n <- dim(X)[1]
-    if (alpha1 < 1 || alpha1 > 2) {
-        aux <- 0
-    } else {
-        l1 <- n * log(alpha1 / gamma(1 / alpha1)) -
-                 ((1 / sqrt(sigma2)) ^ alpha1) * sum((abs(logt - (X) %*%
-                                                            (beta))) ^ alpha1)
-        l0 <- n * log(alpha0 / gamma(1 / alpha0)) -
-                 ((1 / sqrt(sigma2)) ^ alpha0) * sum((abs(logt - (X) %*%
-                                                            (beta))) ^ alpha0)
-        aux <- min(1, exp(l1 - l0) * prior_alpha(alpha1, k, prior) /
-                                                 prior_alpha(alpha0, k, prior))
-    }
-    return(aux)
-}
-
 #### DISTRIBUTION FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
 #### (BASED ON library normalp).
 
@@ -1012,7 +776,7 @@ pnormp <- function(q, mu = 0, sigmap = 1, p = 2,
 
 #### DENSITY FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
 #### (BASED ON library normalp).
-
+### POSSIBLE
 dnormp <- function(x, mu = 0, sigmap = 1, p = 2, log = FALSE) {
  if (!is.numeric(x) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
         stop(" Non-numeric argument to mathematical function")
@@ -1030,7 +794,7 @@ dnormp <- function(x, mu = 0, sigmap = 1, p = 2, log = FALSE) {
 }
 
 ################## LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
-
+### POSSIBLE
 log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
     n <- length(Time)
     aux <- rep(0, n)
@@ -1118,7 +882,7 @@ MCMC.LEP.NonAdapt <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             }
         }
 
-        MH.sigma2 <- MH.marginal.sigma2(N = 1, omega2 = omega2.sigma2,
+        MH.sigma2 <- MH_marginal_sigma2(N = 1, omega2 = omega2.sigma2,
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -1127,7 +891,7 @@ MCMC.LEP.NonAdapt <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             accept.sigma2 <- accept.sigma2 + 1
         }
 
-        MH.alpha <- MH.marginal.alpha(N = 1, omega2 = omega2.alpha,
+        MH.alpha <- MH_marginal_alpha(N = 1, omega2 = omega2.alpha,
                                       logt = logt.aux, X = X, beta = beta.aux,
                                       sigma2 = sigma2.aux, alpha0 = alpha.aux,
                                       prior = prior)
@@ -1214,7 +978,7 @@ MCMCR.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             }
         }
 
-        MH.sigma2 <- MH.marginal.sigma2(N = 1, omega2 = omega2.sigma2,
+        MH.sigma2 <- MH_marginal_sigma2(N = 1, omega2 = omega2.sigma2,
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -1470,7 +1234,7 @@ MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
             }
         }
 
-        MH.sigma2 <- MH.marginal.sigma2(N = 1, omega2 = exp(ls.sigma2.aux),
+        MH.sigma2 <- MH_marginal_sigma2(N = 1, omega2 = exp(ls.sigma2.aux),
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -1480,7 +1244,7 @@ MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
             psigma2.aux <- psigma2.aux + 1
         }
 
-        MH.alpha <- MH.marginal.alpha(N = 1, omega2 = exp(ls.alpha.aux),
+        MH.alpha <- MH_marginal_alpha(N = 1, omega2 = exp(ls.alpha.aux),
                                       logt = logt.aux, X = X, beta = beta.aux,
                                       sigma2 = sigma2.aux, alpha0 = alpha.aux,
                                       prior = prior)
