@@ -70,8 +70,10 @@ test_that("prior_LEP same result in C++ as in R",{
 
 test_that("Unexpected arguments for prior funcs return numeric(0)", {
 
-  expect_equal(prior_nu(1, prior = 1), numeric(0))
-  expect_equal(prior_alpha(c(1, 2), 1, 4), numeric(0))
+  expect_equal(prior_nu(c(1,2), prior = 1), 0)
+  expect_equal(prior_nu_single(1, prior = 1), 0)
+  expect_equal(prior_alpha(c(1, 2), 1, 4), 0)
+  expect_equal(prior_alpha_single(2, 1, 4), 0)
 
 })
 
