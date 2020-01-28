@@ -740,7 +740,7 @@ BF_lambda_obs_LST <- function(N, thin, burn, ref, obs, Time, Cens, X,
                               chain, Q = 1, prior = 2, set = 1, eps_l = 0.5,
                               eps_r =0.5, ar = 0.44) {
     chain <- as.matrix(chain)
-    aux1 <- Post.lambda.obs.LST(obs, ref, X, chain)
+    aux1 <- Post_lambda_obs_LST(obs, ref, X, chain)
     aux2 <- CFP.obs.LST(N, thin, Q, burn, ref, obs, Time, Cens, X, chain, prior,
                         set, eps_l, eps_r, ar = 0.44)
     return(aux1 * aux2)
@@ -1660,7 +1660,7 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
                          prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5,
                          ar = 0.44) {
     chain <- as.matrix(chain)
-    aux1 <- Post.u.obs.LEP(obs, ref, X, chain)
+    aux1 <- Post_u_obs_LEP(obs, ref, X, chain)
     aux2 <- CFP.obs.LEP(N, thin, burn, ref, obs, Time, Cens, X, chain, prior,
                         set, eps_l, eps_r, ar = 0.44)
     return(aux1 * aux2)

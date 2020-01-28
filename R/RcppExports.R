@@ -85,15 +85,35 @@ MH_marginal_alpha <- function(N, omega2, logt, X, beta, sigma2, alpha0, prior) {
     .Call(`_BASSLINE_MH_marginal_alpha`, N, omega2, logt, X, beta, sigma2, alpha0, prior)
 }
 
-pnormp_cpp <- function(q, mu, sigmap, p, lower_tail = TRUE, log_pr = FALSE) {
-    .Call(`_BASSLINE_pnormp_cpp`, q, mu, sigmap, p, lower_tail, log_pr)
-}
-
 MH_marginal_beta_j <- function(N, omega2, logt, X, sigma2, alpha, beta0, j) {
     .Call(`_BASSLINE_MH_marginal_beta_j`, N, omega2, logt, X, sigma2, alpha, beta0, j)
 }
 
 alpha_alpha <- function(alpha0, alpha1, logt, X, beta, sigma2, prior) {
     .Call(`_BASSLINE_alpha_alpha`, alpha0, alpha1, logt, X, beta, sigma2, prior)
+}
+
+d_normp <- function(x, mu, sigmap, p, logs = FALSE) {
+    .Call(`_BASSLINE_d_normp`, x, mu, sigmap, p, logs)
+}
+
+p_normp <- function(q, mu, sigmap, p, lower_tail = TRUE, log_pr = FALSE) {
+    .Call(`_BASSLINE_p_normp`, q, mu, sigmap, p, lower_tail, log_pr)
+}
+
+log_lik_LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
+    .Call(`_BASSLINE_log_lik_LEP`, Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r)
+}
+
+RS_lambda_obs_LLOG <- function(logt, X, beta, sigma2, obs, N_AKS) {
+    .Call(`_BASSLINE_RS_lambda_obs_LLOG`, logt, X, beta, sigma2, obs, N_AKS)
+}
+
+Post_u_obs_LEP <- function(obs, ref, X, chain) {
+    .Call(`_BASSLINE_Post_u_obs_LEP`, obs, ref, X, chain)
+}
+
+Post_lambda_obs_LST <- function(obs, ref, X, chain) {
+    .Call(`_BASSLINE_Post_lambda_obs_LST`, obs, ref, X, chain)
 }
 
