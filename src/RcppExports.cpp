@@ -291,12 +291,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // MH_marginal_beta_j
-Rcpp::List MH_marginal_beta_j(unsigned int N, double omega2, arma::vec logt, arma::mat X, double sigma2, double alpha, arma::vec beta0, int j);
+Rcpp::List MH_marginal_beta_j(const unsigned int N, double omega2, arma::vec logt, arma::mat X, double sigma2, double alpha, arma::vec beta0, int j);
 RcppExport SEXP _BASSLINE_MH_marginal_beta_j(SEXP NSEXP, SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP sigma2SEXP, SEXP alphaSEXP, SEXP beta0SEXP, SEXP jSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< unsigned int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< double >::type omega2(omega2SEXP);
     Rcpp::traits::input_parameter< arma::vec >::type logt(logtSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
@@ -406,13 +406,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // Post_lambda_obs_LST
-double Post_lambda_obs_LST(double obs, int ref, arma::mat X, arma::mat chain);
+double Post_lambda_obs_LST(const unsigned int obs, double ref, arma::mat X, arma::mat chain);
 RcppExport SEXP _BASSLINE_Post_lambda_obs_LST(SEXP obsSEXP, SEXP refSEXP, SEXP XSEXP, SEXP chainSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type obs(obsSEXP);
-    Rcpp::traits::input_parameter< int >::type ref(refSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< double >::type ref(refSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type chain(chainSEXP);
     rcpp_result_gen = Rcpp::wrap(Post_lambda_obs_LST(obs, ref, X, chain));
