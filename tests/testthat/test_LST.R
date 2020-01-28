@@ -146,3 +146,34 @@ test_that("MH_nu_LST same in C++ as in R",{
   expect_equal(MH.nu.LST.R, MH.nu.LST.Cpp)
 
 })
+
+test_that("Post_lambda_obs_LST same in C++ as in R",{
+
+  Post.lambda.obs.LST <- function(obs, ref, X, chain) {
+    N <- dim(chain)[1]
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    aux1 <- rep(0, times = N)
+    aux2 <- rep(0, times = N)
+
+    for (iter in 1:N) {
+      aux1[iter] <- (((chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
+                         as.vector(chain[iter, (1:k)]))^2) / (chain[iter,
+                                                                    (k + 1)])) +
+        chain[iter, (k + 2)]
+      aux2[iter] <- stats::dgamma(x = ref,
+                                  shape = (chain[iter, (k + 2)] + 1) / 2,
+                                  rate = aux1[iter] / 2)
+    }
+
+    aux <- mean(aux2)
+    return(aux)
+  }
+
+  LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                  Cens = cancer[,2], X = cancer[,3:11])
+
+  R.result <- Post.lambda.obs.LST(1, 1, cancer[,3:11], LST)
+  Cpp.result <- Post_lambda_obs_LST(1, 1, cancer[,3:11], LST)
+  expect_equal(R.result, Cpp.result)
+})

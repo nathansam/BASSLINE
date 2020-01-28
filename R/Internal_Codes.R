@@ -551,28 +551,7 @@ MCMCR.LST.lambda.obs <- function(ref, obs, N, thin, Q, Time, Cens, X, beta0,
     return(chain)
 }
 
-######## MARGINAL POSTERIOR OF LAMBDA[obs] (REQUIRED FOR BF.lambda.obs.LST ONLY)
-### Possible
-Post.lambda.obs.LST <- function(obs, ref, X, chain) {
-    N <- dim(chain)[1]
-    n <- dim(X)[1]
-    k <- dim(X)[2]
-    aux1 <- rep(0, times = N)
-    aux2 <- rep(0, times = N)
 
-    for (iter in 1:N) {
-        aux1[iter] <- (((chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
-                           as.vector(chain[iter, (1:k)]))^2) / (chain[iter,
-                                                                    (k + 1)])) +
-                            chain[iter, (k + 2)]
-        aux2[iter] <- stats::dgamma(x = ref,
-                                    shape = (chain[iter, (k + 2)] + 1) / 2,
-                                    rate = aux1[iter] / 2)
-    }
-
-    aux <- mean(aux2)
-    return(aux)
-}
 
 #### CORRECTION FACTOR/PRIOR FOR BAYES FACTOR OF LAMBDA[obs]
 #### (REQUIRED FOR BF.lambda.obs.LST ONLY)
@@ -710,7 +689,7 @@ MCMCR.sigma2.LLAP <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, logt0,
 #### (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
 
 
-### POSSIBLE
+### POSSIBLE CURRENTLY ISSUES WITH CONVERSION
 MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
                                beta0, j) {
     k <- length(beta0)
@@ -752,49 +731,9 @@ MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
     list(beta = beta, ind = ind)
 }
 
-#### DISTRIBUTION FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
-#### (BASED ON library normalp).
-
-pnormp <- function(q, mu = 0, sigmap = 1, p = 2,
-                   lower.tail = TRUE, log.pr = FALSE) {
- if (!is.numeric(q) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
-        stop(" Non-numeric argument to mathematical function")
-    if (min(p) < 1)
-        stop("p must be at least equal to one")
-    if (min(sigmap) <= 0)
-        stop("sigmap must be positive")
-    z <- (q - mu) / sigmap
-    zz <- abs(z) ^ p
-    zp <- stats::pgamma(zz, shape = 1 / p, scale = p)
-    lzp <- stats::pgamma(zz, shape = 1 / p, scale = p, log = TRUE)
-    zp <- ifelse(z < 0, 0.5 - exp(lzp - log(2)), 0.5 + exp(lzp - log(2)))
-    if (log.pr == TRUE)
-        zp <- ifelse(z < 0, log(0.5 - exp(lzp - log(2))),
-                     log(0.5 + exp(lzp - log(2))))
-    zp
-}
-
-#### DENSITY FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
-#### (BASED ON library normalp).
-### POSSIBLE
-dnormp <- function(x, mu = 0, sigmap = 1, p = 2, log = FALSE) {
- if (!is.numeric(x) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
-        stop(" Non-numeric argument to mathematical function")
-    if (min(p) < 1)
-        stop("p must be at least equal to one")
-    if (min(sigmap) <= 0)
-        stop("sigmap must be positive")
-    cost <- 2 * p ^ (1 / p) * gamma(1 + 1 / p) * sigmap
-    expon1 <- (abs(x - mu)) ^ p
-    expon2 <- p * sigmap ^ p
-    dsty <- (1 / cost) * exp(-expon1 / expon2)
-    if (log == TRUE)
-        dsty <- log(dsty)
-    dsty
-}
 
 ################## LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
-### POSSIBLE
+### Need specific versions for specific variables
 log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
     n <- length(Time)
     aux <- rep(0, n)
@@ -803,24 +742,24 @@ log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
     alpha <- rep(alpha, times = n)
     SP <- as.vector(sqrt(sigma2) * (1 / alpha) ^ (1 / alpha))
     if (set == 1) {
-        aux1 <- (I(Time > eps_l) * log(pnormp(log(Time + eps_r),
+        aux1 <- (I(Time > eps_l) * log(p_normp(log(Time + eps_r),
                                               mu = MEAN,
                                               sigmap = SP,
                                               p = alpha) -
-                                         pnormp(log(abs(Time - eps_l)),
+                                         p_normp(log(abs(Time - eps_l)),
                                                 mu = MEAN, sigmap = SP,
                                                 p = alpha)) +
-                        (1 - I(Time > eps_l)) * log(pnormp(log(Time + eps_r),
+                        (1 - I(Time > eps_l)) * log(p_normp(log(Time + eps_r),
                                                            mu = MEAN,
                                                            sigmap = SP,
                                                            p = alpha) - 0))
-        aux2 <- log(1 - pnormp(log(Time), mu = MEAN, sigmap = SP, p = alpha))
+        aux2 <- log(1 - p_normp(log(Time), mu = MEAN, sigmap = SP, p = alpha))
         aux <- ifelse(Cens == 1, aux1, aux2)
     }
     if (set == 0) {
-        aux <- Cens * (dnormp(log(Time), mu = MEAN, sigmap = SP,
-                              p = alpha, log = TRUE) - log(Time)) + (1 - Cens) *
-                     log(1 - pnormp(log(Time), mu = MEAN,
+        aux <- Cens * (d_normp(log(Time), mu = MEAN, sigmap = SP,
+                              p = alpha, logs = TRUE) - log(Time)) + (1 - Cens) *
+                     log(1 - p_normp(log(Time), mu = MEAN,
                                     sigmap = SP, p = alpha))
     }
     return(sum(aux))
@@ -1303,27 +1242,6 @@ MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
     chain <- cbind(beta, sigma2, alpha, U, logt, ls.beta, ls.sigma2, ls.alpha)
     return(chain)
 
-}
-
-#### MARGINAL POSTERIOR OF u[obs]
-#### (REQUIRED FOR BF.u.obs.LEP ONLY)
-
-Post.u.obs.LEP <- function(obs, ref, X, chain) {
-    N <- dim(chain)[1]
-    n <- dim(X)[1]
-    k <- dim(X)[2]
-    aux1 <- rep(0, times = N)
-    aux2 <- rep(0, times = N)
-
-    for (iter in 1:N) {
-        trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
-                            as.vector(chain[iter, 1:k])) /
-                        sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
-
-        aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
-    }
-    aux <- mean(aux1)
-    return(aux)
 }
 
 #### CORRECTION FACTOR/PRIOR FOR BAYES FACTOR OF u[obs]

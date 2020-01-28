@@ -290,22 +290,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// pnormp_cpp
-NumericVector pnormp_cpp(NumericVector q, NumericVector mu, NumericVector sigmap, double p, bool lower_tail, bool log_pr);
-RcppExport SEXP _BASSLINE_pnormp_cpp(SEXP qSEXP, SEXP muSEXP, SEXP sigmapSEXP, SEXP pSEXP, SEXP lower_tailSEXP, SEXP log_prSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type q(qSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type sigmap(sigmapSEXP);
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< bool >::type lower_tail(lower_tailSEXP);
-    Rcpp::traits::input_parameter< bool >::type log_pr(log_prSEXP);
-    rcpp_result_gen = Rcpp::wrap(pnormp_cpp(q, mu, sigmap, p, lower_tail, log_pr));
-    return rcpp_result_gen;
-END_RCPP
-}
 // MH_marginal_beta_j
 Rcpp::List MH_marginal_beta_j(unsigned int N, double omega2, arma::vec logt, arma::mat X, double sigma2, double alpha, arma::vec beta0, int j);
 RcppExport SEXP _BASSLINE_MH_marginal_beta_j(SEXP NSEXP, SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP sigma2SEXP, SEXP alphaSEXP, SEXP beta0SEXP, SEXP jSEXP) {
@@ -341,6 +325,100 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// d_normp
+NumericVector d_normp(NumericVector x, NumericVector mu, NumericVector sigmap, NumericVector p, bool logs);
+RcppExport SEXP _BASSLINE_d_normp(SEXP xSEXP, SEXP muSEXP, SEXP sigmapSEXP, SEXP pSEXP, SEXP logsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type x(xSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type sigmap(sigmapSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type logs(logsSEXP);
+    rcpp_result_gen = Rcpp::wrap(d_normp(x, mu, sigmap, p, logs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// p_normp
+NumericVector p_normp(NumericVector q, NumericVector mu, NumericVector sigmap, NumericVector p, bool lower_tail, bool log_pr);
+RcppExport SEXP _BASSLINE_p_normp(SEXP qSEXP, SEXP muSEXP, SEXP sigmapSEXP, SEXP pSEXP, SEXP lower_tailSEXP, SEXP log_prSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type q(qSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type sigmap(sigmapSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type p(pSEXP);
+    Rcpp::traits::input_parameter< bool >::type lower_tail(lower_tailSEXP);
+    Rcpp::traits::input_parameter< bool >::type log_pr(log_prSEXP);
+    rcpp_result_gen = Rcpp::wrap(p_normp(q, mu, sigmap, p, lower_tail, log_pr));
+    return rcpp_result_gen;
+END_RCPP
+}
+// log_lik_LEP
+double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X, arma::vec beta, double sigma2, double alpha, int set, double eps_l, double eps_r);
+RcppExport SEXP _BASSLINE_log_lik_LEP(SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP alphaSEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type Time(TimeSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Cens(CensSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
+    Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
+    Rcpp::traits::input_parameter< int >::type set(setSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_l(eps_lSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_r(eps_rSEXP);
+    rcpp_result_gen = Rcpp::wrap(log_lik_LEP(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r));
+    return rcpp_result_gen;
+END_RCPP
+}
+// RS_lambda_obs_LLOG
+Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, double beta, double sigma2, int obs, int N_AKS);
+RcppExport SEXP _BASSLINE_RS_lambda_obs_LLOG(SEXP logtSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP obsSEXP, SEXP N_AKSSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::vec >::type logt(logtSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
+    Rcpp::traits::input_parameter< int >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< int >::type N_AKS(N_AKSSEXP);
+    rcpp_result_gen = Rcpp::wrap(RS_lambda_obs_LLOG(logt, X, beta, sigma2, obs, N_AKS));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Post_u_obs_LEP
+double Post_u_obs_LEP(int obs, double ref, arma::mat X, arma::mat chain);
+RcppExport SEXP _BASSLINE_Post_u_obs_LEP(SEXP obsSEXP, SEXP refSEXP, SEXP XSEXP, SEXP chainSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< double >::type ref(refSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type chain(chainSEXP);
+    rcpp_result_gen = Rcpp::wrap(Post_u_obs_LEP(obs, ref, X, chain));
+    return rcpp_result_gen;
+END_RCPP
+}
+// Post_lambda_obs_LST
+double Post_lambda_obs_LST(double obs, const unsigned int ref, arma::mat X, arma::mat chain);
+RcppExport SEXP _BASSLINE_Post_lambda_obs_LST(SEXP obsSEXP, SEXP refSEXP, SEXP XSEXP, SEXP chainSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< double >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type ref(refSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type chain(chainSEXP);
+    rcpp_result_gen = Rcpp::wrap(Post_lambda_obs_LST(obs, ref, X, chain));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_prior_LN", (DL_FUNC) &_BASSLINE_prior_LN, 4},
@@ -364,9 +442,14 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_alpha_beta", (DL_FUNC) &_BASSLINE_alpha_beta, 6},
     {"_BASSLINE_alpha_sigma2", (DL_FUNC) &_BASSLINE_alpha_sigma2, 7},
     {"_BASSLINE_MH_marginal_alpha", (DL_FUNC) &_BASSLINE_MH_marginal_alpha, 8},
-    {"_BASSLINE_pnormp_cpp", (DL_FUNC) &_BASSLINE_pnormp_cpp, 6},
     {"_BASSLINE_MH_marginal_beta_j", (DL_FUNC) &_BASSLINE_MH_marginal_beta_j, 8},
     {"_BASSLINE_alpha_alpha", (DL_FUNC) &_BASSLINE_alpha_alpha, 7},
+    {"_BASSLINE_d_normp", (DL_FUNC) &_BASSLINE_d_normp, 5},
+    {"_BASSLINE_p_normp", (DL_FUNC) &_BASSLINE_p_normp, 6},
+    {"_BASSLINE_log_lik_LEP", (DL_FUNC) &_BASSLINE_log_lik_LEP, 9},
+    {"_BASSLINE_RS_lambda_obs_LLOG", (DL_FUNC) &_BASSLINE_RS_lambda_obs_LLOG, 6},
+    {"_BASSLINE_Post_u_obs_LEP", (DL_FUNC) &_BASSLINE_Post_u_obs_LEP, 4},
+    {"_BASSLINE_Post_lambda_obs_LST", (DL_FUNC) &_BASSLINE_Post_lambda_obs_LST, 4},
     {NULL, NULL, 0}
 };
 

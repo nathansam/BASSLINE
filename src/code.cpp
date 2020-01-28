@@ -233,7 +233,7 @@ double r_GIG(double r) {
 double d_texp(double x, double trunc) {
   if (x >= trunc) {
     double aux = exp(- (x - trunc));
-    return(aux);
+    return aux;
   } else {
     double aux = 0;
     return aux;
@@ -366,7 +366,7 @@ Rcpp::List MH_nu_LST( unsigned int N, double omega2, NumericVector beta,
   }
   nu.erase(0);
   ind.erase(0);
-  return List::create(Rcpp::Named("nu",nu), Rcpp::Named("ind",ind));
+  return List::create(Rcpp::Named("nu", nu), Rcpp::Named("ind", ind));
 }
 
 // ACEPTANCE PROBABILITY FOR METROPOLIS-HASTINMCMC UPDATE OF BETA[j]
@@ -488,30 +488,10 @@ Rcpp::List MH_marginal_alpha (unsigned int N, double omega2, arma::vec logt,
 
 
 
-// DISTRIBUTION FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
-// (BASED ON library normalp)
-// NEED TO FIX FOR WHEN p IS NumericVector
-// [[Rcpp::export]]
-NumericVector pnormp_cpp(NumericVector q, NumericVector mu,
-                         NumericVector sigmap,
-                         double p, bool lower_tail = true,
-                         bool log_pr = false) {
-
-      NumericVector z = (q - mu) / sigmap;
-      NumericVector zz = pow(abs(z), p);
-      NumericVector zp = Rcpp::pgamma(zz, 1 / p, p);
-      NumericVector lzp = Rcpp::pgamma(zz, 1 / p, p, true);
-      zp = ifelse(z < 0, 0.5 - exp(lzp - log(2)), 0.5 + exp(lzp - log(2)));
-      if (log_pr == TRUE)
-        zp = ifelse(z < 0, log(0.5 - exp(lzp - log(2))),
-                     log(0.5 + exp(lzp - log(2))));
-        return zp;
-}
-
 
 // METROPOLIS-HASTINMCMC UPDATE OF BETA[j]
 // (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
-// NEED TO FIX!!!!!!!!!
+// BUGGED
 // [[Rcpp::export]]
 Rcpp::List MH_marginal_beta_j(unsigned int N, double omega2, arma::vec logt,
                               arma::mat X, double sigma2, double alpha,
@@ -593,5 +573,243 @@ double alpha_alpha(double alpha0, double alpha1, arma::vec logt,
   return aux;
 }
 
+// DENSITY FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
+// (BASED ON library normalp).
+// [[Rcpp::export]]
+NumericVector d_normp(NumericVector x, NumericVector mu, NumericVector sigmap,
+                      NumericVector p, bool logs = false) {
+
+  const unsigned int n = x.length();
+
+  NumericVector cost(n);
+  NumericVector expon1(n);
+  NumericVector expon2(n);
+  NumericVector dsty(n);
+
+  for (int i = 0; i < n; ++i){
+    cost[i] = 2 * pow(p[i], 1 / p[i]) * std::tgamma(1 + 1 / p[i]) * sigmap[i];
+    expon1[i] = pow(abs(x[i] - mu[i]), p[i]);
+    expon2[i] = p[i] * pow(sigmap[i], p[i]);
+    dsty[i] = (1 / cost[i]) * exp(-1 * expon1[i] / expon2[i]);
+  }
 
 
+  if (logs == true){
+    dsty = log(dsty);
+  }
+  return dsty;
+}
+
+
+// DISTRIBUTION FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
+// (BASED ON library normalp)
+// NEEDS to be reworked to work for different argument types
+// [[Rcpp::export]]
+NumericVector p_normp(NumericVector q, NumericVector mu,
+                      NumericVector sigmap,
+                      NumericVector p, bool lower_tail = true,
+                      bool log_pr = false) {
+
+  NumericVector z = (q - mu) / sigmap;
+  int n = p.length();
+  NumericVector zz(n);
+  NumericVector zp(n);
+  NumericVector lzp(n);
+
+  for( int i = 0; i < n; ++i){
+    zz[i] = pow(abs(z[i]), p[i]);
+    zp[i] = R::pgamma(zz[i], 1 / p[i], p[i], lower_tail, false);
+    lzp[i] = R::pgamma(zz[i], 1 / p[i], p[i], lower_tail, true);
+
+    if (z[i] < 0){
+      zp[i] = 0.5 - exp(lzp[i] - log(2));
+    } else {
+      zp[i] = 0.5 + exp(lzp[i] - log(2));
+    }
+
+    if (log_pr == true){
+      if (z[i] < 0){
+        zp[i] = log(0.5 - exp(lzp[i] - log(2)));
+      } else {
+        zp[i] = log(0.5 + exp(lzp[i] - log(2)));
+      }
+    }
+  }
+  return zp;
+}
+
+
+
+// LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
+// [[Rcpp::export]]
+double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
+                   arma::vec beta, double sigma2, double alpha, int set,
+                   double eps_l, double eps_r) {
+  const unsigned int n = Time.length();
+
+  NumericVector aux(n);
+
+
+  NumericVector MEAN = Rcpp::wrap(X * beta);
+
+  NumericVector sigma2vec(n, sigma2);
+  NumericVector alphavec(n, alpha);
+
+  NumericVector SP(n);
+
+  for(int i = 0; i < n; ++i){
+    SP[i] = sqrt(sigma2vec[i]) *  pow(1 / alphavec[i], 1 / alphavec[i]);
+  }
+
+  if (set == 1) {
+
+    NumericVector TimeGreater(n);
+
+    for (int i = 0; i < n; ++i){
+      if (Time[i] > eps_l){
+        TimeGreater[i] = 1;
+      } else{
+        TimeGreater[i] = 0;
+      }
+    }
+
+    //NumericVector d_normp(NumericVector x,NumericVector mu, NumericVector sigmap,
+    //                      NumericVector p, bool logs = false)
+    NumericVector aux1 = TimeGreater * log(p_normp(log(Time + eps_r), MEAN, SP,
+                                                   alphavec) -
+                            p_normp(log(abs(Time - eps_l)),
+                                    MEAN, SP, alphavec)) +
+                                      (1 - TimeGreater) * log(p_normp(log(Time + eps_r),
+                                                              MEAN, SP,
+                                                              alphavec));
+
+    NumericVector aux2 = log(1 - p_normp(log(Time), MEAN, SP, alphavec));
+
+    for(int i = 0; i < n; ++i){
+      if (Cens[i] == 1){
+        aux[i] = aux1[i];
+      } else{
+        aux[i] = aux2[i];
+      }
+    }
+
+  }
+  if (set == 0) {
+    NumericVector aux = Cens * (d_normp(log(Time), MEAN, SP,
+                           alphavec) - log(Time)) + (1 - Cens) *
+                             log(1 - p_normp(log(Time), MEAN, SP, alphavec));
+  }
+  return sum(aux);
+}
+
+
+// REJECTION SAMPLING FOR LAMBDA[i]
+// (REQUIRED FOR SEVERAL .LLOG FUNCTIONS)
+// BASED ON HOLMES AND HELD (2006)
+// BUGGED
+// [[Rcpp::export]]
+Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, double beta,
+                               double sigma2, int obs, int N_AKS) {
+  double lambda = 0;
+  bool OK = false;
+  int step = 0;
+  while (OK == 0) {
+    step = step + 1;
+
+    double lambda = r_GIG((abs(logt[obs - 1] - X.row(obs))[0] * beta) / sqrt(sigma2));
+    if (lambda != 0 && lambda != INFINITY) {
+      double U = R::runif(0, 1);
+      if (lambda > 4 / 3) {
+        double Z = 1;
+        double W = exp(-0.5 * lambda);
+        int n_AKS = 0;
+        while (n_AKS <= N_AKS) {
+          n_AKS = n_AKS + 1;
+          Z = Z - (pow(n_AKS + 1, 2)) * pow(W, pow(n_AKS + 1, 2) - 1);
+          if (Z > U) {
+            OK = 1;
+          }
+          n_AKS = n_AKS + 1;
+          Z = Z + pow(n_AKS + 1, 2) * pow(W, pow(n_AKS + 1, 2) - 1);
+            if (Z < U) {
+              OK = 0;
+            }
+        }
+      } else {
+        double H = 0.5 * log(2) + 2.5 * log(PI) - 2.5 *
+          log(lambda) - ((PI * PI) / (2 * lambda)) + 0.5 *
+          lambda;
+        double lU = log(U);
+        double Z = 1;
+        double W = exp(- (PI * PI) / (2 * lambda));
+        double K = lambda / (PI * PI);
+        int n_AKS = 0;
+        while (n_AKS <= N_AKS) {
+          n_AKS = n_AKS + 1;
+          Z = Z - K * pow(W, (pow(n_AKS, 2) - 1));
+          double aux = H + log(Z);
+
+          if ( aux != R_NaReal && aux != -INFINITY && aux == INFINITY) {
+            OK = 1;
+          }
+          if ( aux != R_NaReal && aux < INFINITY && aux > -INFINITY && aux > lU) {
+            OK = 1;
+          }
+          n_AKS = n_AKS + 1;
+          Z = Z + (pow(n_AKS + 1, 2)) * pow(W, pow(n_AKS + 1, 2) - 1);
+            aux = H + log(Z);
+            if ( aux != R_NaReal && aux == -INFINITY) {
+              OK = 0;
+            }
+            if (aux != R_NaReal && aux > -INFINITY && aux < INFINITY && aux < lU) {
+              OK = 0;
+            }
+        }
+      }
+    }
+  }
+
+  return List::create(Rcpp::Named("lambda", lambda), Rcpp::Named("steps",step));
+}
+
+// MARGINAL POSTERIOR OF u[obs]
+// (REQUIRED FOR BF.u.obs.LEP ONLY)
+// [[Rcpp::export]]
+double Post_u_obs_LEP(int obs, double ref, arma::mat X, arma::mat chain) {
+  const unsigned int N = chain.n_rows;
+  const unsigned int n = X.n_rows;
+  const unsigned int k = X.n_cols;
+  NumericVector aux1(N);
+
+  for (int iter = 0; iter < N;  ++iter) {
+
+    double trunc_aux = pow(abs((chain(iter, obs + k + 1 + n) - X.row(obs -1) *
+      chain(iter, arma::span(0, k - 1)).t())[0]) / sqrt(chain(iter, k)), chain(iter, k + 1));
+
+    aux1[iter] = d_texp(ref, trunc_aux);
+  }
+  double aux = mean(aux1);
+  return aux;
+}
+
+// MARGINAL POSTERIOR OF LAMBDA[obs] (REQUIRED FOR BF.lambda.obs.LST ONLY)
+// [[Rcpp::export]]
+double Post_lambda_obs_LST(double obs, const unsigned int ref, arma::mat X,
+                           arma::mat chain) {
+  const unsigned int N = chain.n_rows;
+  const unsigned int n = X.n_rows;
+  const unsigned int k = X.n_cols;
+  NumericVector aux1(N);
+  NumericVector aux2(N);
+
+  for (int iter = 0; iter < N; iter = iter + 1) {
+    aux1[iter] = pow((chain(iter, obs + k + 1 + n) - X.row(obs - 1) *
+      chain(iter, arma::span(0, k - 1)).t())[0], 2) / (chain(iter, k )) +
+        chain(iter, k + 1);
+    aux2[iter] = R::dgamma(ref, (chain(iter, (k + 1)) + 1) / 2,
+                                2/ aux1[iter], false);
+  }
+
+  double aux = mean(aux2);
+  return aux;
+}

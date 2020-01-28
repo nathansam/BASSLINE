@@ -330,10 +330,133 @@ test_that("alpha_alpha same in C++ as in R",{
     return(aux)
   }
 
-  R.result <- alpha.alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1), 3, 2)
+  R.result <- alpha.alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
+                          3, 2)
 
-  Cpp.result <- alpha_alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1), 3, 2)
+  Cpp.result <- alpha_alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
+                            3, 2)
   expect_equal(R.result, Cpp.result)
 })
 
+test_that("d_normp same in C++ as in R",{
+  #### DENSITY FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
+  #### (BASED ON library normalp).
+  ### POSSIBLE
+  dnormp <- function(x, mu = 0, sigmap = 1, p = 2, log = FALSE) {
+    if (!is.numeric(x) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
+      stop(" Non-numeric argument to mathematical function")
+    if (min(p) < 1)
+      stop("p must be at least equal to one")
+    if (min(sigmap) <= 0)
+      stop("sigmap must be positive")
+    cost <- 2 * p ^ (1 / p) * gamma(1 + 1 / p) * sigmap
+    expon1 <- (abs(x - mu)) ^ p
+    expon2 <- p * sigmap ^ p
+    dsty <- (1 / cost) * exp(-expon1 / expon2)
+    if (log == TRUE)
+      dsty <- log(dsty)
+    dsty
+  }
+
+  R.result <- dnormp(c(1,2), c(0,0) , c(1,1), c(2,2), log = T)
+  Cpp.result <- d_normp(c(1,2), c(0,0) , c(1,1), c(2,2), logs = T)
+  expect_equal(R.result, Cpp.result)
+})
+
+test_that("pnorm same in C++ as in R",{
+  pnormp <- function(q, mu = 0, sigmap = 1, p = 2,
+                     lower.tail = TRUE, log.pr = FALSE) {
+    if (!is.numeric(q) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
+      stop(" Non-numeric argument to mathematical function")
+    if (min(p) < 1)
+      stop("p must be at least equal to one")
+    if (min(sigmap) <= 0)
+      stop("sigmap must be positive")
+    z <- (q - mu) / sigmap
+    zz <- abs(z) ^ p
+    zp <- stats::pgamma(zz, shape = 1 / p, scale = p)
+    lzp <- stats::pgamma(zz, shape = 1 / p, scale = p, log = TRUE)
+    zp <- ifelse(z < 0, 0.5 - exp(lzp - log(2)), 0.5 + exp(lzp - log(2)))
+    if (log.pr == TRUE)
+      zp <- ifelse(z < 0, log(0.5 - exp(lzp - log(2))),
+                   log(0.5 + exp(lzp - log(2))))
+    zp
+  }
+  R.result <- pnormp(c(1,2), c(2,3), c(1,1), c(2,1))
+  Cpp.result <- p_normp(c(1,2), c(2,3), c(1,1), c(2,1))
+
+  expect_equal(R.result, Cpp.result)
+})
+
+test_that("log_lik_LEP same in C++ as in R",{
+  log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
+    n <- length(Time)
+    aux <- rep(0, n)
+    MEAN <- X %*% beta
+    sigma2 <- rep(sigma2, times = n)
+    alpha <- rep(alpha, times = n)
+    SP <- as.vector(sqrt(sigma2) * (1 / alpha) ^ (1 / alpha))
+    if (set == 1) {
+      aux1 <- (I(Time > eps_l) * log(p_normp(log(Time + eps_r),
+                                             mu = MEAN,
+                                             sigmap = SP,
+                                             p = alpha) -
+                                       p_normp(log(abs(Time - eps_l)),
+                                               mu = MEAN, sigmap = SP,
+                                               p = alpha)) +
+                 (1 - I(Time > eps_l)) * log(p_normp(log(Time + eps_r),
+                                                     mu = MEAN,
+                                                     sigmap = SP,
+                                                     p = alpha) - 0))
+      aux2 <- log(1 - p_normp(log(Time), mu = MEAN, sigmap = SP, p = alpha))
+      aux <- ifelse(Cens == 1, aux1, aux2)
+    }
+    if (set == 0) {
+      aux <- Cens * (d_normp(log(Time), mu = MEAN, sigmap = SP,
+                             p = alpha, logs = TRUE) - log(Time)) + (1 - Cens) *
+        log(1 - p_normp(log(Time), mu = MEAN,
+                        sigmap = SP, p = alpha))
+    }
+    return(sum(aux))
+  }
+
+  R.result <- log.lik.LEP(c(1,2), c(1,0), matrix(seq(4), ncol=2), c(1,2),
+                          0.2, 1.2, 1, 0.3, 0.4)
+  Cpp.result <- log_lik_LEP(c(1,2), c(1,0), matrix(seq(4), ncol=2), c(1,2),
+                            0.2, 1.2, 1, 0.3,0.4)
+  expect_equal(R.result, Cpp.result)
+})
+
+test_that("Post_u_obs_LEP same in C++ as in R",{
+  LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                  Cens = cancer[,2], X = cancer[,3:11])
+  alpha <- mean(LEP[,11])
+  uref <- 1.6 + 1 / alpha
+
+
+  Post.u.obs.LEP <- function(obs, ref, X, chain) {
+    N <- dim(chain)[1]
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    aux1 <- rep(0, times = N)
+    aux2 <- rep(0, times = N)
+
+    for (iter in 1:N) {
+      trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
+                          as.vector(chain[iter, 1:k])) /
+                      sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
+
+      aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
+    }
+    aux <- mean(aux1)
+    return(aux)
+  }
+
+  R.result <- Post.u.obs.LEP(obs = 1, ref = uref, X = cancer[,3:11],
+                             chain = LEP )
+  Cpp.result <- Post_u_obs_LEP(obs = 1, ref = uref, X = cancer[,3:11],
+                               chain = LEP)
+
+ expect_equal(R.result, Cpp.result)
+})
 
