@@ -703,6 +703,7 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
 }
 
 
+
 // REJECTION SAMPLING FOR LAMBDA[i]
 // (REQUIRED FOR SEVERAL .LLOG FUNCTIONS)
 // BASED ON HOLMES AND HELD (2006)
@@ -794,11 +795,11 @@ double Post_u_obs_LEP(int obs, double ref, arma::mat X, arma::mat chain) {
 
 // MARGINAL POSTERIOR OF LAMBDA[obs] (REQUIRED FOR BF.lambda.obs.LST ONLY)
 // [[Rcpp::export]]
-double Post_lambda_obs_LST(double obs, const unsigned int ref, arma::mat X,
+double Post_lambda_obs_LST(double obs, int ref, arma::mat X,
                            arma::mat chain) {
-  const unsigned int N = chain.n_rows;
-  const unsigned int n = X.n_rows;
-  const unsigned int k = X.n_cols;
+  int N = chain.n_rows;
+  int n = X.n_rows;
+  int k = X.n_cols;
   NumericVector aux1(N);
   NumericVector aux2(N);
 
@@ -809,7 +810,6 @@ double Post_lambda_obs_LST(double obs, const unsigned int ref, arma::mat X,
     aux2[iter] = R::dgamma(ref, (chain(iter, (k + 1)) + 1) / 2,
                                 2/ aux1[iter], false);
   }
-
   double aux = mean(aux2);
   return aux;
 }
