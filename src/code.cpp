@@ -284,7 +284,7 @@ Rcpp::List MH_marginal_sigma2 (int N, double omega2, arma::vec logt,
     NumericVector sigma2(N + 1);
     sigma2[0] = sigma20;
     NumericVector ind(N + 1);
-    for (int i_s = 0; i_s < N; i_s = i_s + 1) {
+    for (unsigned int i_s = 0; i_s < N; i_s = i_s + 1) {
       double  y_aux = R::rnorm(sigma2[i_s],sqrt(omega2));
       if (y_aux <= 0) {
         sigma2[i_s + 1] = sigma2[i_s];
@@ -329,13 +329,13 @@ Rcpp::List MH_marginal_sigma2 (int N, double omega2, arma::vec logt,
 //METROPOLIS-HASTINMCMC UPDATE OF NU (REQUIRED FOR SEVERAL .LST FUNCTIONS)
 // POSSIBLE
 // [[Rcpp::export]]
-Rcpp::List MH_nu_LST(int N, double omega2, NumericVector beta,
+Rcpp::List MH_nu_LST(const unsigned int N, double omega2, NumericVector beta,
                       NumericVector lambda, double nu0, int prior) {
   NumericVector ind(N + 1);
   NumericVector nu(N + 1);
   nu[0] = nu0;
 
-  for (int j_nu = 0; j_nu < N; j_nu = j_nu + 1) {
+  for (unsigned int j_nu = 0; j_nu < N; j_nu = j_nu + 1) {
     double y = R::rnorm(nu[j_nu], sqrt(omega2));
 
     int ind_aux;
@@ -439,7 +439,7 @@ Rcpp::List MH_marginal_alpha (unsigned int N, double omega2, arma::vec logt,
   alpha[0] = alpha0;
   NumericVector ind(N + 1);
 
-  for (int i_a = 0; i_a < N; i_a = i_a + 1) {
+  for (unsigned int i_a = 0; i_a < N; i_a = i_a + 1) {
     double y_aux = R::rnorm(alpha[i_a], omega2);
     if (y_aux >= 2 || y_aux <= 1) {
       alpha[i_a + 1] = alpha[i_a];
@@ -493,7 +493,7 @@ Rcpp::List MH_marginal_alpha (unsigned int N, double omega2, arma::vec logt,
 // (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
 // BUGGED
 // [[Rcpp::export]]
-Rcpp::List MH_marginal_beta_j(unsigned int N, double omega2, arma::vec logt,
+Rcpp::List MH_marginal_beta_j(const unsigned int N, double omega2, arma::vec logt,
                               arma::mat X, double sigma2, double alpha,
                               arma::vec beta0, int j) {
   const unsigned int k = beta0.n_elem;
@@ -503,7 +503,7 @@ Rcpp::List MH_marginal_beta_j(unsigned int N, double omega2, arma::vec logt,
 
   NumericVector ind(N + 1);
 
-  for (int i_b = 0; i_b < N; i_b = i_b + 1){
+  for (unsigned int i_b = 0; i_b < N; i_b = i_b + 1){
 
     arma::vec y_aux = beta.col(i_b);
 
@@ -586,7 +586,7 @@ NumericVector d_normp(NumericVector x, NumericVector mu, NumericVector sigmap,
   NumericVector expon2(n);
   NumericVector dsty(n);
 
-  for (int i = 0; i < n; ++i){
+  for (unsigned int i = 0; i < n; ++i){
     cost[i] = 2 * pow(p[i], 1 / p[i]) * std::tgamma(1 + 1 / p[i]) * sigmap[i];
     expon1[i] = pow(abs(x[i] - mu[i]), p[i]);
     expon2[i] = p[i] * pow(sigmap[i], p[i]);
@@ -657,7 +657,7 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
 
   NumericVector SP(n);
 
-  for(int i = 0; i < n; ++i){
+  for(unsigned int i = 0; i < n; ++i){
     SP[i] = sqrt(sigma2vec[i]) *  pow(1 / alphavec[i], 1 / alphavec[i]);
   }
 
@@ -775,13 +775,14 @@ Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, double beta,
 // MARGINAL POSTERIOR OF u[obs]
 // (REQUIRED FOR BF.u.obs.LEP ONLY)
 // [[Rcpp::export]]
-double Post_u_obs_LEP(int obs, double ref, arma::mat X, arma::mat chain) {
-  int N = chain.n_rows;
-  int n = X.n_rows;
-  int k = X.n_cols;
+double Post_u_obs_LEP(const unsigned int obs, double ref, arma::mat X,
+                      arma::mat chain) {
+  const unsigned int N = chain.n_rows;
+  const unsigned int n = X.n_rows;
+  const unsigned int k = X.n_cols;
   NumericVector aux1(N);
 
-  for (int iter = 0; iter < N;  ++iter) {
+  for (unsigned int iter = 0; iter < N;  ++iter) {
 
     double trunc_aux = pow(abs((chain(iter, obs + k + 1 + n) - X.row(obs -1) *
       chain(iter, arma::span(0, k - 1)).t())[0]) / sqrt(chain(iter, k)), chain(iter, k + 1));
@@ -794,7 +795,7 @@ double Post_u_obs_LEP(int obs, double ref, arma::mat X, arma::mat chain) {
 
 // MARGINAL POSTERIOR OF LAMBDA[obs] (REQUIRED FOR BF.lambda.obs.LST ONLY)
 // [[Rcpp::export]]
-double Post_lambda_obs_LST(double obs, const unsigned int ref, arma::mat X,
+double Post_lambda_obs_LST(const unsigned int obs, double  ref, arma::mat X,
                            arma::mat chain) {
   const unsigned int N = chain.n_rows;
   const unsigned int n = X.n_rows;
@@ -802,7 +803,7 @@ double Post_lambda_obs_LST(double obs, const unsigned int ref, arma::mat X,
   NumericVector aux1(N);
   NumericVector aux2(N);
 
-  for (int iter = 0; iter < N; iter = iter + 1) {
+  for (unsigned int iter = 0; iter < N; iter = iter + 1) {
     aux1[iter] = pow((chain(iter, obs + k + 1 + n) - X.row(obs - 1) *
       chain(iter, arma::span(0, k - 1)).t())[0], 2) / (chain(iter, k )) +
         chain(iter, k + 1);
