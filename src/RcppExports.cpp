@@ -224,12 +224,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // MH_nu_LST
-Rcpp::List MH_nu_LST(int N, double omega2, NumericVector beta, NumericVector lambda, double nu0, int prior);
+Rcpp::List MH_nu_LST(const unsigned int N, double omega2, NumericVector beta, NumericVector lambda, double nu0, int prior);
 RcppExport SEXP _BASSLINE_MH_nu_LST(SEXP NSEXP, SEXP omega2SEXP, SEXP betaSEXP, SEXP lambdaSEXP, SEXP nu0SEXP, SEXP priorSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type N(NSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< double >::type omega2(omega2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type lambda(lambdaSEXP);
@@ -392,12 +392,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // Post_u_obs_LEP
-double Post_u_obs_LEP(int obs, double ref, arma::mat X, arma::mat chain);
+double Post_u_obs_LEP(const unsigned int obs, double ref, arma::mat X, arma::mat chain);
 RcppExport SEXP _BASSLINE_Post_u_obs_LEP(SEXP obsSEXP, SEXP refSEXP, SEXP XSEXP, SEXP chainSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type obs(obsSEXP);
+    Rcpp::traits::input_parameter< const unsigned int >::type obs(obsSEXP);
     Rcpp::traits::input_parameter< double >::type ref(refSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type chain(chainSEXP);
