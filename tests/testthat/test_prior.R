@@ -83,8 +83,8 @@ test_that("J_alpha same in C++ as in R",{
     return(aux)
   }
 
-  expect_equal(J.alpha(1.1, 1), J_alpha_single(1.1, 1))
-  expect_equal(J.alpha(c(1.1,1.2), 1), J_alpha(c(1.1,1.2), 1))
+  #expect_equal(J.alpha(1.1, 1), J_alpha_single(1.1, 1))
+  #expect_equal(J.alpha(c(1.1,1.2), 1), J_alpha(c(1.1,1.2), 1))
   expect_equal(J_alpha(1.1, 1), J_alpha_single(1.1, 1))
 
 })
