@@ -102,11 +102,11 @@ test_that("alpha_nu same in C++ as in R",{
 })
 
 test_that("MH_nu_LST same in C++ as in R",{
-  ########METROPOLIS-HASTINMCMC UPDATE OF NU (REQUIRED FOR SEVERAL .LST FUNCTIONS)
-  ### POSSIBLE
+  ### METROPOLIS-HASTINMCMC UPDATE OF NU
+  ### (REQUIRED FOR SEVERAL .LST FUNCTIONS)
   MH.nu.LST <- function(N = 1, omega2, beta, lambda, nu0, prior) {
     k <- length(beta)
-    ind <- rep(0, N)
+    ind <- rep(0, N + 1)
     nu <- rep(0, times = N + 1)
     nu[1] <- nu0
 
@@ -138,10 +138,10 @@ test_that("MH_nu_LST same in C++ as in R",{
   }
 
   set.seed(123)
-  MH.nu.LST.R <- MH.nu.LST(10,0.5,c(1,2), c(3,4), 0.2, 2)
+  MH.nu.LST.R <- MH.nu.LST(10, 0.5, c(1, 2), c(3, 4), 0.2, 2)
 
   set.seed(123)
-  MH.nu.LST.Cpp <- MH_nu_LST(10,0.5,c(1,2), c(3,4), 0.2, 2)
+  MH.nu.LST.Cpp <- MH_nu_LST(10, 0.5, c(1, 2), c(3 ,4), 0.2, 2)
 
   expect_equal(MH.nu.LST.R, MH.nu.LST.Cpp)
 
@@ -173,7 +173,7 @@ test_that("Post_lambda_obs_LST same in C++ as in R",{
   LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
 
-  R.result <- Post.lambda.obs.LST(1, 1, cancer[,3:11], LST)
-  Cpp.result <- Post_lambda_obs_LST(1, 1, cancer[,3:11], LST)
+  R.result <- Post.lambda.obs.LST(1, 1, cancer[, 3:11], LST)
+  Cpp.result <- Post_lambda_obs_LST(1, 1, cancer[, 3:11], LST)
   expect_equal(R.result, Cpp.result)
 })

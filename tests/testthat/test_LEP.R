@@ -258,58 +258,58 @@ test_that("MH_marginal_alpha same in C++ as in R",{
 
 })
 
-# test_that("MH_marginal_beta_j same in C++ as in R",{
-#   MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
-#                                  beta0, j) {
-#     k <- length(beta0)
-#     beta <- matrix(rep(0, times = k * (N + 1)), ncol = k)
-#     beta[1, ] <- beta0
-#     ind <- rep(0, times = N + 1)
-#     for (i.b in 1:N) {
-#       y.aux <- beta[i.b, ]
-#       y.aux[j] <- stats::rnorm(n = 1, mean = beta[i.b, j], sd = sqrt(omega2))
-#       aux <- -sum(abs((logt - X %*% y.aux) / sqrt(sigma2)) ^ alpha) +
-#         sum(abs((logt - X %*% beta[i.b, ]) / sqrt(sigma2)) ^ alpha)
-#       u.aux <- stats::runif(1, 0, 1)
-#       if (is.na(aux)) {
-#         beta[i.b + 1, ] <- beta[i.b, ]
-#         ind[i.b + 1] <- 0
-#         cat("NA.beta\n")
-#       }
-#       if (is.na(aux) == FALSE && aux == -Inf) {
-#         beta[i.b + 1, ] <- beta[i.b, ]
-#         ind[i.b + 1] <- 0
-#         cat("-Inf.beta\n")
-#       }
-#       if (is.na(aux) == FALSE && aux == Inf) {
-#         beta[i.b + 1, ] <- y.aux
-#         ind[i.b + 1] <- 1
-#         cat("Inf.beta\n")
-#       }
-#       if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
-#         beta[i.b + 1, ] <- y.aux
-#         ind[i.b + 1] <- 1
-#       }
-#       if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) >= aux) {
-#         beta[i.b + 1, ] <- beta[i.b, ]
-#         ind[i.b + 1] <- 0
-#       }
-#     }
-#     beta <- beta[-1, ]
-#     ind <- ind[-1]
-#     list(beta = beta, ind = ind)
-#   }
-#
-#   set.seed(123)
-#   R.result <- MH.marginal.beta.j(5, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
-#                                  0.3, 0.4, c(1, 2), 1)
-#
-#   set.seed(123)
-#   Cpp.result <- MH_marginal_beta_j(5, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
-#                                    0.3, 0.4, c(1, 2), 1)
-#
-#   expect_equal(R.result, Cpp.result)
-# })
+test_that("MH_marginal_beta_j same in C++ as in R",{
+  MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
+                                 beta0, j) {
+    k <- length(beta0)
+    beta <- matrix(rep(0, times = k * (N + 1)), ncol = k)
+    beta[1, ] <- beta0
+    ind <- rep(0, times = N + 1)
+    for (i.b in 1:N) {
+      y.aux <- beta[i.b, ]
+      y.aux[j] <- stats::rnorm(n = 1, mean = beta[i.b, j], sd = sqrt(omega2))
+      aux <- -sum(abs((logt - X %*% y.aux) / sqrt(sigma2)) ^ alpha) +
+        sum(abs((logt - X %*% beta[i.b, ]) / sqrt(sigma2)) ^ alpha)
+      u.aux <- stats::runif(1, 0, 1)
+      if (is.na(aux)) {
+        beta[i.b + 1, ] <- beta[i.b, ]
+        ind[i.b + 1] <- 0
+        cat("NA.beta\n")
+      }
+      if (is.na(aux) == FALSE && aux == -Inf) {
+        beta[i.b + 1, ] <- beta[i.b, ]
+        ind[i.b + 1] <- 0
+        cat("-Inf.beta\n")
+      }
+      if (is.na(aux) == FALSE && aux == Inf) {
+        beta[i.b + 1, ] <- y.aux
+        ind[i.b + 1] <- 1
+        cat("Inf.beta\n")
+      }
+      if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) < aux) {
+        beta[i.b + 1, ] <- y.aux
+        ind[i.b + 1] <- 1
+      }
+      if (is.na(aux) == FALSE && aux > -Inf && log(u.aux) >= aux) {
+        beta[i.b + 1, ] <- beta[i.b, ]
+        ind[i.b + 1] <- 0
+      }
+    }
+    beta <- beta[-1, ]
+    ind <- ind[-1]
+    list(beta = beta, ind = ind)
+  }
+
+  set.seed(123)
+  R.result <- MH.marginal.beta.j(5, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
+                                 0.3, 0.4, c(1, 2), 1)
+
+  set.seed(123)
+  Cpp.result <- MH_marginal_beta_j(5, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
+                                   0.3, 0.4, c(1, 2), 1)
+
+  expect_equal(R.result, Cpp.result)
+})
 
 test_that("alpha_alpha same in C++ as in R",{
   alpha.alpha <- function(alpha0, alpha1, logt, X, beta, sigma2, prior) {
@@ -382,10 +382,20 @@ test_that("pnorm same in C++ as in R",{
                    log(0.5 + exp(lzp - log(2))))
     zp
   }
+
+  ## Test for when log.pr is FALSE
   R.result <- pnormp(c(1,2), c(2,3), c(1,1), c(2,1))
   Cpp.result <- p_normp(c(1,2), c(2,3), c(1,1), c(2,1))
 
   expect_equal(R.result, Cpp.result)
+
+
+  ## Test for when log.pr is TRUE
+  R.result <- pnormp(c(1,2), c(2,3), c(1,1), c(2,1), log.pr = TRUE)
+  Cpp.result <- p_normp(c(1,2), c(2,3), c(1,1), c(2,1), log_pr = TRUE)
+  expect_equal(R.result, Cpp.result)
+
+
 })
 
 test_that("log_lik_LEP same in C++ as in R",{
@@ -420,6 +430,7 @@ test_that("log_lik_LEP same in C++ as in R",{
     return(sum(aux))
   }
 
+  # Set = 1
   R.result <- log.lik.LEP(c(1,2), c(1,0), matrix(seq(4), ncol=2), c(1,2),
                           0.2, 1.2, 1, 0.3, 0.4)
   Cpp.result <- log_lik_LEP(c(1,2), c(1,0), matrix(seq(4), ncol=2), c(1,2),

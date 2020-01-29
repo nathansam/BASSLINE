@@ -67,7 +67,7 @@ double prior_nu_single(double nu, int prior){
   if (prior == 2){
     double aux = sqrt(nu / (nu + 3)) *
       sqrt (R::trigamma(nu / 2) - R::trigamma((nu + 1) / 2) -
-      (2 * (nu + 3)) / (nu * pow(nu + 1,2)));
+      (2 * (nu + 3)) / (nu * pow(nu + 1, 2)));
     return aux;
   } else{
     return 0;
@@ -94,25 +94,23 @@ NumericVector prior_LST(NumericVector beta, double sigma2, NumericVector nu,
 
 
 
-
+// BUGGED
 // [[Rcpp::export]]
 NumericVector J_alpha(NumericVector alpha, int k){
   NumericVector aux = pow(alpha * (alpha - 1) *
-
-    Rcpp::trigamma(1.0 - 1.0 / alpha) /
-      Rcpp::trigamma (1.0 / alpha) , k / 2) *
-        (1 / alpha) * sqrt((1 + 1 / alpha) * Rcpp::trigamma( 1 + 1 / alpha) -1);
+    Rcpp::gamma(1 - 1 / alpha) /
+      Rcpp::gamma (1 / alpha) , k / 2) *
+        (1 / alpha) * sqrt((1 + 1 / alpha) * Rcpp::trigamma( 1 + 1 / alpha) - 1);
 
    return aux;
 }
 
+// BUGGED
 // [[Rcpp::export]]
 double J_alpha_single(double alpha, int k){
-  double aux = pow(alpha * (alpha - 1) *
-    R::trigamma(1.0 - 1.0 / alpha) /
-      R::trigamma (1.0 / alpha) , k / 2) *
-        (1 / alpha) * sqrt((1 + 1 / alpha) * R::trigamma( 1 + 1 / alpha) -1);
-
+  double aux = pow(alpha * (alpha - 1) * std::tgamma(1 - 1 / alpha) / std::tgamma(1 / alpha) ,
+             (k / 2)) * (1 / alpha) *
+               sqrt((1 + 1 / alpha) * R::trigamma(1 + 1 / alpha) - 1);
   return aux;
 }
 
@@ -231,11 +229,13 @@ double r_GIG(double r) {
 // (REQUIRED FOR BF.u.i.LEP ONLY)
 // [[Rcpp::export]]
 double d_texp(double x, double trunc) {
+
+  double aux;
   if (x >= trunc) {
-    double aux = exp(- (x - trunc));
+    aux = exp(trunc - x);
     return aux;
   } else {
-    double aux = 0;
+    aux = 0;
     return aux;
   }
 }
@@ -284,7 +284,7 @@ Rcpp::List MH_marginal_sigma2 (int N, double omega2, arma::vec logt,
     NumericVector sigma2(N + 1);
     sigma2[0] = sigma20;
     NumericVector ind(N + 1);
-    for (unsigned int i_s = 0; i_s < N; i_s = i_s + 1) {
+    for (unsigned int i_s = 0; i_s < N; i_s = ++i_s) {
       double  y_aux = R::rnorm(sigma2[i_s],sqrt(omega2));
       if (y_aux <= 0) {
         sigma2[i_s + 1] = sigma2[i_s];
@@ -335,7 +335,7 @@ Rcpp::List MH_nu_LST(const unsigned int N, double omega2, NumericVector beta,
   NumericVector nu(N + 1);
   nu[0] = nu0;
 
-  for (unsigned int j_nu = 0; j_nu < N; j_nu = j_nu + 1) {
+  for (unsigned int j_nu = 0; j_nu < N; j_nu = ++j_nu) {
     double y = R::rnorm(nu[j_nu], sqrt(omega2));
 
     int ind_aux;
@@ -353,7 +353,7 @@ Rcpp::List MH_nu_LST(const unsigned int N, double omega2, NumericVector beta,
                    log(prior_nu_single(y, prior) /
                         prior_nu_single(nu[j_nu], prior));
 
-    double aux;
+    int aux;
     if (log(u_aux) < log_aux){
       aux = 1;
     } else{
@@ -491,15 +491,16 @@ Rcpp::List MH_marginal_alpha (unsigned int N, double omega2, arma::vec logt,
 
 // METROPOLIS-HASTINMCMC UPDATE OF BETA[j]
 // (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
-// BUGGED
 // [[Rcpp::export]]
 Rcpp::List MH_marginal_beta_j(const unsigned int N, double omega2, arma::vec logt,
                               arma::mat X, double sigma2, double alpha,
                               arma::vec beta0, int j) {
+
   const unsigned int k = beta0.n_elem;
   arma::mat beta = arma::zeros(k, N + 1);
 
   beta.col(0) = beta0;
+
 
   NumericVector ind(N + 1);
 
@@ -507,14 +508,14 @@ Rcpp::List MH_marginal_beta_j(const unsigned int N, double omega2, arma::vec log
 
     arma::vec y_aux = beta.col(i_b);
 
-    y_aux[j - 1] = R::rnorm(beta(j, i_b), sqrt(omega2));
+    y_aux[j - 1] = R::rnorm(beta(j - 1, i_b), sqrt(omega2));
 
     double aux = -sum(pow(abs((logt - (X * y_aux)) / sqrt(sigma2)), alpha)) +
       sum(pow(abs((logt - (X * beta.col(i_b))) / sqrt(sigma2)) , alpha));
     double u_aux = R::runif(0, 1);
 
 
-    if (aux == R_NaN) {
+    if (aux == R_NaReal) {
       beta.col(i_b + 1) = beta.col(i_b);
       ind[i_b + 1] = 0;
       Rcpp::Rcout << "NA.beta\n";
@@ -534,7 +535,7 @@ Rcpp::List MH_marginal_beta_j(const unsigned int N, double omega2, arma::vec log
       ind[i_b + 1] = 0;
     }
   }
-  //beta.shed_col(0);
+  beta.shed_col(0);
   ind.erase(0);
 
   return List::create(Rcpp::Named("beta", beta.t()), Rcpp::Named("ind",ind));
@@ -611,12 +612,12 @@ NumericVector p_normp(NumericVector q, NumericVector mu,
                       bool log_pr = false) {
 
   NumericVector z = (q - mu) / sigmap;
-  int n = p.length();
+  const unsigned int n = p.length();
   NumericVector zz(n);
   NumericVector zp(n);
   NumericVector lzp(n);
 
-  for( int i = 0; i < n; ++i){
+  for( unsigned int i = 0; i < n; ++i){
     zz[i] = pow(abs(z[i]), p[i]);
     zp[i] = R::pgamma(zz[i], 1 / p[i], p[i], lower_tail, false);
     lzp[i] = R::pgamma(zz[i], 1 / p[i], p[i], lower_tail, true);
@@ -657,7 +658,7 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
 
   NumericVector SP(n);
 
-  for(unsigned int i = 0; i < n; ++i){
+  for (unsigned int i = 0; i < n; ++i){
     SP[i] = sqrt(sigma2vec[i]) *  pow(1 / alphavec[i], 1 / alphavec[i]);
   }
 
@@ -673,19 +674,16 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
       }
     }
 
-    //NumericVector d_normp(NumericVector x,NumericVector mu, NumericVector sigmap,
-    //                      NumericVector p, bool logs = false)
     NumericVector aux1 = TimeGreater * log(p_normp(log(Time + eps_r), MEAN, SP,
                                                    alphavec) -
                             p_normp(log(abs(Time - eps_l)),
                                     MEAN, SP, alphavec)) +
-                                      (1 - TimeGreater) * log(p_normp(log(Time + eps_r),
-                                                              MEAN, SP,
-                                                              alphavec));
+                              (1 - TimeGreater) * log(p_normp(log(Time + eps_r),
+                                                      MEAN, SP, alphavec));
 
     NumericVector aux2 = log(1 - p_normp(log(Time), MEAN, SP, alphavec));
 
-    for(int i = 0; i < n; ++i){
+    for (unsigned int i = 0; i < n; ++i){
       if (Cens[i] == 1){
         aux[i] = aux1[i];
       } else{
@@ -706,70 +704,78 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
 // REJECTION SAMPLING FOR LAMBDA[i]
 // (REQUIRED FOR SEVERAL .LLOG FUNCTIONS)
 // BASED ON HOLMES AND HELD (2006)
-// BUGGED
 // [[Rcpp::export]]
-Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, double beta,
+Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta,
                                double sigma2, int obs, int N_AKS) {
   double lambda = 0;
   bool OK = false;
   int step = 0;
-  while (OK == 0) {
+
+  double Z;
+  double W;
+  int n_AKS;
+
+  while (OK == false) {
     step = step + 1;
 
-    double lambda = r_GIG((abs(logt[obs - 1] - X.row(obs))[0] * beta) / sqrt(sigma2));
+
+    lambda = r_GIG((abs(logt[obs - 1] - X.row(obs - 1) * beta)[0]) /
+                             sqrt(sigma2));
+
     if (lambda != 0 && lambda != INFINITY) {
       double U = R::runif(0, 1);
       if (lambda > 4 / 3) {
-        double Z = 1;
-        double W = exp(-0.5 * lambda);
-        int n_AKS = 0;
+        Z = 1;
+        W = exp(-0.5 * lambda);
+        n_AKS = 0;
         while (n_AKS <= N_AKS) {
           n_AKS = n_AKS + 1;
           Z = Z - (pow(n_AKS + 1, 2)) * pow(W, pow(n_AKS + 1, 2) - 1);
           if (Z > U) {
-            OK = 1;
+            OK = true;
           }
           n_AKS = n_AKS + 1;
           Z = Z + pow(n_AKS + 1, 2) * pow(W, pow(n_AKS + 1, 2) - 1);
-            if (Z < U) {
-              OK = 0;
-            }
+          if (Z < U) {
+            OK = false;
+          }
         }
       } else {
         double H = 0.5 * log(2) + 2.5 * log(PI) - 2.5 *
           log(lambda) - ((PI * PI) / (2 * lambda)) + 0.5 *
           lambda;
         double lU = log(U);
-        double Z = 1;
-        double W = exp(- (PI * PI) / (2 * lambda));
+        Z = 1;
+        W = exp(- (PI * PI) / (2 * lambda));
         double K = lambda / (PI * PI);
-        int n_AKS = 0;
+        n_AKS = 0;
         while (n_AKS <= N_AKS) {
           n_AKS = n_AKS + 1;
           Z = Z - K * pow(W, (pow(n_AKS, 2) - 1));
           double aux = H + log(Z);
 
           if ( aux != R_NaReal && aux != -INFINITY && aux == INFINITY) {
-            OK = 1;
+            OK = true;
           }
           if ( aux != R_NaReal && aux < INFINITY && aux > -INFINITY && aux > lU) {
-            OK = 1;
+            OK = true;
           }
           n_AKS = n_AKS + 1;
           Z = Z + (pow(n_AKS + 1, 2)) * pow(W, pow(n_AKS + 1, 2) - 1);
             aux = H + log(Z);
             if ( aux != R_NaReal && aux == -INFINITY) {
-              OK = 0;
+              OK = false;
             }
             if (aux != R_NaReal && aux > -INFINITY && aux < INFINITY && aux < lU) {
-              OK = 0;
+              OK = false;
             }
         }
       }
     }
   }
 
-  return List::create(Rcpp::Named("lambda", lambda), Rcpp::Named("steps",step));
+  return List::create(Rcpp::Named("lambda", lambda),
+                      Rcpp::Named("steps", step));
 }
 
 // MARGINAL POSTERIOR OF u[obs]
@@ -785,7 +791,8 @@ double Post_u_obs_LEP(const unsigned int obs, double ref, arma::mat X,
   for (unsigned int iter = 0; iter < N;  ++iter) {
 
     double trunc_aux = pow(abs((chain(iter, obs + k + 1 + n) - X.row(obs -1) *
-      chain(iter, arma::span(0, k - 1)).t())[0]) / sqrt(chain(iter, k)), chain(iter, k + 1));
+      chain(iter, arma::span(0, k - 1)).t())[0]) / sqrt(chain(iter, k)),
+                           chain(iter, k + 1));
 
     aux1[iter] = d_texp(ref, trunc_aux);
   }
@@ -808,7 +815,7 @@ double Post_lambda_obs_LST(const unsigned int obs, double  ref, arma::mat X,
       chain(iter, arma::span(0, k - 1)).t())[0], 2) / (chain(iter, k )) +
         chain(iter, k + 1);
     aux2[iter] = R::dgamma(ref, (chain(iter, (k + 1)) + 1) / 2,
-                                2/ aux1[iter], false);
+                           2 / aux1[iter], false);
   }
 
   double aux = mean(aux2);

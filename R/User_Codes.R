@@ -1210,7 +1210,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
         i_batch <- i_batch + 1
 
         for (ind.b in 1:k) {
-            MH.beta <- MH.marginal.beta.j(N = 1,
+            MH.beta <- MH_marginal_beta_j(N = 1,
                                           omega2 = exp(ls.beta.aux[ind.b]),
                                           logt = logt.aux, X = X,
                                           sigma2 = sigma2.aux,
@@ -1752,12 +1752,12 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
         if ((iter - 1) %% Q == 0) {
             for (obs in 1:n) {
-                lambda.aux[obs] <-  1 / RS.lambda.obs.LLOG(logt = logt.aux,
+                lambda.aux[obs] <-  1 / RS_lambda_obs_LLOG(logt = logt.aux,
                                                            X = X,
                                                            beta = beta.aux,
                                                            sigma2 = sigma2.aux,
                                                            obs = obs,
-                                                           N.AKS = N.AKS)$lambda
+                                                           N_AKS = N.AKS)$lambda
             }
         }
 

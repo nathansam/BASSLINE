@@ -376,14 +376,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // RS_lambda_obs_LLOG
-Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, double beta, double sigma2, int obs, int N_AKS);
+Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta, double sigma2, int obs, int N_AKS);
 RcppExport SEXP _BASSLINE_RS_lambda_obs_LLOG(SEXP logtSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP obsSEXP, SEXP N_AKSSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< arma::vec >::type logt(logtSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
-    Rcpp::traits::input_parameter< double >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
     Rcpp::traits::input_parameter< int >::type obs(obsSEXP);
     Rcpp::traits::input_parameter< int >::type N_AKS(N_AKSSEXP);
