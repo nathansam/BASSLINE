@@ -50,9 +50,9 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
 NumericVector prior_nu(NumericVector nu, int prior){
 
   if (prior == 2){
-    NumericVector aux = sqrt(nu / (nu + 3)) *
-      sqrt (Rcpp::trigamma(nu / 2) - Rcpp::trigamma((nu + 1) / 2) -
-      (2 * (nu + 3)) / (nu * pow(nu + 1,2)));
+    NumericVector aux = sqrt(nu / (nu + 3.0)) *
+      sqrt (Rcpp::trigamma(nu / 2.0) - Rcpp::trigamma((nu + 1.0) / 2.0) -
+      (2.0 * (nu + 3.0)) / (nu * pow(nu + 1, 2.0)));
     return aux;
   }
   return 1;
@@ -66,8 +66,8 @@ double prior_nu_single(double nu, int prior){
 
   if (prior == 2){
     double aux = sqrt(nu / (nu + 3)) *
-      sqrt (R::trigamma(nu / 2) - R::trigamma((nu + 1) / 2) -
-      (2 * (nu + 3)) / (nu * pow(nu + 1, 2)));
+      sqrt (R::trigamma(nu / 2.0) - R::trigamma((nu + 1) / 2.0) -
+      (2.0 * (nu + 3.0)) / (nu * pow(nu + 1.0, 2.0)));
     return aux;
   } else{
     return 0;
@@ -99,7 +99,7 @@ NumericVector prior_LST(NumericVector beta, double sigma2, NumericVector nu,
 NumericVector J_alpha(NumericVector alpha, int k){
   NumericVector aux = pow(alpha * (alpha - 1) *
     Rcpp::gamma(1 - 1 / alpha) /
-      Rcpp::gamma (1 / alpha) , k / 2) *
+      Rcpp::gamma (1 / alpha), k / 2.0) *
         (1 / alpha) * sqrt((1 + 1 / alpha) * Rcpp::trigamma( 1 + 1 / alpha) - 1);
 
    return aux;
@@ -109,7 +109,7 @@ NumericVector J_alpha(NumericVector alpha, int k){
 // [[Rcpp::export]]
 double J_alpha_single(double alpha, int k){
   double aux = pow(alpha * (alpha - 1) * std::tgamma(1 - 1 / alpha) / std::tgamma(1 / alpha) ,
-             (k / 2)) * (1 / alpha) *
+             (k / 2.0)) * (1 / alpha) *
                sqrt((1 + 1 / alpha) * R::trigamma(1 + 1 / alpha) - 1);
   return aux;
 }
@@ -132,17 +132,17 @@ double II_alpha_single (double alpha){
 
 // [[Rcpp::export]]
 NumericVector I_alpha (NumericVector alpha) {
-  NumericVector aux = sqrt(1 / pow(alpha, 3)) * sqrt((1 + 1 / alpha) *
+  NumericVector aux = sqrt(1 / pow(alpha, 3.0)) * sqrt((1 + 1 / alpha) *
     Rcpp::trigamma(1 + 1 / alpha) +
-      pow(1 + Rcpp::digamma(1 + 1 / alpha), 2)  - 1);
+      pow(1 + Rcpp::digamma(1 + 1 / alpha), 2.0)  - 1);
   return aux;
 }
 
 // [[Rcpp::export]]
 double I_alpha_single (double alpha) {
-  double aux = sqrt(1 / pow(alpha, 3)) * sqrt((1 + 1 / alpha) *
+  double aux = sqrt(1 / pow(alpha, 3.0)) * sqrt((1 + 1 / alpha) *
     R::trigamma(1 + 1 / alpha) +
-    pow(1 + R::digamma(1 + 1 / alpha), 2)  - 1);
+    pow(1 + R::digamma(1 + 1 / alpha), 2.0)  - 1);
   return aux;
 }
 
@@ -414,7 +414,7 @@ double alpha_sigma2 (double sigma2_0, double sigma2_1, arma::vec logt,
     }
 
     double l1 = - ((n / 2) + p) * log(sigma2_1 / sigma2_0);
-    double l2 = - sum(pow(abs(logt - X * (beta)),alpha)) *
+    double l2 = - sum(pow(abs(logt - X * (beta)), alpha)) *
         (pow(sigma2_1, (-alpha / 2)) - pow(sigma2_0, (-alpha / 2)));
 
     aux = exp(l1 + l2);
@@ -730,12 +730,12 @@ Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta,
         n_AKS = 0;
         while (n_AKS <= N_AKS) {
           n_AKS = n_AKS + 1;
-          Z = Z - (pow(n_AKS + 1, 2)) * pow(W, pow(n_AKS + 1, 2) - 1);
+          Z = Z - (pow(n_AKS + 1, 2.0)) * pow(W, pow(n_AKS + 1, 2.0) - 1);
           if (Z > U) {
             OK = true;
           }
           n_AKS = n_AKS + 1;
-          Z = Z + pow(n_AKS + 1, 2) * pow(W, pow(n_AKS + 1, 2) - 1);
+          Z = Z + pow(n_AKS + 1, 2.0) * pow(W, pow(n_AKS + 1, 2.0) - 1);
           if (Z < U) {
             OK = false;
           }
@@ -751,7 +751,7 @@ Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta,
         n_AKS = 0;
         while (n_AKS <= N_AKS) {
           n_AKS = n_AKS + 1;
-          Z = Z - K * pow(W, (pow(n_AKS, 2) - 1));
+          Z = Z - K * pow(W, (pow(n_AKS, 2.0) - 1));
           double aux = H + log(Z);
 
           if ( aux != R_NaReal && aux != -INFINITY && aux == INFINITY) {
@@ -761,7 +761,7 @@ Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta,
             OK = true;
           }
           n_AKS = n_AKS + 1;
-          Z = Z + (pow(n_AKS + 1, 2)) * pow(W, pow(n_AKS + 1, 2) - 1);
+          Z = Z + (pow(n_AKS + 1, 2.0)) * pow(W, pow(n_AKS + 1, 2.0) - 1);
             aux = H + log(Z);
             if ( aux != R_NaReal && aux == -INFINITY) {
               OK = false;
@@ -780,6 +780,7 @@ Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta,
 
 // MARGINAL POSTERIOR OF u[obs]
 // (REQUIRED FOR BF.u.obs.LEP ONLY)
+// Broken for windows
 // [[Rcpp::export]]
 double Post_u_obs_LEP(const unsigned int obs, double ref, arma::mat X,
                       arma::mat chain) {
