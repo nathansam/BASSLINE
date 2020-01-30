@@ -1454,3 +1454,22 @@ dnormp <- function(x, mu = 0, sigmap = 1, p = 2, log = FALSE) {
         dsty <- log(dsty)
     dsty
 }
+
+Post.u.obs.LEP <- function(obs, ref, X, chain) {
+    N <- dim(chain)[1]
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    aux1 <- rep(0, times = N)
+    aux2 <- rep(0, times = N)
+
+    for (iter in 1:N) {
+        trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
+                              as.vector(chain[iter, 1:k])) /
+                          sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
+
+        aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
+    }
+    aux <- mean(aux1)
+    return(aux)
+}
+

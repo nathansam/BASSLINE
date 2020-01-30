@@ -565,6 +565,7 @@ double alpha_alpha(double alpha0, double alpha1, arma::vec logt,
 
 // DENSITY FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
 // (BASED ON library normalp).
+// BUGGED Currently broken on travis
 // [[Rcpp::export]]
 NumericVector d_normp(NumericVector x, NumericVector mu, NumericVector sigmap,
                       NumericVector p, bool logs = false) {
@@ -594,6 +595,7 @@ NumericVector d_normp(NumericVector x, NumericVector mu, NumericVector sigmap,
 // DISTRIBUTION FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
 // (BASED ON library normalp)
 // NEEDS to be reworked to work for different argument types
+// BUGGED Currently broken on travis
 // [[Rcpp::export]]
 NumericVector p_normp(NumericVector q, NumericVector mu,
                       NumericVector sigmap,
@@ -769,6 +771,7 @@ Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta,
 
 // MARGINAL POSTERIOR OF u[obs]
 // (REQUIRED FOR BF.u.obs.LEP ONLY)
+// BUGGED
 // [[Rcpp::export]]
 double Post_u_obs_LEP(const unsigned int obs, double ref, arma::mat X,
                       arma::mat chain) {
