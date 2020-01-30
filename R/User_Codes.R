@@ -404,7 +404,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        MH.nu <- MH.nu.LST(N = 1, omega2 = exp(ls.nu.aux), beta.aux,
+        MH.nu <- MH_nu_LST(omega2 = exp(ls.nu.aux), beta.aux,
                            lambda.aux, nu.aux, prior)
         nu.aux <- MH.nu$nu
         accept.nu <- accept.nu + MH.nu$ind
@@ -537,18 +537,17 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     for (i in 1:N) {
         lambda.po1 <- t(chain.nonadapt[i, (k + 3):(k + 2 + n)])
         mean <- as.numeric(chain.nonadapt[i, (k + 2)])
-        po1.nu[i] <- alpha.nu(nu0 = as.numeric(chain.nonadapt[i, (k + 2)]),
+        po1.nu[i] <- alpha_nu(nu0 = as.numeric(chain.nonadapt[i, (k + 2)]),
                               nu1 = nu.star,
-                              lambda = lambda.po1, k = k,
+                              lambda = lambda.po1,
                               prior = prior) * stats::dnorm(x = nu.star,
                                                             mean = mean,
                                                             sd = sqrt(omega2.nu))
         nu.aux <- stats::rnorm(n = 1, mean = nu.star, sd = sqrt(omega2.nu))
 
         lambda.po2 <- t(chain.sigma2[i + 1, (k + 2):(k + 1 + n)])
-        po2.nu[i] <- alpha.nu(nu0 = nu.star, nu1 = nu.aux,
-                              lambda = lambda.po2,
-                              k = k, prior = prior)
+        po2.nu[i] <- alpha_nu(nu0 = nu.star, nu1 = nu.aux,
+                              lambda = lambda.po2, prior = prior)
     }
     PO.nu <- mean(po1.nu) / mean(po2.nu)
     cat("Posterior ordinate nu ready!\n")
@@ -741,7 +740,7 @@ BF_lambda_obs_LST <- function(N, thin, burn, ref, obs, Time, Cens, X,
                               chain, Q = 1, prior = 2, set = 1, eps_l = 0.5,
                               eps_r =0.5, ar = 0.44) {
     chain <- as.matrix(chain)
-    aux1 <- Post.lambda.obs.LST(obs, ref, X, chain)
+    aux1 <- Post_lambda_obs_LST(obs, ref, X, chain)
     aux2 <- CFP.obs.LST(N, thin, Q, burn, ref, obs, Time, Cens, X, chain, prior,
                         set, eps_l, eps_r, ar = 0.44)
     return(aux1 * aux2)
@@ -1211,8 +1210,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
         i_batch <- i_batch + 1
 
         for (ind.b in 1:k) {
-            MH.beta <- MH.marginal.beta.j(N = 1,
-                                          omega2 = exp(ls.beta.aux[ind.b]),
+            MH.beta <- MH_marginal_beta_j(omega2 = exp(ls.beta.aux[ind.b]),
                                           logt = logt.aux, X = X,
                                           sigma2 = sigma2.aux,
                                           alpha = alpha.aux,
@@ -1224,7 +1222,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
             }
         }
 
-        MH.sigma2 <- MH.marginal.sigma2(N = 1, omega2 = exp(ls.sigma2.aux),
+        MH.sigma2 <- MH_marginal_sigma2(omega2 = exp(ls.sigma2.aux),
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -1234,7 +1232,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
             psigma2.aux <- psigma2.aux + 1
         }
 
-        MH.alpha <- MH.marginal.alpha(N = 1, omega2 = exp(ls.alpha.aux),
+        MH.alpha <- MH_marginal_alpha(omega2 = exp(ls.alpha.aux),
                                       logt = logt.aux, X = X, beta = beta.aux,
                                       sigma2 = sigma2.aux, alpha0 = alpha.aux,
                                       prior = prior)
@@ -1391,7 +1389,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
     po1.alpha <- rep(0, times = N)
     po2.alpha <- rep(0, times = N)
     for (i in 1:N) {
-        po1.alpha[i] <- alpha.alpha(alpha0 = as.numeric(chain.nonadapt[i,
+        po1.alpha[i] <- alpha_alpha(alpha0 = as.numeric(chain.nonadapt[i,
                                                                        (k + 2)]),
                                     alpha1 = alpha.star,
                                     logt = as.vector(chain.nonadapt[i, (k + 3 + n) :
@@ -1403,7 +1401,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                                                   mean = as.numeric(chain.nonadapt[i, (k + 2)]),
                                                                   sd = sqrt(omega2.alpha))
         alpha.aux <- stats::rnorm(n = 1, mean = alpha.star, sd = sqrt(omega2.alpha))
-        po2.alpha[i] <- alpha.alpha(alpha0 = alpha.star, alpha1 = alpha.aux,
+        po2.alpha[i] <- alpha_alpha(alpha0 = alpha.star, alpha1 = alpha.aux,
                                     logt = as.vector(chain.sigma2[i, (k + 2 + n) :
                                                                       (2 * n + k + 1)]),
                                     X = X,
@@ -1431,9 +1429,9 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
     po1.sigma2 <- rep(0, times = N)
     po2.sigma2 <- rep(0, times = N)
     for (i in 1:N) {
-        po1.sigma2[i] <- alpha.sigma2(sigma2.0 = as.numeric(chain.sigma2[i + 1,
+        po1.sigma2[i] <- alpha_sigma2(sigma2_0 = as.numeric(chain.sigma2[i + 1,
                                                                          (k + 1)]),
-                                      sigma2.1 = sigma2.star,
+                                      sigma2_1 = sigma2.star,
                                       logt = as.vector(chain.sigma2[i,
                                                                     (k + 2 + n) :
                                                                         (2 * n + k + 1)]),
@@ -1446,8 +1444,8 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                          mean = as.numeric(chain.sigma2[i + 1, (k + 1)]),
                          sd = sqrt(omega2.sigma2))
         sigma2.aux <- stats::rnorm(n = 1, mean = sigma2.star, sd = sqrt(omega2.sigma2))
-        po2.sigma2[i] <- alpha.sigma2(sigma2.0 = sigma2.star,
-                                      sigma2.1 = sigma2.aux,
+        po2.sigma2[i] <- alpha_sigma2(sigma2_0 = sigma2.star,
+                                      sigma2_1 = sigma2.aux,
                                       logt = as.vector(chain.beta[i, (k + 1 + n):
                                                                       (2 * n + k)]),
                                       X = X,
@@ -1485,7 +1483,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
             beta.0 <- as.vector(t(chain.prev[i + 1, 1:k]))
             beta.1 <- beta.0
             beta.1[j.beta + 1] <- beta.star[j.beta + 1]
-            po1.beta[i] <- alpha.beta(beta.0 = beta.0, beta.1 = beta.1,
+            po1.beta[i] <- alpha_beta(beta_0 = beta.0, beta_1 = beta.1,
                                       logt = as.vector(chain.prev[i + 1,
                                                                   (k + 1 + n) :
                                                                       (2 * n + k)]),
@@ -1498,7 +1496,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
                                       sd = sqrt(omega2.beta[j.beta + 1]))
             beta.2 <- beta.star
             beta.2[j.beta + 1] <- betaj.aux
-            po2.beta[i] <- alpha.beta(beta.0 = beta.star, beta.1 = beta.2,
+            po2.beta[i] <- alpha_beta(beta_0 = beta.star, beta_1 = beta.2,
                                       logt = as.vector(chain.next[i + 1, (k + 1
                                                                           + n):
                                                                       (2 * n + k)]),
@@ -1753,12 +1751,12 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
         if ((iter - 1) %% Q == 0) {
             for (obs in 1:n) {
-                lambda.aux[obs] <-  1 / RS.lambda.obs.LLOG(logt = logt.aux,
+                lambda.aux[obs] <-  1 / RS_lambda_obs_LLOG(logt = logt.aux,
                                                            X = X,
                                                            beta = beta.aux,
                                                            sigma2 = sigma2.aux,
                                                            obs = obs,
-                                                           N.AKS = N.AKS)$lambda
+                                                           N_AKS = N.AKS)$lambda
             }
         }
 
