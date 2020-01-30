@@ -20,7 +20,7 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
   float p;
   double aux;
 
-  int k = beta.size();
+  int k = beta.length();
 
   if (prior == 1){
     p = 1.0 + k / 2.0;
@@ -49,9 +49,13 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
 NumericVector prior_nu(NumericVector nu, int prior){
 
   if (prior == 2){
+
+
+
     NumericVector aux = sqrt(nu / (nu + 3)) *
       sqrt (Rcpp::trigamma(nu / 2) - Rcpp::trigamma((nu + 1) / 2) -
-      (2 * (nu + 3)) / (nu * pow(nu + 1,2)));
+      (2 * (nu + 3)) / (nu * pow(nu + 1, 2)));
+
     return aux;
   }
   return 1;
@@ -96,10 +100,10 @@ NumericVector prior_LST(NumericVector beta, double sigma2, NumericVector nu,
 // BUGGED
 // [[Rcpp::export]]
 NumericVector J_alpha(NumericVector alpha, int k){
-  NumericVector aux = pow(alpha * (alpha - 1) *
-    Rcpp::gamma(1 - 1 / alpha) /
-      Rcpp::gamma (1 / alpha) , k / 2) *
-        (1 / alpha) * sqrt((1 + 1 / alpha) * Rcpp::trigamma( 1 + 1 / alpha) - 1);
+  NumericVector aux = pow(alpha * (alpha - 1.0) *
+    Rcpp::gamma(1.0 - 1.0 / alpha) /
+      Rcpp::gamma (1.0 / alpha) , k / 2.0) *
+        (1.0 / alpha) * sqrt((1.0 + 1.0 / alpha) * Rcpp::trigamma( 1.0 + 1.0 / alpha) - 1.0);
 
    return aux;
 }
@@ -107,9 +111,9 @@ NumericVector J_alpha(NumericVector alpha, int k){
 // BUGGED
 // [[Rcpp::export]]
 double J_alpha_single(double alpha, int k){
-  double aux = pow(alpha * (alpha - 1) * std::tgamma(1 - 1 / alpha) / std::tgamma(1 / alpha) ,
-             (k / 2)) * (1 / alpha) *
-               sqrt((1 + 1 / alpha) * R::trigamma(1 + 1 / alpha) - 1);
+  double aux = pow(alpha * (alpha - 1.0) * std::tgamma(1.0 - 1.0 / alpha) / std::tgamma(1.0 / alpha) ,
+             (k / 2.0)) * (1.0 / alpha) *
+               sqrt((1.0 + 1.0 / alpha) * R::trigamma(1.0 + 1.0 / alpha) - 1.0);
   return aux;
 }
 
