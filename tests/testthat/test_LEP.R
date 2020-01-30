@@ -438,36 +438,36 @@ test_that("log_lik_LEP same in C++ as in R",{
   expect_equal(R.result, Cpp.result)
 })
 
-test_that("Post_u_obs_LEP same in C++ as in R",{
-  LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-                  Cens = cancer[,2], X = cancer[,3:11])
-  alpha <- mean(LEP[,11])
-  uref <- 1.6 + 1 / alpha
-
-
-  Post.u.obs.LEP <- function(obs, ref, X, chain) {
-    N <- dim(chain)[1]
-    n <- dim(X)[1]
-    k <- dim(X)[2]
-    aux1 <- rep(0, times = N)
-    aux2 <- rep(0, times = N)
-
-    for (iter in 1:N) {
-      trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
-                          as.vector(chain[iter, 1:k])) /
-                      sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
-
-      aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
-    }
-    aux <- mean(aux1)
-    return(aux)
-  }
-
-  R.result <- Post.u.obs.LEP(obs = 1, ref = uref, X = cancer[,3:11],
-                             chain = LEP )
-  Cpp.result <- Post_u_obs_LEP(obs = 1, ref = uref, X = cancer[,3:11],
-                               chain = LEP)
-
- expect_equal(R.result, Cpp.result)
-})
+# test_that("Post_u_obs_LEP same in C++ as in R",{
+#   LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+#                   Cens = cancer[,2], X = cancer[,3:11])
+#   alpha <- mean(LEP[,11])
+#   uref <- 1.6 + 1 / alpha
+#
+#
+#   Post.u.obs.LEP <- function(obs, ref, X, chain) {
+#     N <- dim(chain)[1]
+#     n <- dim(X)[1]
+#     k <- dim(X)[2]
+#     aux1 <- rep(0, times = N)
+#     aux2 <- rep(0, times = N)
+#
+#     for (iter in 1:N) {
+#       trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
+#                           as.vector(chain[iter, 1:k])) /
+#                       sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
+#
+#       aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
+#     }
+#     aux <- mean(aux1)
+#     return(aux)
+#   }
+#
+#   R.result <- Post.u.obs.LEP(obs = 1, ref = uref, X = cancer[,3:11],
+#                              chain = LEP )
+#   Cpp.result <- Post_u_obs_LEP(obs = 1, ref = uref, X = cancer[,3:11],
+#                                chain = LEP)
+#
+#  expect_equal(R.result, Cpp.result)
+# })
 
