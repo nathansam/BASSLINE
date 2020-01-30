@@ -13,16 +13,6 @@ test_that("MCMC_LST returns expected number of rows when burn = 0",{
 ############################## INTERNAL FUNCTIONS ##############################
 ################################################################################
 
-
-
-test_that("Expected value for MH_nu_LST",{
-  set.seed(123)
-  val <- MH_nu_LST(omega2 = 1, beta = 1, lambda = 1, nu0 = 1,
-                   prior = 2) $nu
-
-  expect_equal(round(val, 4), 0.4395)
-})
-
 test_that("Expected value for alpha_nu when nu1 > 0",{
   if(.Machine$sizeof.pointer == 8){
 
