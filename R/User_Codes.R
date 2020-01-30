@@ -404,7 +404,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        MH.nu <- MH_nu_LST(N = 1, omega2 = exp(ls.nu.aux), beta.aux,
+        MH.nu <- MH_nu_LST(omega2 = exp(ls.nu.aux), beta.aux,
                            lambda.aux, nu.aux, prior)
         nu.aux <- MH.nu$nu
         accept.nu <- accept.nu + MH.nu$ind
@@ -1210,8 +1210,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
         i_batch <- i_batch + 1
 
         for (ind.b in 1:k) {
-            MH.beta <- MH_marginal_beta_j(N = 1,
-                                          omega2 = exp(ls.beta.aux[ind.b]),
+            MH.beta <- MH_marginal_beta_j(omega2 = exp(ls.beta.aux[ind.b]),
                                           logt = logt.aux, X = X,
                                           sigma2 = sigma2.aux,
                                           alpha = alpha.aux,
@@ -1223,7 +1222,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
             }
         }
 
-        MH.sigma2 <- MH_marginal_sigma2(N = 1, omega2 = exp(ls.sigma2.aux),
+        MH.sigma2 <- MH_marginal_sigma2(omega2 = exp(ls.sigma2.aux),
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -1233,7 +1232,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
             psigma2.aux <- psigma2.aux + 1
         }
 
-        MH.alpha <- MH_marginal_alpha(N = 1, omega2 = exp(ls.alpha.aux),
+        MH.alpha <- MH_marginal_alpha(omega2 = exp(ls.alpha.aux),
                                       logt = logt.aux, X = X, beta = beta.aux,
                                       sigma2 = sigma2.aux, alpha0 = alpha.aux,
                                       prior = prior)

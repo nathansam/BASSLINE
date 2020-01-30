@@ -206,12 +206,11 @@ BEGIN_RCPP
 END_RCPP
 }
 // MH_marginal_sigma2
-Rcpp::List MH_marginal_sigma2(int N, double omega2, arma::vec logt, arma::mat X, arma::vec beta, double alpha, double sigma20, int prior);
-RcppExport SEXP _BASSLINE_MH_marginal_sigma2(SEXP NSEXP, SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP sigma20SEXP, SEXP priorSEXP) {
+Rcpp::List MH_marginal_sigma2(double omega2, arma::vec logt, arma::mat X, arma::vec beta, double alpha, double sigma20, int prior);
+RcppExport SEXP _BASSLINE_MH_marginal_sigma2(SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP alphaSEXP, SEXP sigma20SEXP, SEXP priorSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< int >::type N(NSEXP);
     Rcpp::traits::input_parameter< double >::type omega2(omega2SEXP);
     Rcpp::traits::input_parameter< arma::vec >::type logt(logtSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
@@ -219,23 +218,22 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma20(sigma20SEXP);
     Rcpp::traits::input_parameter< int >::type prior(priorSEXP);
-    rcpp_result_gen = Rcpp::wrap(MH_marginal_sigma2(N, omega2, logt, X, beta, alpha, sigma20, prior));
+    rcpp_result_gen = Rcpp::wrap(MH_marginal_sigma2(omega2, logt, X, beta, alpha, sigma20, prior));
     return rcpp_result_gen;
 END_RCPP
 }
 // MH_nu_LST
-Rcpp::List MH_nu_LST(const unsigned int N, double omega2, NumericVector beta, NumericVector lambda, double nu0, int prior);
-RcppExport SEXP _BASSLINE_MH_nu_LST(SEXP NSEXP, SEXP omega2SEXP, SEXP betaSEXP, SEXP lambdaSEXP, SEXP nu0SEXP, SEXP priorSEXP) {
+Rcpp::List MH_nu_LST(double omega2, NumericVector beta, NumericVector lambda, double nu0, int prior);
+RcppExport SEXP _BASSLINE_MH_nu_LST(SEXP omega2SEXP, SEXP betaSEXP, SEXP lambdaSEXP, SEXP nu0SEXP, SEXP priorSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< double >::type omega2(omega2SEXP);
     Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< NumericVector >::type lambda(lambdaSEXP);
     Rcpp::traits::input_parameter< double >::type nu0(nu0SEXP);
     Rcpp::traits::input_parameter< int >::type prior(priorSEXP);
-    rcpp_result_gen = Rcpp::wrap(MH_nu_LST(N, omega2, beta, lambda, nu0, prior));
+    rcpp_result_gen = Rcpp::wrap(MH_nu_LST(omega2, beta, lambda, nu0, prior));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -273,12 +271,11 @@ BEGIN_RCPP
 END_RCPP
 }
 // MH_marginal_alpha
-Rcpp::List MH_marginal_alpha(unsigned int N, double omega2, arma::vec logt, arma::mat X, arma::vec beta, double sigma2, double alpha0, int prior);
-RcppExport SEXP _BASSLINE_MH_marginal_alpha(SEXP NSEXP, SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP alpha0SEXP, SEXP priorSEXP) {
+Rcpp::List MH_marginal_alpha(double omega2, arma::vec logt, arma::mat X, arma::vec beta, double sigma2, double alpha0, int prior);
+RcppExport SEXP _BASSLINE_MH_marginal_alpha(SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP alpha0SEXP, SEXP priorSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< double >::type omega2(omega2SEXP);
     Rcpp::traits::input_parameter< arma::vec >::type logt(logtSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
@@ -286,17 +283,16 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
     Rcpp::traits::input_parameter< double >::type alpha0(alpha0SEXP);
     Rcpp::traits::input_parameter< int >::type prior(priorSEXP);
-    rcpp_result_gen = Rcpp::wrap(MH_marginal_alpha(N, omega2, logt, X, beta, sigma2, alpha0, prior));
+    rcpp_result_gen = Rcpp::wrap(MH_marginal_alpha(omega2, logt, X, beta, sigma2, alpha0, prior));
     return rcpp_result_gen;
 END_RCPP
 }
 // MH_marginal_beta_j
-Rcpp::List MH_marginal_beta_j(const unsigned int N, double omega2, arma::vec logt, arma::mat X, double sigma2, double alpha, arma::vec beta0, int j);
-RcppExport SEXP _BASSLINE_MH_marginal_beta_j(SEXP NSEXP, SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP sigma2SEXP, SEXP alphaSEXP, SEXP beta0SEXP, SEXP jSEXP) {
+Rcpp::List MH_marginal_beta_j(double omega2, arma::vec logt, arma::mat X, double sigma2, double alpha, arma::vec beta0, int j);
+RcppExport SEXP _BASSLINE_MH_marginal_beta_j(SEXP omega2SEXP, SEXP logtSEXP, SEXP XSEXP, SEXP sigma2SEXP, SEXP alphaSEXP, SEXP beta0SEXP, SEXP jSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const unsigned int >::type N(NSEXP);
     Rcpp::traits::input_parameter< double >::type omega2(omega2SEXP);
     Rcpp::traits::input_parameter< arma::vec >::type logt(logtSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
@@ -304,7 +300,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type beta0(beta0SEXP);
     Rcpp::traits::input_parameter< int >::type j(jSEXP);
-    rcpp_result_gen = Rcpp::wrap(MH_marginal_beta_j(N, omega2, logt, X, sigma2, alpha, beta0, j));
+    rcpp_result_gen = Rcpp::wrap(MH_marginal_beta_j(omega2, logt, X, sigma2, alpha, beta0, j));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -437,12 +433,12 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_r_GIG", (DL_FUNC) &_BASSLINE_r_GIG, 1},
     {"_BASSLINE_d_texp", (DL_FUNC) &_BASSLINE_d_texp, 2},
     {"_BASSLINE_alpha_nu", (DL_FUNC) &_BASSLINE_alpha_nu, 4},
-    {"_BASSLINE_MH_marginal_sigma2", (DL_FUNC) &_BASSLINE_MH_marginal_sigma2, 8},
-    {"_BASSLINE_MH_nu_LST", (DL_FUNC) &_BASSLINE_MH_nu_LST, 6},
+    {"_BASSLINE_MH_marginal_sigma2", (DL_FUNC) &_BASSLINE_MH_marginal_sigma2, 7},
+    {"_BASSLINE_MH_nu_LST", (DL_FUNC) &_BASSLINE_MH_nu_LST, 5},
     {"_BASSLINE_alpha_beta", (DL_FUNC) &_BASSLINE_alpha_beta, 6},
     {"_BASSLINE_alpha_sigma2", (DL_FUNC) &_BASSLINE_alpha_sigma2, 7},
-    {"_BASSLINE_MH_marginal_alpha", (DL_FUNC) &_BASSLINE_MH_marginal_alpha, 8},
-    {"_BASSLINE_MH_marginal_beta_j", (DL_FUNC) &_BASSLINE_MH_marginal_beta_j, 8},
+    {"_BASSLINE_MH_marginal_alpha", (DL_FUNC) &_BASSLINE_MH_marginal_alpha, 7},
+    {"_BASSLINE_MH_marginal_beta_j", (DL_FUNC) &_BASSLINE_MH_marginal_beta_j, 7},
     {"_BASSLINE_alpha_alpha", (DL_FUNC) &_BASSLINE_alpha_alpha, 7},
     {"_BASSLINE_d_normp", (DL_FUNC) &_BASSLINE_d_normp, 5},
     {"_BASSLINE_p_normp", (DL_FUNC) &_BASSLINE_p_normp, 6},

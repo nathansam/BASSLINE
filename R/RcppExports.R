@@ -65,12 +65,12 @@ alpha_nu <- function(nu0, nu1, lambda, prior) {
     .Call(`_BASSLINE_alpha_nu`, nu0, nu1, lambda, prior)
 }
 
-MH_marginal_sigma2 <- function(N, omega2, logt, X, beta, alpha, sigma20, prior) {
-    .Call(`_BASSLINE_MH_marginal_sigma2`, N, omega2, logt, X, beta, alpha, sigma20, prior)
+MH_marginal_sigma2 <- function(omega2, logt, X, beta, alpha, sigma20, prior) {
+    .Call(`_BASSLINE_MH_marginal_sigma2`, omega2, logt, X, beta, alpha, sigma20, prior)
 }
 
-MH_nu_LST <- function(N, omega2, beta, lambda, nu0, prior) {
-    .Call(`_BASSLINE_MH_nu_LST`, N, omega2, beta, lambda, nu0, prior)
+MH_nu_LST <- function(omega2, beta, lambda, nu0, prior) {
+    .Call(`_BASSLINE_MH_nu_LST`, omega2, beta, lambda, nu0, prior)
 }
 
 alpha_beta <- function(beta_0, beta_1, logt, X, sigma2, alpha) {
@@ -81,12 +81,12 @@ alpha_sigma2 <- function(sigma2_0, sigma2_1, logt, X, beta, alpha, prior) {
     .Call(`_BASSLINE_alpha_sigma2`, sigma2_0, sigma2_1, logt, X, beta, alpha, prior)
 }
 
-MH_marginal_alpha <- function(N, omega2, logt, X, beta, sigma2, alpha0, prior) {
-    .Call(`_BASSLINE_MH_marginal_alpha`, N, omega2, logt, X, beta, sigma2, alpha0, prior)
+MH_marginal_alpha <- function(omega2, logt, X, beta, sigma2, alpha0, prior) {
+    .Call(`_BASSLINE_MH_marginal_alpha`, omega2, logt, X, beta, sigma2, alpha0, prior)
 }
 
-MH_marginal_beta_j <- function(N, omega2, logt, X, sigma2, alpha, beta0, j) {
-    .Call(`_BASSLINE_MH_marginal_beta_j`, N, omega2, logt, X, sigma2, alpha, beta0, j)
+MH_marginal_beta_j <- function(omega2, logt, X, sigma2, alpha, beta0, j) {
+    .Call(`_BASSLINE_MH_marginal_beta_j`, omega2, logt, X, sigma2, alpha, beta0, j)
 }
 
 alpha_alpha <- function(alpha0, alpha1, logt, X, beta, sigma2, prior) {

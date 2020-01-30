@@ -1,13 +1,12 @@
-#include <math.h>
-#include <assert.h>
-#include <R.h>
-#include <Rmath.h>
-#include <cmath>
+#define RCPP_ARMADILLO_RETURN_ANYVEC_AS_VECTOR
 #include <RcppArmadillo.h>
 
+
 using Rcpp::NumericVector;
-using Rcpp::List;
 using Rcpp::NumericMatrix;
+using arma::vec;
+using Rcpp::List;
+using arma::mat;
 
 /*##############################################################################
 #####################################PRIORS#####################################
@@ -266,13 +265,14 @@ double alpha_nu(double nu0, double nu1, NumericVector lambda, int prior) {
 // METROPOLIS-HASTINMCMC UPDATE OF SIGMA2
 // (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
 // [[Rcpp::export]]
-Rcpp::List MH_marginal_sigma2 (int N, double omega2, arma::vec logt,
+Rcpp::List MH_marginal_sigma2 (double omega2, arma::vec logt,
                                arma::mat X, arma::vec beta,
                                double alpha, double sigma20, int prior) {
   const unsigned int k = beta.n_elem;
   const unsigned int n = logt.n_elem;
 
   double p;
+  int ind;
 
   if (prior == 1) {
      p = 1 + k / 2;
@@ -281,91 +281,86 @@ Rcpp::List MH_marginal_sigma2 (int N, double omega2, arma::vec logt,
      p = 1;
   }
 
-    NumericVector sigma2(N + 1);
-    sigma2[0] = sigma20;
-    NumericVector ind(N + 1);
-    for (unsigned int i_s = 0; i_s < N; i_s = ++i_s) {
-      double  y_aux = R::rnorm(sigma2[i_s],sqrt(omega2));
-      if (y_aux <= 0) {
-        sigma2[i_s + 1] = sigma2[i_s];
-        ind[i_s + 1] = 2;
-      } else {
-        double l1 = - ((n / 2) + p) * log(y_aux / sigma2[i_s]);
+  double sigma2;
+  double  y_aux = R::rnorm(sigma20, sqrt(omega2));
+  if (y_aux <= 0) {
 
-        double l2 = - sum(pow(abs(logt - X * beta), alpha)) *
-          (pow(y_aux , -alpha / 2) - pow(sigma2[i_s], -alpha / 2));
+    ind = 2;
 
-        double aux = l1 + l2;
+  } else {
+    double l1 = - ((n / 2) + p) * log(y_aux / sigma20);
 
-        double u_aux = R::runif(0, 1);
+    double l2 = - sum(pow(abs(logt - X * beta), alpha)) *
+      (pow(y_aux , -alpha / 2) - pow(sigma20, -alpha / 2));
+
+    double aux = l1 + l2;
+
+    double u_aux = R::runif(0, 1);
+
+
 
 // THE FOLLOWING THREE LINES AVOID CRUSHES
-        if (aux == R_NaN) {
-          sigma2[i_s + 1] = sigma2[i_s];
-          ind[i_s + 1] = 0;
-          Rcpp::Rcout << "NA.sigma2\n";
-        } else if (aux == INFINITY) {
-          sigma2[i_s + 1] = sigma2[i_s];
-          ind[i_s + 1] = 0;
-          Rcpp::Rcout << "-Inf.sigma2\n";
-        } else if (aux == -INFINITY) {
-          sigma2[i_s + 1] = y_aux;
-          ind[i_s + 1] = 1;
-          Rcpp::Rcout << "Inf.sigma2\n";
-        } else if (aux > -INFINITY && log(u_aux) < aux) {
-          sigma2[i_s + 1] = y_aux;
-          ind[i_s + 1] = 1;
-        } else if (aux > -INFINITY && log(u_aux) >= aux) {
-          sigma2[i_s + 1] = sigma2[i_s];
-          ind[i_s + 1] = 0;
-        }
-      }
+    if (aux == R_NaReal) {
+      sigma2 = sigma20;
+      ind = 0;
+      Rcpp::Rcout << "NA.sigma2\n";
+    } else if (aux == INFINITY) {
+      sigma2 = sigma20;
+      ind = 0;
+      Rcpp::Rcout << "-Inf.sigma2\n";
+    } else if (aux == -INFINITY) {
+      sigma2 = y_aux;
+      ind = 1;
+      Rcpp::Rcout << "Inf.sigma2\n";
+    } else if (aux > -INFINITY && log(u_aux) < aux) {
+      sigma2 = y_aux;
+      ind = 1;
+    } else if (aux > -INFINITY && log(u_aux) >= aux) {
+      sigma2 = sigma20;
+      ind = 0;
     }
-    sigma2.erase(0);
-    ind.erase(0);
-    return List::create(Rcpp::Named("sigma2",sigma2), Rcpp::Named("ind",ind));
+  }
+
+  return List::create(Rcpp::Named("sigma2",sigma2), Rcpp::Named("ind",ind));
 }
 
 //METROPOLIS-HASTINMCMC UPDATE OF NU (REQUIRED FOR SEVERAL .LST FUNCTIONS)
 // POSSIBLE
 // [[Rcpp::export]]
-Rcpp::List MH_nu_LST(const unsigned int N, double omega2, NumericVector beta,
+Rcpp::List MH_nu_LST(double omega2, NumericVector beta,
                       NumericVector lambda, double nu0, int prior) {
-  NumericVector ind(N + 1);
-  NumericVector nu(N + 1);
-  nu[0] = nu0;
 
-  for (unsigned int j_nu = 0; j_nu < N; j_nu = ++j_nu) {
-    double y = R::rnorm(nu[j_nu], sqrt(omega2));
 
-    int ind_aux;
-    if (y >= 0){
-      ind_aux = 1;
-    } else{
-      ind_aux = 0;
-    }
+  int ind, ind_aux, aux;
+  double nu, u_aux, log_aux;
 
-    y = abs(y);
-    double u_aux = R::runif(0, 1);
+  double y = R::rnorm(nu0, sqrt(omega2));
 
-    double log_aux = sum(Rcpp::dgamma(lambda, y/2, 2/y, true)) -
-               sum(Rcpp::dgamma(lambda, nu[j_nu]/2, 2/nu[j_nu], true))  +
-                   log(prior_nu_single(y, prior) /
-                        prior_nu_single(nu[j_nu], prior));
-
-    int aux;
-    if (log(u_aux) < log_aux){
-      aux = 1;
-    } else{
-      aux = 0;
-    }
-
-      aux = aux * ind_aux;
-      nu[j_nu + 1] = aux * y + (1 - aux) * nu[j_nu];
-      ind[j_nu + 1] = aux;
+  if (y >= 0){
+    ind_aux = 1;
+  } else{
+    ind_aux = 0;
   }
-  nu.erase(0);
-  ind.erase(0);
+
+  y = abs(y);
+  u_aux = R::runif(0, 1);
+
+  log_aux = sum(Rcpp::dgamma(lambda, y/2, 2/y, true)) -
+             sum(Rcpp::dgamma(lambda, nu0/2, 2/nu0, true))  +
+                 log(prior_nu_single(y, prior) /
+                      prior_nu_single(nu0, prior));
+
+
+  if (log(u_aux) < log_aux){
+    aux = 1;
+  } else{
+    aux = 0;
+  }
+
+    aux = aux * ind_aux;
+    nu = aux * y + (1 - aux) * nu0;
+    ind = aux;
+
   return List::create(Rcpp::Named("nu", nu), Rcpp::Named("ind", ind));
 }
 
@@ -430,59 +425,53 @@ double alpha_sigma2 (double sigma2_0, double sigma2_1, arma::vec logt,
 
 // METROPOLIS-HASTINMCMC UPDATE OF ALPHA (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
 // [[Rcpp::export]]
-Rcpp::List MH_marginal_alpha (unsigned int N, double omega2, arma::vec logt,
+Rcpp::List MH_marginal_alpha (double omega2, arma::vec logt,
                               arma::mat X, arma::vec beta, double sigma2,
                               double alpha0, int prior) {
   const unsigned int k = X.n_cols;
   const unsigned int n = X.n_rows;
-  NumericVector alpha(N + 1);
-  alpha[0] = alpha0;
-  NumericVector ind(N + 1);
+  double alpha, y_aux, u_aux, aux, l0, l1;
+  int ind;
 
-  for (unsigned int i_a = 0; i_a < N; i_a = i_a + 1) {
-    double y_aux = R::rnorm(alpha[i_a], omega2);
-    if (y_aux >= 2 || y_aux <= 1) {
-      alpha[i_a + 1] = alpha[i_a];
-      ind[i_a + 1] = 0;
-    } else {
 
-      double l1 = n * log(y_aux / std::tgamma(1 / y_aux)) -
-        sum(pow(abs((logt - X * beta) / sqrt(sigma2)) , y_aux));
+  y_aux = R::rnorm(alpha0, omega2);
+  if (y_aux >= 2 || y_aux <= 1) {
+    alpha = alpha0;
+    ind = 0;
+  } else {
 
-      double l0 = n * log(alpha[i_a] / std::tgamma(1 / alpha[i_a])) -
-        sum(pow(abs((logt - X * beta) / sqrt(sigma2)), alpha[i_a]));
+    l1 = n * log(y_aux / std::tgamma(1 / y_aux)) -
+      sum(pow(abs((logt - X * beta) / sqrt(sigma2)) , y_aux));
 
-      double aux = l1 - l0 + log(prior_alpha_single(y_aux, k, prior) /
-        prior_alpha_single(alpha[i_a], k, prior));
+    l0 = n * log(alpha0 / std::tgamma(1 / alpha0)) -
+      sum(pow(abs((logt - X * beta) / sqrt(sigma2)), alpha0));
 
-      double u_aux = R::runif(0, 1);
+    aux = l1 - l0 + log(prior_alpha_single(y_aux, k, prior) /
+      prior_alpha_single(alpha0, k, prior));
+
+    u_aux = R::runif(0, 1);
 
 // THE FOLLOWING THREE LINES AVOID CRUSHES
-      if (aux == R_NaN) {
-        alpha[i_a + 1] = alpha[i_a];
-        ind[i_a + 1] = 0;
-        Rcpp::Rcout << "NA.alpha\n";
-      } else if (aux == -INFINITY) {
-        alpha[i_a + 1] = alpha[i_a];
-        ind[i_a + 1] = 0;
-        Rcpp::Rcout << "-Inf.alpha\n";
-      } else if ( aux == INFINITY) {
-        alpha[i_a + 1] = y_aux;
-        ind[i_a + 1] = 1;
-        Rcpp::Rcout << "Inf.alpha\n";
-      } else if (log(u_aux) < aux) {
-        alpha[i_a + 1] = y_aux;
-        ind[i_a + 1] = 1;
-      } else {
-        alpha[i_a + 1] = alpha[i_a];
-        ind[i_a + 1] = 0;
-      }
+    if (aux == R_NaN) {
+      alpha = alpha0;
+      ind = 0;
+      Rcpp::Rcout << "NA.alpha\n";
+    } else if (aux == -INFINITY) {
+      alpha = alpha0;
+      ind = 0;
+      Rcpp::Rcout << "-Inf.alpha\n";
+    } else if ( aux == INFINITY) {
+      alpha = y_aux;
+      ind = 1;
+      Rcpp::Rcout << "Inf.alpha\n";
+    } else if (log(u_aux) < aux) {
+      alpha = y_aux;
+      ind = 1;
+    } else {
+      alpha = alpha0;
+      ind = 0;
     }
   }
-
-  alpha.erase(0);
-  ind.erase(0);
-
   return List::create(Rcpp::Named("alpha", alpha), Rcpp::Named("ind",ind));
 }
 
@@ -492,53 +481,49 @@ Rcpp::List MH_marginal_alpha (unsigned int N, double omega2, arma::vec logt,
 // METROPOLIS-HASTINMCMC UPDATE OF BETA[j]
 // (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
 // [[Rcpp::export]]
-Rcpp::List MH_marginal_beta_j(const unsigned int N, double omega2, arma::vec logt,
+Rcpp::List MH_marginal_beta_j(double omega2, arma::vec logt,
                               arma::mat X, double sigma2, double alpha,
                               arma::vec beta0, int j) {
 
   const unsigned int k = beta0.n_elem;
-  arma::mat beta = arma::zeros(k, N + 1);
-
-  beta.col(0) = beta0;
 
 
-  NumericVector ind(N + 1);
-
-  for (unsigned int i_b = 0; i_b < N; i_b = i_b + 1){
-
-    arma::vec y_aux = beta.col(i_b);
-
-    y_aux[j - 1] = R::rnorm(beta(j - 1, i_b), sqrt(omega2));
-
-    double aux = -sum(pow(abs((logt - (X * y_aux)) / sqrt(sigma2)), alpha)) +
-      sum(pow(abs((logt - (X * beta.col(i_b))) / sqrt(sigma2)) , alpha));
-    double u_aux = R::runif(0, 1);
+  int ind;
+  vec beta;
 
 
-    if (aux == R_NaReal) {
-      beta.col(i_b + 1) = beta.col(i_b);
-      ind[i_b + 1] = 0;
-      Rcpp::Rcout << "NA.beta\n";
-    } else if ( aux == -INFINITY) {
-      beta.col(i_b + 1) = beta.col(i_b);
-      ind[i_b + 1] = 0;
-      Rcpp::Rcout << "-Inf.beta\n";
-    } else if (aux == INFINITY) {
-      beta.col(i_b + 1) = y_aux;
-      ind[i_b + 1] = 1;
-      Rcpp::Rcout << "Inf.beta\n";
-    } else if (log(u_aux) < aux) {
-      beta.col(i_b + 1) = y_aux;
-      ind[i_b + 1] = 1;
-    } else if (log(u_aux) >= aux) {
-      beta.col(i_b + 1) = beta.col(i_b);
-      ind[i_b + 1] = 0;
-    }
+  arma::vec y_aux = beta0;
+
+  y_aux[j - 1] = R::rnorm(beta0(j - 1), sqrt(omega2));
+
+  double aux = -sum(pow(abs((logt - (X * y_aux)) / sqrt(sigma2)), alpha)) +
+    sum(pow(abs((logt - (X * beta0)) / sqrt(sigma2)) , alpha));
+  double u_aux = R::runif(0, 1);
+
+
+  if (aux == R_NaReal) {
+    beta = beta0;
+    ind = 0;
+    Rcpp::Rcout << "NA.beta\n";
+  } else if ( aux == -INFINITY) {
+    beta = beta0;
+    ind = 0;
+    Rcpp::Rcout << "-Inf.beta\n";
+  } else if (aux == INFINITY) {
+    beta = y_aux;
+    ind = 1;
+    Rcpp::Rcout << "Inf.beta\n";
+  } else if (log(u_aux) < aux) {
+    beta = y_aux;
+    ind = 1;
+  } else if (log(u_aux) >= aux) {
+    beta = beta0;
+    ind = 0;
   }
-  beta.shed_col(0);
-  ind.erase(0);
 
-  return List::create(Rcpp::Named("beta", beta.t()), Rcpp::Named("ind",ind));
+
+
+  return List::create(Rcpp::Named("beta", beta), Rcpp::Named("ind",ind));
 }
 
 
@@ -821,3 +806,4 @@ double Post_lambda_obs_LST(const unsigned int obs, double  ref, arma::mat X,
   double aux = mean(aux2);
   return aux;
 }
+

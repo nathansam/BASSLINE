@@ -17,7 +17,7 @@ test_that("MCMC_LST returns expected number of rows when burn = 0",{
 
 test_that("Expected value for MH_nu_LST",{
   set.seed(123)
-  val <- MH_nu_LST(N = 1, omega2 = 1, beta = 1, lambda = 1, nu0 = 1,
+  val <- MH_nu_LST(omega2 = 1, beta = 1, lambda = 1, nu0 = 1,
                    prior = 2) $nu
 
   expect_equal(round(val, 4), 0.4395)
@@ -138,10 +138,12 @@ test_that("MH_nu_LST same in C++ as in R",{
   }
 
   set.seed(123)
-  MH.nu.LST.R <- MH.nu.LST(10, 0.5, c(1, 2), c(3, 4), 0.2, 2)
+  MH.nu.LST.R <- MH.nu.LST(N = 1, omega2 = 0.5, beta = c(1, 2),
+                           lambda = c(3, 4), nu0 = 0.2, prior = 2)
 
   set.seed(123)
-  MH.nu.LST.Cpp <- MH_nu_LST(10, 0.5, c(1, 2), c(3 ,4), 0.2, 2)
+  MH.nu.LST.Cpp <- MH_nu_LST(omega2 = 0.5, beta = c(1, 2),
+                             lambda = c(3, 4), nu0 = 0.2, prior = 2)
 
   expect_equal(MH.nu.LST.R, MH.nu.LST.Cpp)
 

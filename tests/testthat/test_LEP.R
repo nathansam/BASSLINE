@@ -123,7 +123,6 @@ test_that("MH_marginal_sigma2 same in C++ as in R",{
   }
 
   # Test params
-  N <- 5
   omega2 <- 0.5
   logt <- c (2,3)
   X <- matrix(seq(4), ncol = 2)
@@ -134,10 +133,11 @@ test_that("MH_marginal_sigma2 same in C++ as in R",{
 
 
   set.seed(123)
-  R.result <- MH.marginal.sigma2(N, omega2, logt,X,beta,alpha,sigma20,prior)
+  # N will always equal 1 for MH
+  R.result <- MH.marginal.sigma2(N = 1, omega2, logt,X,beta,alpha,sigma20,prior)
 
   set.seed(123)
-  Cpp.result <- MH_marginal_sigma2(N, omega2, logt,X,beta,alpha,sigma20, prior)
+  Cpp.result <- MH_marginal_sigma2(omega2, logt,X,beta,alpha,sigma20, prior)
 
   expect_equal(R.result,Cpp.result)
 })
@@ -250,9 +250,9 @@ test_that("MH_marginal_alpha same in C++ as in R",{
     list(alpha = alpha, ind = ind)
   }
 
-  R.result <- MH.marginal.alpha(5, 0.2, c(1,2), matrix(seq(4), ncol=2), c(2,1),
+  R.result <- MH.marginal.alpha(N = 1, 0.2, c(1,2), matrix(seq(4), ncol=2), c(2,1),
                                 0.3, 0.4, 2)
-  Cpp.result <- MH_marginal_alpha(5, 0.2, c(1,2), matrix(seq(4), ncol=2),
+  Cpp.result <- MH_marginal_alpha(0.2, c(1,2), matrix(seq(4), ncol=2),
                                   c(2,1), 0.3, 0.4, 2)
   expect_equal(R.result, Cpp.result)
 
@@ -301,11 +301,11 @@ test_that("MH_marginal_beta_j same in C++ as in R",{
   }
 
   set.seed(123)
-  R.result <- MH.marginal.beta.j(5, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
+  R.result <- MH.marginal.beta.j(N = 1, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
                                  0.3, 0.4, c(1, 2), 1)
 
   set.seed(123)
-  Cpp.result <- MH_marginal_beta_j(5, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
+  Cpp.result <- MH_marginal_beta_j(0.2, c(1, 2), matrix(seq(4), ncol = 2),
                                    0.3, 0.4, c(1, 2), 1)
 
   expect_equal(R.result, Cpp.result)

@@ -266,7 +266,7 @@ MCMC.LST.NonAdapt <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        MH.nu <- MH_nu_LST(N = 1, omega2 = omega2.nu, beta.aux, lambda.aux,
+        MH.nu <- MH_nu_LST(omega2 = omega2.nu, beta.aux, lambda.aux,
                            nu.aux, prior)
         nu.aux <- MH.nu$nu
         accept.nu <- accept.nu + MH.nu$ind
@@ -505,7 +505,7 @@ MCMCR.LST.lambda.obs <- function(ref, obs, N, thin, Q, Time, Cens, X, beta0,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        MH.nu <- MH_nu_LST(N = 1, omega2 = exp(ls.nu.aux), beta.aux,
+        MH.nu <- MH_nu_LST(omega2 = exp(ls.nu.aux), beta.aux,
                            lambda.aux, nu.aux, prior)
         nu.aux <- MH.nu$nu
         accept.nu <- accept.nu + MH.nu$ind
@@ -763,7 +763,7 @@ MCMC.LEP.NonAdapt <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
 
     for (iter in 2:(N + 1)) {
         for (ind.b in 1:k) {
-            MH.beta <- MH_marginal_beta_j(N = 1, omega2 = omega2.beta[ind.b],
+            MH.beta <- MH_marginal_beta_j(omega2 = omega2.beta[ind.b],
                                           logt = logt.aux, X = X,
                                           sigma2 = sigma2.aux,
                                           alpha = alpha.aux,
@@ -774,7 +774,7 @@ MCMC.LEP.NonAdapt <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             }
         }
 
-        MH.sigma2 <- MH_marginal_sigma2(N = 1, omega2 = omega2.sigma2,
+        MH.sigma2 <- MH_marginal_sigma2(omega2 = omega2.sigma2,
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -783,7 +783,7 @@ MCMC.LEP.NonAdapt <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             accept.sigma2 <- accept.sigma2 + 1
         }
 
-        MH.alpha <- MH_marginal_alpha(N = 1, omega2 = omega2.alpha,
+        MH.alpha <- MH_marginal_alpha(omega2 = omega2.alpha,
                                       logt = logt.aux, X = X, beta = beta.aux,
                                       sigma2 = sigma2.aux, alpha0 = alpha.aux,
                                       prior = prior)
@@ -859,7 +859,7 @@ MCMCR.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
 
     for (iter in 2:(N + 1)) {
         for (ind.b in 1:k) {
-            MH.beta <- MH_marginal_beta_j(N = 1, omega2 = omega2.beta[ind.b],
+            MH.beta <- MH_marginal_beta_j(omega2 = omega2.beta[ind.b],
                                           logt = logt.aux, X = X,
                                           sigma2 = sigma2.aux,
                                           alpha = alpha.aux, beta0 = beta.aux,
@@ -870,7 +870,7 @@ MCMCR.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20, alpha0,
             }
         }
 
-        MH.sigma2 <- MH_marginal_sigma2(N = 1, omega2 = omega2.sigma2,
+        MH.sigma2 <- MH_marginal_sigma2(omega2 = omega2.sigma2,
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -944,7 +944,7 @@ MCMCR.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
 
     for (iter in 2:(N + 1)) {
         for (ind.b in 1:k) {
-            MH.beta <- MH_marginal_beta_j(N = 1, omega2 = omega2.beta[ind.b],
+            MH.beta <- MH_marginal_beta_j(omega2 = omega2.beta[ind.b],
                                           logt = logt.aux, X = X,
                                           sigma2 = sigma2.aux,
                                           alpha = alpha.aux, beta0 = beta.aux,
@@ -1020,8 +1020,7 @@ MCMCR.betaJ.sigma2.alpha.LEP <- function(N, thin, Time, Cens, X, beta0, sigma20,
     for (iter in 2:(N + 1)) {
         if (J < k) {
             for (ind.b in (J + 1):k) {
-                MH.beta <- MH_marginal_beta_j(N = 1,
-                                              omega2 = omega2.beta[ind.b],
+                MH.beta <- MH_marginal_beta_j(omega2 = omega2.beta[ind.b],
                                               logt = logt.aux, X = X,
                                               sigma2 = sigma2.aux,
                                               alpha = alpha.aux,
@@ -1112,8 +1111,7 @@ MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
         i_batch <- i_batch + 1
 
         for (ind.b in 1:k) {
-            MH.beta <- MH_marginal_beta_j(N = 1,
-                                          omega2 = exp(ls.beta.aux[ind.b]),
+            MH.beta <- MH_marginal_beta_j(omega2 = exp(ls.beta.aux[ind.b]),
                                           logt = logt.aux, X = X,
                                           sigma2 = sigma2.aux,
                                           alpha = alpha.aux,
@@ -1126,7 +1124,7 @@ MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
             }
         }
 
-        MH.sigma2 <- MH_marginal_sigma2(N = 1, omega2 = exp(ls.sigma2.aux),
+        MH.sigma2 <- MH_marginal_sigma2(omega2 = exp(ls.sigma2.aux),
                                         logt = logt.aux, X = X, beta = beta.aux,
                                         alpha = alpha.aux, sigma20 = sigma2.aux,
                                         prior = prior)
@@ -1136,7 +1134,7 @@ MCMCR.LEP.u.i <- function(ref, obs, N, thin, Time, Cens, X, beta0, sigma20,
             psigma2.aux <- psigma2.aux + 1
         }
 
-        MH.alpha <- MH_marginal_alpha(N = 1, omega2 = exp(ls.alpha.aux),
+        MH.alpha <- MH_marginal_alpha(omega2 = exp(ls.alpha.aux),
                                       logt = logt.aux, X = X, beta = beta.aux,
                                       sigma2 = sigma2.aux, alpha0 = alpha.aux,
                                       prior = prior)
