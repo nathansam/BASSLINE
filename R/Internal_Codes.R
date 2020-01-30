@@ -695,24 +695,24 @@ log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
     alpha <- rep(alpha, times = n)
     SP <- as.vector(sqrt(sigma2) * (1 / alpha) ^ (1 / alpha))
     if (set == 1) {
-        aux1 <- (I(Time > eps_l) * log(p_normp(log(Time + eps_r),
+        aux1 <- (I(Time > eps_l) * log(pnormp(log(Time + eps_r),
                                               mu = MEAN,
                                               sigmap = SP,
                                               p = alpha) -
-                                         p_normp(log(abs(Time - eps_l)),
+                                         pnormp(log(abs(Time - eps_l)),
                                                 mu = MEAN, sigmap = SP,
                                                 p = alpha)) +
-                        (1 - I(Time > eps_l)) * log(p_normp(log(Time + eps_r),
-                                                           mu = MEAN,
-                                                           sigmap = SP,
-                                                           p = alpha) - 0))
-        aux2 <- log(1 - p_normp(log(Time), mu = MEAN, sigmap = SP, p = alpha))
+                        (1 - I(Time > eps_l)) * log(pnormp(log(Time + eps_r),
+                                                            mu = MEAN,
+                                                            sigmap = SP,
+                                                            p = alpha) - 0))
+        aux2 <- log(1 - pnormp(log(Time), mu = MEAN, sigmap = SP, p = alpha))
         aux <- ifelse(Cens == 1, aux1, aux2)
     }
     if (set == 0) {
-        aux <- Cens * (d_normp(log(Time), mu = MEAN, sigmap = SP,
-                              p = alpha, logs = TRUE) - log(Time)) + (1 - Cens) *
-                     log(1 - p_normp(log(Time), mu = MEAN,
+        aux <- Cens * (dnormp(log(Time), mu = MEAN, sigmap = SP,
+                              p = alpha, log = TRUE) - log(Time)) + (1 - Cens) *
+                     log(1 - pnormp(log(Time), mu = MEAN,
                                     sigmap = SP, p = alpha))
     }
     return(sum(aux))
@@ -1418,4 +1418,39 @@ alpha.sample <- function() {
     alpha <- stats::runif(1, 1, 2)
     cat(paste("Initial alpha :", round(alpha, 2), "\n\n"))
     return(alpha)
+}
+
+pnormp <- function(q, mu = 0, sigmap = 1, p = 2,
+                   lower.tail = TRUE, log.pr = FALSE) {
+    if (!is.numeric(q) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
+        stop(" Non-numeric argument to mathematical function")
+    if (min(p) < 1)
+        stop("p must be at least equal to one")
+    if (min(sigmap) <= 0)
+        stop("sigmap must be positive")
+    z <- (q - mu) / sigmap
+    zz <- abs(z) ^ p
+    zp <- stats::pgamma(zz, shape = 1 / p, scale = p)
+    lzp <- stats::pgamma(zz, shape = 1 / p, scale = p, log = TRUE)
+    zp <- ifelse(z < 0, 0.5 - exp(lzp - log(2)), 0.5 + exp(lzp - log(2)))
+    if (log.pr == TRUE)
+        zp <- ifelse(z < 0, log(0.5 - exp(lzp - log(2))),
+                     log(0.5 + exp(lzp - log(2))))
+    zp
+}
+
+dnormp <- function(x, mu = 0, sigmap = 1, p = 2, log = FALSE) {
+    if (!is.numeric(x) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
+        stop(" Non-numeric argument to mathematical function")
+    if (min(p) < 1)
+        stop("p must be at least equal to one")
+    if (min(sigmap) <= 0)
+        stop("sigmap must be positive")
+    cost <- 2 * p ^ (1 / p) * gamma(1 + 1 / p) * sigmap
+    expon1 <- (abs(x - mu)) ^ p
+    expon2 <- p * sigmap ^ p
+    dsty <- (1 / cost) * exp(-expon1 / expon2)
+    if (log == TRUE)
+        dsty <- log(dsty)
+    dsty
 }
