@@ -415,20 +415,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// rtnorm
-NumericVector rtnorm(NumericVector lower, NumericVector upper, NumericVector mu, NumericVector sd);
-RcppExport SEXP _BASSLINE_rtnorm(SEXP lowerSEXP, SEXP upperSEXP, SEXP muSEXP, SEXP sdSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type upper(upperSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type sd(sdSEXP);
-    rcpp_result_gen = Rcpp::wrap(rtnorm(lower, upper, mu, sd));
-    return rcpp_result_gen;
-END_RCPP
-}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_prior_LN", (DL_FUNC) &_BASSLINE_prior_LN, 4},
@@ -460,7 +446,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_RS_lambda_obs_LLOG", (DL_FUNC) &_BASSLINE_RS_lambda_obs_LLOG, 6},
     {"_BASSLINE_Post_u_obs_LEP", (DL_FUNC) &_BASSLINE_Post_u_obs_LEP, 4},
     {"_BASSLINE_Post_lambda_obs_LST", (DL_FUNC) &_BASSLINE_Post_lambda_obs_LST, 4},
-    {"_BASSLINE_rtnorm", (DL_FUNC) &_BASSLINE_rtnorm, 4},
     {NULL, NULL, 0}
 };
 
