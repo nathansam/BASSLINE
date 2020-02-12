@@ -71,7 +71,7 @@ penalization factor of the complexity of the model" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9008</span>
       </span>
     </div>
 
@@ -150,7 +150,10 @@ the number of observations and \(k\) is the number of covariates
     <tr>
       <th>set</th>
       <td><p>Indicator for the use of set observations (1: set observations,
-0: point observations).</p></td>
+0: point observations). The former is strongly recommended over the
+latter as point observations cause problems in the context of Bayesian
+inference (due to continuous sampling models assigning zero probability
+to a point).</p></td>
     </tr>
     <tr>
       <th>eps_l</th>
@@ -174,24 +177,24 @@ the number of observations and \(k\) is the number of covariates
 
 <span class='no'>LST</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LST.html'>MCMC_LST</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                 <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : 0.6 
-#&gt;  Initial beta 2 : -0.33 
-#&gt;  Initial beta 3 : -0.12 
-#&gt;  Initial beta 4 : -0.21 
-#&gt;  Initial beta 5 : 0.27 
-#&gt;  Initial beta 6 : 0.47 
-#&gt;  Initial beta 7 : -0.15 
-#&gt;  Initial beta 8 : -0.8 
+#&gt; Initial beta 1 : 0.54 
+#&gt;  Initial beta 2 : 2.35 
+#&gt;  Initial beta 3 : 0.55 
+#&gt;  Initial beta 4 : -0.37 
+#&gt;  Initial beta 5 : -0.4 
+#&gt;  Initial beta 6 : 0.17 
+#&gt;  Initial beta 7 : 0.7 
+#&gt;  Initial beta 8 : 0.5 
 #&gt;  Initial beta 9 : 1.06 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.89 
+#&gt; Initial sigma^2 : 0.39 
 #&gt; 
 #&gt; Sampling initial nu from a Gamma(2, 2) distribution
-#&gt; Initial nu : 0.48 
+#&gt; Initial nu : 1.1 
 #&gt; 
-#&gt; AR nu : 0.54 </div><div class='input'><span class='no'>LST.DIC</span> <span class='kw'>&lt;-</span> <span class='fu'>DIC_LST</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>],
-                   <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LST</span>)</div><div class='output co'>#&gt; Effective number of parameters : -6.5 
+#&gt; AR nu : 0.52 </div><div class='input'><span class='no'>LST.DIC</span> <span class='kw'>&lt;-</span> <span class='fu'>DIC_LST</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>],
+                   <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LST</span>)</div><div class='output co'>#&gt; Effective number of parameters : -17.48 
 #&gt; Actual number of parameters : 11 </div><div class='input'>
 </div></pre>
   </div>

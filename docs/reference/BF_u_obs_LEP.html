@@ -75,7 +75,7 @@ log-Student’s t model, in which case a reduced chain given
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9008</span>
       </span>
     </div>
 
@@ -166,7 +166,8 @@ log-Student’s t model, in which case a reduced chain given
     </tr>
     <tr>
       <th>ref</th>
-      <td><p>Reference value \(u_{ref}\)</p></td>
+      <td><p>Reference value \(u_{ref}\). Vallejos &amp; Steel recommends this
+value be set to \(1.6 +1_\alpha\) for the LEP model.</p></td>
     </tr>
     <tr>
       <th>obs</th>
@@ -198,7 +199,10 @@ the number of observations and \(k\) is the number of covariates
     <tr>
       <th>set</th>
       <td><p>Indicator for the use of set observations (1: set observations,
-0: point observations).</p></td>
+0: point observations). The former is strongly recommended over the
+latter as point observations cause problems in the context of Bayesian
+inference (due to continuous sampling models assigning zero probability
+to a point).</p></td>
     </tr>
     <tr>
       <th>eps_l</th>
@@ -243,31 +247,32 @@ updates</p></td>
 #&gt; Sampling initial alpha from a Uniform(1, 2) distribution
 #&gt; Initial alpha : 1.26 
 #&gt; 
-#&gt; AR beta 1 : 0.58 
-#&gt;  AR beta 2 : 0.67 
-#&gt;  AR beta 3 : 0.74 
+#&gt; Inf.sigma2
+#&gt; AR beta 1 : 0.61 
+#&gt;  AR beta 2 : 0.69 
+#&gt;  AR beta 3 : 0.77 
 #&gt;  AR beta 4 : 0.7 
-#&gt;  AR beta 5 : 0.78 
+#&gt;  AR beta 5 : 0.77 
 #&gt;  AR beta 6 : 0.02 
-#&gt;  AR beta 7 : 0.07 
+#&gt;  AR beta 7 : 0.06 
 #&gt;  AR beta 8 : 0.02 
-#&gt;  AR beta 9 : 0.76 
-#&gt; AR sigma2 : 0.88 
-#&gt; AR alpha : 0.09 </div><div class='input'><span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/median.html'>median</a></span>(<span class='no'>LEP</span>[,<span class='fl'>11</span>])
-<span class='no'>uref</span> <span class='kw'>&lt;-</span> <span class='fl'>1</span> + <span class='fl'>1</span> / <span class='no'>alpha</span> + <span class='fl'>0.6</span>
+#&gt;  AR beta 9 : 0.74 
+#&gt; AR sigma2 : 0.86 
+#&gt; AR alpha : 0.11 </div><div class='input'><span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>LEP</span>[,<span class='fl'>11</span>])
+<span class='no'>uref</span> <span class='kw'>&lt;-</span> <span class='fl'>1.6</span> + <span class='fl'>1</span> / <span class='no'>alpha</span>
 <span class='no'>LEP.Outlier</span> <span class='kw'>&lt;-</span> <span class='fu'>BF_u_obs_LEP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span><span class='fl'>1</span> , <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>uref</span>,
                             <span class='kw'>obs</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
-                            <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; AR beta 1 : 0.52 
-#&gt;  AR beta 2 : 0.64 
-#&gt;  AR beta 3 : 0.7 
-#&gt;  AR beta 4 : 0.72 
-#&gt;  AR beta 5 : 0.78 
-#&gt;  AR beta 6 : 0 
-#&gt;  AR beta 7 : 0.05 
-#&gt;  AR beta 8 : 0.02 
-#&gt;  AR beta 9 : 0.62 
-#&gt; AR sigma2 : 0.97 
-#&gt; AR alpha : 0.14 </div><div class='input'>
+                            <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; AR beta 1 : 0.4 
+#&gt;  AR beta 2 : 0.61 
+#&gt;  AR beta 3 : 0.67 
+#&gt;  AR beta 4 : 0.59 
+#&gt;  AR beta 5 : 0.71 
+#&gt;  AR beta 6 : 0.01 
+#&gt;  AR beta 7 : 0.06 
+#&gt;  AR beta 8 : 0 
+#&gt;  AR beta 9 : 0.64 
+#&gt; AR sigma2 : 0.93 
+#&gt; AR alpha : 0.05 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

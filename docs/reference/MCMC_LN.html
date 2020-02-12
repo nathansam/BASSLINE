@@ -71,7 +71,7 @@ Gaussian random walk proposals for the log-normal model
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9008</span>
       </span>
     </div>
 
@@ -186,7 +186,10 @@ will be randomly generated from a gamma distribution.</p></td>
     <tr>
       <th>set</th>
       <td><p>Indicator for the use of set observations (1: set observations,
-0: point observations).</p></td>
+0: point observations). The former is strongly recommended over the
+latter as point observations cause problems in the context of Bayesian
+inference (due to continuous sampling models assigning zero probability
+to a point).</p></td>
     </tr>
     <tr>
       <th>eps_l</th>
@@ -218,18 +221,18 @@ evaluate if the adaptive variances have been stabilized.</p>
 
 <span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LN</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
               <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -0.32 
-#&gt;  Initial beta 2 : -0.71 
-#&gt;  Initial beta 3 : -1.44 
-#&gt;  Initial beta 4 : -1.5 
-#&gt;  Initial beta 5 : 1.46 
-#&gt;  Initial beta 6 : -0.44 
-#&gt;  Initial beta 7 : -2.36 
-#&gt;  Initial beta 8 : 0.71 
-#&gt;  Initial beta 9 : -1.01 
+#&gt; Initial beta 1 : -1.51 
+#&gt;  Initial beta 2 : -2.27 
+#&gt;  Initial beta 3 : 0.17 
+#&gt;  Initial beta 4 : -0.1 
+#&gt;  Initial beta 5 : 0.47 
+#&gt;  Initial beta 6 : -0.68 
+#&gt;  Initial beta 7 : 1.82 
+#&gt;  Initial beta 8 : 0.51 
+#&gt;  Initial beta 9 : 0.47 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.22 
+#&gt; Initial sigma^2 : 1.07 
 #&gt; </div><div class='input'>
 </div></pre>
   </div>

@@ -8,8 +8,6 @@
   [![License: GPL-3](https://img.shields.io/badge/License-GPL3-green.svg)](https://opensource.org/licenses/GPL-3.0)
   <!-- badges: end -->
 
-
-
 ## Overview
 
 Mixtures of life distributions provide a convienient framework for survival

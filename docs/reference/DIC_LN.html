@@ -71,7 +71,7 @@ penalization factor of the complexity of the model" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9008</span>
       </span>
     </div>
 
@@ -150,7 +150,10 @@ the number of observations and \(k\) is the number of covariates
     <tr>
       <th>set</th>
       <td><p>Indicator for the use of set observations (1: set observations,
-0: point observations).</p></td>
+0: point observations). The former is strongly recommended over the
+latter as point observations cause problems in the context of Bayesian
+inference (due to continuous sampling models assigning zero probability
+to a point).</p></td>
     </tr>
     <tr>
       <th>eps_l</th>
@@ -174,20 +177,20 @@ the number of observations and \(k\) is the number of covariates
 
 <span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LN.html'>MCMC_LN</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
               <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -0.5 
-#&gt;  Initial beta 2 : 0.22 
-#&gt;  Initial beta 3 : 1.59 
-#&gt;  Initial beta 4 : 0.03 
-#&gt;  Initial beta 5 : -0.23 
-#&gt;  Initial beta 6 : -0.47 
-#&gt;  Initial beta 7 : 0.09 
-#&gt;  Initial beta 8 : 0.3 
-#&gt;  Initial beta 9 : -1.65 
+#&gt; Initial beta 1 : 0.48 
+#&gt;  Initial beta 2 : 0.25 
+#&gt;  Initial beta 3 : 1.5 
+#&gt;  Initial beta 4 : -0.3 
+#&gt;  Initial beta 5 : -0.88 
+#&gt;  Initial beta 6 : 0.33 
+#&gt;  Initial beta 7 : -2.14 
+#&gt;  Initial beta 8 : 0.62 
+#&gt;  Initial beta 9 : -0.82 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.57 
+#&gt; Initial sigma^2 : 1.89 
 #&gt; </div><div class='input'><span class='no'>LN.DIC</span> <span class='kw'>&lt;-</span> <span class='fu'>DIC_LN</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>],
-                 <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LN</span>)</div><div class='output co'>#&gt; Effective number of parameters : -1.94 
+                 <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LN</span>)</div><div class='output co'>#&gt; Effective number of parameters : 6.88 
 #&gt; Actual number of parameters : 10 </div><div class='input'>
 </div></pre>
   </div>
