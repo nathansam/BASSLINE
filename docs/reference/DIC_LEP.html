@@ -71,7 +71,7 @@ penalization factor of the complexity of the model" />
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9004</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9008</span>
       </span>
     </div>
 
@@ -150,7 +150,10 @@ the number of observations and \(k\) is the number of covariates
     <tr>
       <th>set</th>
       <td><p>Indicator for the use of set observations (1: set observations,
-0: point observations).</p></td>
+0: point observations). The former is strongly recommended over the
+latter as point observations cause problems in the context of Bayesian
+inference (due to continuous sampling models assigning zero probability
+to a point).</p></td>
     </tr>
     <tr>
       <th>eps_l</th>
@@ -174,34 +177,34 @@ the number of observations and \(k\) is the number of covariates
 
 <span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LEP.html'>MCMC_LEP</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                 <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -0.63 
-#&gt;  Initial beta 2 : 0.66 
-#&gt;  Initial beta 3 : -0.29 
-#&gt;  Initial beta 4 : 0.56 
-#&gt;  Initial beta 5 : 1.86 
-#&gt;  Initial beta 6 : 0.66 
-#&gt;  Initial beta 7 : 1.5 
-#&gt;  Initial beta 8 : -1.19 
-#&gt;  Initial beta 9 : 1.06 
+#&gt; Initial beta 1 : -0.45 
+#&gt;  Initial beta 2 : 0.33 
+#&gt;  Initial beta 3 : -1.09 
+#&gt;  Initial beta 4 : -0.09 
+#&gt;  Initial beta 5 : -0.86 
+#&gt;  Initial beta 6 : 0.23 
+#&gt;  Initial beta 7 : 1.72 
+#&gt;  Initial beta 8 : -0.08 
+#&gt;  Initial beta 9 : 0.49 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.71 
+#&gt; Initial sigma^2 : 1.13 
 #&gt; 
 #&gt; Sampling initial alpha from a Uniform(1, 2) distribution
-#&gt; Initial alpha : 1.03 
+#&gt; Initial alpha : 1.65 
 #&gt; 
-#&gt; AR beta 1 : 0.57 
-#&gt;  AR beta 2 : 0.66 
-#&gt;  AR beta 3 : 0.73 
-#&gt;  AR beta 4 : 0.72 
-#&gt;  AR beta 5 : 0.8 
-#&gt;  AR beta 6 : 0.02 
-#&gt;  AR beta 7 : 0.07 
+#&gt; AR beta 1 : 0.31 
+#&gt;  AR beta 2 : 0.37 
+#&gt;  AR beta 3 : 0.49 
+#&gt;  AR beta 4 : 0.45 
+#&gt;  AR beta 5 : 0.48 
+#&gt;  AR beta 6 : 0.01 
+#&gt;  AR beta 7 : 0.03 
 #&gt;  AR beta 8 : 0.01 
-#&gt;  AR beta 9 : 0.74 
-#&gt; AR sigma2 : 0.91 
-#&gt; AR alpha : 0.09 </div><div class='input'><span class='no'>LEP.DIC</span> <span class='kw'>&lt;-</span> <span class='fu'>DIC_LEP</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>],
-                   <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; Effective number of parameters : 5.75 
+#&gt;  AR beta 9 : 0.46 
+#&gt; AR sigma2 : 0.81 
+#&gt; AR alpha : 0.14 </div><div class='input'><span class='no'>LEP.DIC</span> <span class='kw'>&lt;-</span> <span class='fu'>DIC_LEP</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>],
+                   <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; Effective number of parameters : 13.97 
 #&gt; Actual number of parameters : 11 </div><div class='input'>
 </div></pre>
   </div>
