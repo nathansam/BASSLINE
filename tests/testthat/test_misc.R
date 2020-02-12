@@ -13,15 +13,15 @@ test_that("Title & labels for Trace_plot are as expected",{
 })
 
 test_that("BASSLINE_convert returns expected value",{
-  Time <- c(5,15,15)
-  Cens <- c(1,0,1)
+  Time <- c(5, 15, 15)
+  Cens <- c(1, 0, 1)
   experiment <- as.factor(c("chem1", "chem2", "chem3"))
-  age <- c(15,35,20)
+  age <- c(15, 35, 20)
 
   df <- data.frame(Time, Cens, experiment, age)
   converted <- BASSLINE_convert(df)
-  expected <- cbind(c(5,15,15), c(1,0,1), c(1,0,0), c(0,1,0), c(0,0,1),
-                    c(15, 35, 20))
+  expected <- cbind(c(5, 15, 15), c(1, 0, 1), c(1 ,0, 0), c(0, 1, 0),
+                    c(0, 0, 1), c(15, 35, 20))
   colnames(expected) <- c("Time", "Cens", "experiment.chem1",
                           "experiment.chem2", "experiment.chem3", "age")
   row.names(expected) <- seq(3)

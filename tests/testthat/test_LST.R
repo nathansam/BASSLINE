@@ -157,7 +157,6 @@ test_that("Post_lambda_obs_LST same in C++ as in R",{
                                   shape = (chain[iter, (k + 2)] + 1) / 2,
                                   rate = aux1[iter] / 2)
     }
-
     aux <- mean(aux2)
     return(aux)
   }

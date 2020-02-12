@@ -188,8 +188,8 @@ test_that("alpha_sigma2 same in C++ as in R",{
 
   R.result <- alpha.sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2), c(1,2),
                            0.4, 2)
-  Cpp.result <- alpha_sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2), c(1,2),
-                             0.4, 2)
+  Cpp.result <- alpha_sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
+                             c(1,2), 0.4, 2)
 
   expect_equal(R.result, Cpp.result)
 
@@ -384,22 +384,23 @@ test_that("pnorm same in C++ as in R",{
   }
 
   ## Test for when log.pr is FALSE
-  R.result <- pnormp(c(1,2), c(2,3), c(1,1), c(2,1))
-  Cpp.result <- p_normp(c(1,2), c(2,3), c(1,1), c(2,1))
+  R.result <- pnormp(c(1, 2), c(2, 3), c(1, 1), c(2, 1))
+  Cpp.result <- p_normp(c(1, 2), c(2, 3), c(1, 1), c(2, 1))
 
   expect_equal(R.result, Cpp.result)
 
 
   ## Test for when log.pr is TRUE
-  R.result <- pnormp(c(1,2), c(2,3), c(1,1), c(2,1), log.pr = TRUE)
-  Cpp.result <- p_normp(c(1,2), c(2,3), c(1,1), c(2,1), log_pr = TRUE)
+  R.result <- pnormp(c(1, 2), c(2, 3), c(1, 1), c(2, 1), log.pr = TRUE)
+  Cpp.result <- p_normp(c(1, 2), c(2, 3), c(1, 1), c(2, 1), log_pr = TRUE)
   expect_equal(R.result, Cpp.result)
 
 
 })
 
 test_that("log_lik_LEP same in C++ as in R",{
-  log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
+  log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l,
+                          eps_r) {
     n <- length(Time)
     aux <- rep(0, n)
     MEAN <- X %*% beta
@@ -431,9 +432,9 @@ test_that("log_lik_LEP same in C++ as in R",{
   }
 
   # Set = 1
-  R.result <- log.lik.LEP(c(1,2), c(1,0), matrix(seq(4), ncol=2), c(1,2),
+  R.result <- log.lik.LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol=2), c(1, 2),
                           0.2, 1.2, 1, 0.3, 0.4)
-  Cpp.result <- log_lik_LEP(c(1,2), c(1,0), matrix(seq(4), ncol=2), c(1,2),
+  Cpp.result <- log_lik_LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol=2), c(1, 2),
                             0.2, 1.2, 1, 0.3,0.4)
   expect_equal(R.result, Cpp.result)
 })
