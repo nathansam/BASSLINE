@@ -164,6 +164,7 @@ test_that("Post_lambda_obs_LST same in C++ as in R",{
   LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
 
+
   R.result <- Post.lambda.obs.LST(1, 1, cancer[, 3:11], LST)
   Cpp.result <- Post_lambda_obs_LST(1, 1, cancer[, 3:11], LST)
   expect_equal(R.result, Cpp.result)
