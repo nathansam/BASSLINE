@@ -14,41 +14,41 @@ test_that("MCMC_LN returns expected number of rows when burn = 5,thin = 10",{
 })
 
 test_that("LML_LN Returns Expected Result",{
-  if(.Machine$sizeof.pointer == 8 && .Platform$OS.type != "unix"){
+  if(.Machine$sizeof.pointer == 8){
 
     set.seed(123)
     LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
     LN.LML <- LML_LN(thin = 20, Time = cancer[,1], Cens = cancer[,2],
                      X = cancer[,3:11], chain = LN)
-    testthat::expect_equal(round(as.numeric(LN.LML),2), c( -717.22, -0.27,
-                                                           0.75, 13.94,
-                                                           -732.17))
+    testthat::expect_equal(round(as.numeric(LN.LML),2), c( -716.08, -0.21,
+                                                           0.85, 14.75,
+                                                           -731.89))
     }
 })
 
 test_that("DIC_LN Returns Expected Result",{
-  if(.Machine$sizeof.pointer == 8 && .Platform$OS.type != "unix"){
+  if(.Machine$sizeof.pointer == 8){
     set.seed(123)
 
     LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
     LN.DIC <- DIC_LN(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
                      chain = LN)
-    testthat::expect_equal(round(LN.DIC, 4), 1449.8554)
+    testthat::expect_equal(round(LN.DIC, 4), 1446.2871)
     }
 })
 
 test_that("CaseDeletion_LN Returns Expected Result",{
 
-  if(.Machine$sizeof.pointer == 8 && .Platform$OS.type != "unix"){
+  if(.Machine$sizeof.pointer == 8){
     set.seed(123)
     LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
     LN.CD <- CaseDeletion_LN(Time = cancer[,1], Cens = cancer[,2],
                              X = cancer[,3:11], chain = LN)
     means <- round(c(mean(LN.CD[,1]), mean(LN.CD[,2]), mean(LN.CD[,3])), 4)
-    testthat::expect_equal(means, c(-5.312, 0.0487, 0.6068))}
+    testthat::expect_equal(means, c(-5.2836, 0.0310, 0.5898))}
 })
 
 ################################################################################
