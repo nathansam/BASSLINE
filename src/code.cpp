@@ -23,13 +23,7 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
 
   if (prior == 1){
     p = 1.0 + k / 2.0;
-  }
-
-  if (prior == 2){
-    p = 1;
-  }
-
-  if (prior == 3){
+  } else{
     p = 1;
   }
 
@@ -282,8 +276,7 @@ Rcpp::List MH_marginal_sigma2 (double omega2, arma::vec logt,
 
   if (prior == 1) {
      p = 1 + k / 2;
-  }
-  if (prior == 2 || prior == 3) {
+  } else {
      p = 1;
   }
 
@@ -321,7 +314,8 @@ Rcpp::List MH_marginal_sigma2 (double omega2, arma::vec logt,
     } else if (aux > -INFINITY && log(u_aux) < aux) {
       sigma2 = y_aux;
       ind = 1;
-    } else if (aux > -INFINITY && log(u_aux) >= aux) {
+    } else{
+      //aux > -INFINITY && log(u_aux) >= aux)
       sigma2 = sigma20;
       ind = 0;
     }
@@ -406,11 +400,7 @@ double alpha_sigma2 (double sigma2_0, double sigma2_1, arma::vec logt,
     float p;
     if (prior == 1) {
       p = 1 + k / 2;
-    }
-    if (prior == 2) {
-      p = 1;
-    }
-    if (prior == 3) {
+    } else {
       p = 1;
     }
 
@@ -518,7 +508,8 @@ Rcpp::List MH_marginal_beta_j(double omega2, arma::vec logt,
   } else if (log(u_aux) < aux) {
     beta = y_aux;
     ind = 1;
-  } else if (log(u_aux) >= aux) {
+  } else{
+    // (log(u_aux) >= aux)
     beta = beta0;
     ind = 0;
   }
@@ -655,7 +646,7 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
 
     NumericVector TimeGreater(n);
 
-    for (int i = 0; i < n; ++i){
+    for (unsigned int i = 0; i < n; ++i){
       if (Time[i] > eps_l){
         TimeGreater[i] = 1;
       } else{
