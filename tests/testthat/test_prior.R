@@ -79,12 +79,15 @@ test_that("Unexpected arguments for prior funcs return 0", {
 
 test_that("J_alpha same in C++ as in R",{
   J.alpha<-function(alpha,k){
-    aux<-((alpha*(alpha-1)*gamma(1-1/alpha)/gamma(1/alpha))^(k/2))*(1/alpha)*sqrt((1+1/alpha)*trigamma(1+1/alpha)-1)
+    aux<-((alpha * (alpha - 1) * gamma(1 - 1 / alpha) / gamma(1 / alpha)) ^
+            (k / 2)) *
+               (1 / alpha) *
+                  sqrt(( 1 + 1 / alpha) * trigamma( 1 + 1 / alpha) - 1)
     return(aux)
   }
 
   expect_equal(J.alpha(1.1, 1), J_alpha_single(1.1, 1))
-  expect_equal(J.alpha(c(1.1,1.2), 1), J_alpha(c(1.1,1.2), 1))
+  expect_equal(J.alpha(c(1.1,1.2), 1), J_alpha(c(1.1, 1.2), 1))
   expect_equal(J_alpha(1.1, 1), J_alpha_single(1.1, 1))
 
 })
@@ -98,18 +101,60 @@ test_that("I_alpha same in C++ as in R",{
   }
 
   expect_equal(I.alpha(1.1), I_alpha_single(1.1))
-  expect_equal(I.alpha(c(1.1,1.2)), I_alpha(c(1.1,1.2)))
+  expect_equal(I.alpha(c(1.1, 1.2)), I_alpha(c(1.1, 1.2)))
   expect_equal(I_alpha(1.1), I_alpha_single(1.1))
 })
 
 
 test_that("II_alpha same in C++ as in R",{
   II.alpha<-function(alpha){
-    aux<-(1/alpha)*sqrt((1+1/alpha)*trigamma(1+1/alpha)-1)
+    aux<-(1 / alpha) * sqrt(( 1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
     return(aux)
   }
   expect_equal(II.alpha(1.1), II_alpha_single(1.1))
-  expect_equal(II.alpha(c(1.1,1.2)), II_alpha(c(1.1,1.2)))
+  expect_equal(II.alpha(c(1.1, 1.2)), II_alpha(c(1.1, 1.2)))
   expect_equal(II_alpha(1.1), II_alpha_single(1.1))
+})
+
+
+test_that("rtnorm returns same results as truncnorm::rtruncnorm",{
+  # Test when all arguments are vectors
+  set.seed(123)
+  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf), mu = c(0, 0),
+                       sd = c(1,1))
+  set.seed(123)
+  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
+                                    b= c(Inf, Inf) , mean = c(0, 0),
+                                    sd= c(1, 1))
+  expect_equal(Cpp.result, R.result)
+
+  #  Test when SD isn't a vector
+  set.seed(123)
+  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf), mu = c(0, 0),
+                       sd = 1)
+  set.seed(123)
+  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
+                                    b= c(Inf, Inf) , mean = c(0, 0), sd= 1)
+  expect_equal(Cpp.result, R.result)
+
+  # Test when lower / a isn't a vector
+  set.seed(123)
+  Cpp.result <- rtnorm(n = 2, lower = -Inf, upper = c(Inf, Inf), mu = c(0, 0),
+                       sd = c(1, 1))
+  set.seed(123)
+  R.result <- truncnorm::rtruncnorm(n = 2, a = -Inf,
+                                    b= c(Inf, Inf) , mean = c(0, 0),
+                                    sd = c(1,1))
+  expect_equal(Cpp.result, R.result)
+
+  # Test when upper / b isn't a vector
+  set.seed(123)
+  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = Inf, mu = c(0, 0),
+                       sd = c(1, 1))
+  set.seed(123)
+  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
+                                    b= Inf , mean = c(0, 0),
+                                    sd = c(1,1))
+  expect_equal(Cpp.result, R.result)
 })
 

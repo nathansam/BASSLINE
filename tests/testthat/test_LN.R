@@ -88,19 +88,6 @@ test_that("Prior_LN returns expected value for prior = 3 & logs = FALSE",{
                              logs = F), aux )
 })
 
-test_that("MCMCR.sigma2.LN returns expected values for first row",{
-  if(.Machine$sizeof.pointer == 8){
-    set.seed(123)
-
-    chain <- MCMCR.sigma2.LN(N = 1000, thin = 20, Time = cancer[,1],
-                             Cens = cancer[,2], X = cancer[,3:11],
-                             beta0 =  seq(9), sigma20 = 1,
-                             logt0 = 1, prior = 2, set = 1)
-    expect_equal(chain[1,], c(seq(9), rep(1, 137) ))
-    expect_equal(round(chain[2,1],4), 1.5805)
-  }
-})
-
 test_that("log.lik.LN returns expected value for set = 0",{
   if(.Machine$sizeof.pointer == 8){
     set.seed(123)
