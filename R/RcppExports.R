@@ -117,3 +117,7 @@ Post_lambda_obs_LST <- function(obs, ref, X, chain) {
     .Call(`_BASSLINE_Post_lambda_obs_LST`, obs, ref, X, chain)
 }
 
+rtnorm <- function(n, lower, upper, mu, sd) {
+    .Call(`_BASSLINE_rtnorm`, n, lower, upper, mu, sd)
+}
+

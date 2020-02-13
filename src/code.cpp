@@ -1,7 +1,6 @@
 #define RCPP_ARMADILLO_RETURN_ANYVEC_AS_VECTOR
 #include <RcppArmadillo.h>
 
-
 using Rcpp::NumericVector;
 using Rcpp::NumericMatrix;
 using arma::vec;
@@ -24,13 +23,7 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
 
   if (prior == 1){
     p = 1.0 + k / 2.0;
-  }
-
-  if (prior == 2){
-    p = 1;
-  }
-
-  if (prior == 3){
+  } else{
     p = 1;
   }
 
@@ -103,7 +96,8 @@ NumericVector J_alpha(NumericVector alpha, int k){
   NumericVector aux = pow(alpha * (alpha - 1.0) *
     Rcpp::gamma(1.0 - 1.0 / alpha) /
       Rcpp::gamma (1.0 / alpha) , k / 2.0) *
-        (1.0 / alpha) * sqrt((1.0 + 1.0 / alpha) * Rcpp::trigamma( 1.0 + 1.0 / alpha) - 1.0);
+        (1.0 / alpha) *
+          sqrt((1.0 + 1.0 / alpha) * Rcpp::trigamma( 1.0 + 1.0 / alpha) - 1.0);
 
    return aux;
 }
@@ -111,9 +105,11 @@ NumericVector J_alpha(NumericVector alpha, int k){
 // BUGGED
 // [[Rcpp::export]]
 double J_alpha_single(double alpha, int k){
-  double aux = pow(alpha * (alpha - 1.0) * std::tgamma(1.0 - 1.0 / alpha) / std::tgamma(1.0 / alpha) ,
-             (k / 2.0)) * (1.0 / alpha) *
-               sqrt((1.0 + 1.0 / alpha) * R::trigamma(1.0 + 1.0 / alpha) - 1.0);
+  double aux = pow(alpha * (alpha - 1.0) * std::tgamma(1.0 - 1.0 / alpha) /
+                   std::tgamma(1.0 / alpha) ,
+                   (k / 2.0)) * (1.0 / alpha) *
+                     sqrt((1.0 + 1.0 / alpha) *
+                        R::trigamma(1.0 + 1.0 / alpha) - 1.0);
   return aux;
 }
 
@@ -280,8 +276,7 @@ Rcpp::List MH_marginal_sigma2 (double omega2, arma::vec logt,
 
   if (prior == 1) {
      p = 1 + k / 2;
-  }
-  if (prior == 2 || prior == 3) {
+  } else {
      p = 1;
   }
 
@@ -319,7 +314,8 @@ Rcpp::List MH_marginal_sigma2 (double omega2, arma::vec logt,
     } else if (aux > -INFINITY && log(u_aux) < aux) {
       sigma2 = y_aux;
       ind = 1;
-    } else if (aux > -INFINITY && log(u_aux) >= aux) {
+    } else{
+      //aux > -INFINITY && log(u_aux) >= aux)
       sigma2 = sigma20;
       ind = 0;
     }
@@ -404,11 +400,7 @@ double alpha_sigma2 (double sigma2_0, double sigma2_1, arma::vec logt,
     float p;
     if (prior == 1) {
       p = 1 + k / 2;
-    }
-    if (prior == 2) {
-      p = 1;
-    }
-    if (prior == 3) {
+    } else {
       p = 1;
     }
 
@@ -489,12 +481,8 @@ Rcpp::List MH_marginal_beta_j(double omega2, arma::vec logt,
                               arma::mat X, double sigma2, double alpha,
                               arma::vec beta0, int j) {
 
-  const unsigned int k = beta0.n_elem;
-
-
   int ind;
   vec beta;
-
 
   arma::vec y_aux = beta0;
 
@@ -520,7 +508,8 @@ Rcpp::List MH_marginal_beta_j(double omega2, arma::vec logt,
   } else if (log(u_aux) < aux) {
     beta = y_aux;
     ind = 1;
-  } else if (log(u_aux) >= aux) {
+  } else{
+    // (log(u_aux) >= aux)
     beta = beta0;
     ind = 0;
   }
@@ -657,7 +646,7 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
 
     NumericVector TimeGreater(n);
 
-    for (int i = 0; i < n; ++i){
+    for (unsigned int i = 0; i < n; ++i){
       if (Time[i] > eps_l){
         TimeGreater[i] = 1;
       } else{
@@ -814,3 +803,123 @@ double Post_lambda_obs_LST(const unsigned int obs, double  ref, arma::mat X,
   return aux;
 }
 
+
+double rtnormsingle(double mu, double sd, double lower, double upper){
+  if (lower == R_NegInf) {
+    lower = -1e35;
+  }
+  if (upper == R_PosInf) {
+    upper = 1e35;
+  }
+
+  double z, pz, u, slower, supper, tr, alpha;
+  bool sample = 1;
+
+  if(lower >= upper){
+    return((lower + upper) / 2);
+  }
+  if(lower < -1e32 || upper > 1e32){
+
+    if(lower < -1e32 && upper > 1e32){
+      z = R::rnorm(mu, sd);
+      return z;
+
+    }else{
+      if(upper > 1e32){
+        tr = (lower - mu) / sd;
+      }else{
+        tr = (mu - upper) / sd;
+      }
+      if(tr < 0){
+        /* if sampling >0.5 of a normal density possibly quicker just to
+         * sample and reject */
+        while(sample == 1){
+          z = R::rnorm(0.0, 1.0);
+          if(z > tr){
+            sample = 0;
+          }
+        }
+      }else{
+        alpha = (tr + sqrt((tr * tr) + 4.0)) / 2.0;
+        while(sample == 1){
+          z = R::rexp(1.0/alpha) + tr;
+          pz = - ((alpha - z) * (alpha - z) / 2.0);
+          u = -R::rexp(1.0);
+          if(u <= pz){
+            sample = 0;
+          }
+        }
+      }
+    }
+  }else{
+
+    slower = (lower  -mu) / sd;
+    supper = (upper - mu) / sd;
+
+    tr = R::pnorm(supper, 0.0, 1.0, true, false) - R::pnorm(slower, 0.0, 1.0,
+                                                            true, false);
+
+    if(tr > 0.5){                   // if sampling >0.5 of a normal density possibly quicker just to sample and reject
+      while(sample == 1){
+        z = R::rnorm(0.0,1.0);
+        if(z > slower && z < supper){
+          sample = 0;
+        }
+      }
+    }else{
+      while(sample == 1){
+        z = R::runif(slower, supper);
+
+        if(slower <= 0.0 && 0.0 <= supper){
+          pz = -z * z / 2.0;
+        }else{
+          if(supper < 0.0){
+            pz = (supper * supper - z * z) / 2.0;
+          }else{
+            pz = (slower * slower - z * z) / 2.0;
+          }
+        }
+        u = - R::rexp(1.0);
+        if(u < pz){
+          sample = 0;
+        }
+      }
+    }
+  }
+  if(lower < -1e+32){
+    return(mu - z * sd);
+  }else{
+    return(z * sd + mu);
+  }
+}
+
+
+
+// C++ adaptation of Jarrod Hadfield's MCMCglmm::rtnorm
+// [[Rcpp::export]]
+NumericVector rtnorm(int n, NumericVector lower, NumericVector upper,
+                     NumericVector mu, NumericVector sd){
+
+  if (mu.length() == 1) {
+    mu = NumericVector (n, mu[0]);
+  }
+
+  if (sd.length() == 1) {
+    sd = NumericVector (n, sd[0]);
+  }
+
+  if (lower.length() == 1) {
+    lower = NumericVector (n, lower[0]);
+  }
+
+  if (upper.length() == 1) {
+    upper = NumericVector (n, upper[0]);
+  }
+
+
+  NumericVector rv (n);
+  for( int i = 0; i < n; i++){
+    rv[i] = rtnormsingle(mu[i], sd[i],lower[i], upper[i]);
+  }
+  return rv;
+}

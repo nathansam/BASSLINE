@@ -14,26 +14,23 @@ logt.update.SMLN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
     MEAN <- X %*% beta
     if (set == 1) {
         aux <- Cens * (I(Time > eps_l) *
-                         truncnorm::rtruncnorm(n = n,
-                                               a = log(abs(Time - eps_l)),
-                                               b = log(Time + eps_r),
-                                               mean = MEAN,
-                                               sd = sqrt(sigma2)) +
+                         rtnorm(n = n, lower = log(abs(Time - eps_l)),
+                                upper = log(Time + eps_r), mu = MEAN,
+                                sd = sqrt(sigma2)) +
                   (1 - I(Time > eps_l)) *
-                    truncnorm::rtruncnorm(n = n, a = -Inf,
-                                          b = log(Time + eps_r),
-                                          mean = MEAN,
-                                          sd = sqrt(sigma2))) + (1 - Cens) *
-                                    truncnorm::rtruncnorm(n = n,
-                                                          a = log(Time),
-                                                          b = Inf,
-                                                          mean = MEAN,
+                    rtnorm(n = n, lower = -Inf, upper = log(Time + eps_r),
+                           mu = MEAN,
+                           sd = sqrt(sigma2))) + (1 - Cens) *
+                                                   rtnorm(n = n,
+                                                          lower = log(Time),
+                                                          upper = Inf,
+                                                          mu = MEAN,
                                                           sd = sqrt(sigma2))
     }
     if (set == 0) {
         aux <- Cens * log(Time) + (1 - Cens) *
-                 truncnorm::rtruncnorm(n = n, a = log(Time), b = Inf,
-                                       mean = MEAN, sd = sqrt(sigma2))
+                 rtnorm(n = n, lower = log(Time), upper = Inf, mu = MEAN,
+                        sd = sqrt(sigma2))
     }
     return(aux)
 }
