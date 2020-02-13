@@ -410,9 +410,9 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
         accept.nu <- accept.nu + MH.nu$ind
         pnu.aux <- pnu.aux + MH.nu$ind
 
-        if ((iter - 1) %% Q == 0) {
+        if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
             shape1.aux <- (nu.aux + 1) / 2
-            rate1.aux <- 0.5 * (nu.aux + ((logt.aux - X %*% beta.aux)^2) /
+            rate1.aux <- 0.5 * (nu.aux + ((logt.aux - X %*% beta.aux) ^ 2) /
                                     sigma2.aux)
             lambda.aux <- stats::rgamma(n, shape = rep(shape1.aux, times = n),
                                         rate = rate1.aux)
@@ -425,7 +425,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
             pnu.aux <- pnu.aux / 50
             Pnu.aux <- as.numeric(pnu.aux < ar)
             ls.nu.aux <- ls.nu.aux + ((-1) ^ Pnu.aux) *
-                           min(0.01, 1 / sqrt(iter))
+                min(0.01, 1 / sqrt(iter))
             i_batch <- 0
             pnu.aux <- 0
         }
@@ -453,6 +453,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
 
     colnames(chain) <- c(beta.cols, "sigma2", "nu", lambda.cols, logt.cols,
                          "ls.nu")
+
 
     if (burn > 0) {
         burn.period <- 1:burn
@@ -831,7 +832,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
             }
         }
 
-        if ((iter - 1) %% Q == 0) {
+        if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
             mu.aux <- sqrt(sigma2.aux) / abs(logt.aux - X %*% beta.aux)
             if (sum(is.na(mu.aux)) == 0) {
                 draw.aux <- VGAM::rinv.gaussian(n = n, mu = mu.aux,
@@ -1749,7 +1750,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        if ((iter - 1) %% Q == 0) {
+        if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
             for (obs in 1:n) {
                 lambda.aux[obs] <-  1 / RS_lambda_obs_LLOG(logt = logt.aux,
                                                            X = X,
