@@ -856,35 +856,24 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
     slower = (lower  -mu) / sd;
     supper = (upper - mu) / sd;
 
-    tr = R::pnorm(supper, 0.0, 1.0, true, false) - R::pnorm(slower, 0.0, 1.0,
-                                                            true, false);
+    while(sample == 1){
+      z = R::runif(slower, supper);
 
-    if(tr > 0.5){                   // if sampling >0.5 of a normal density possibly quicker just to sample and reject
-      while(sample == 1){
-        z = R::rnorm(0.0,1.0);
-        if(z > slower && z < supper){
-          sample = 0;
+      if(slower <= 0.0 && 0.0 <= supper){
+        pz = -z * z / 2.0;
+      }else{
+        if(supper < 0.0){
+          pz = (supper * supper - z * z) / 2.0;
+        }else{
+          pz = (slower * slower - z * z) / 2.0;
         }
       }
-    }else{
-      while(sample == 1){
-        z = R::runif(slower, supper);
-
-        if(slower <= 0.0 && 0.0 <= supper){
-          pz = -z * z / 2.0;
-        }else{
-          if(supper < 0.0){
-            pz = (supper * supper - z * z) / 2.0;
-          }else{
-            pz = (slower * slower - z * z) / 2.0;
-          }
-        }
-        u = - R::rexp(1.0);
-        if(u < pz){
-          sample = 0;
-        }
+      u = - R::rexp(1.0);
+      if(u < pz){
+        sample = 0;
       }
     }
+
   }
   if(lower < -1e+32){
     return(mu - z * sd);
