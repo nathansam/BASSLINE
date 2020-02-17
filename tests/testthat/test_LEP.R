@@ -1,7 +1,7 @@
 ################################################################################
 ################################ USER FUNCTIONS ################################
 ################################################################################
-test_that("MCMC_LEP returns expected number of rows when burn = 5,thin = 10",{
+test_that("MCMC_LEP returns expected number of rows when burn = 20,thin = 10",{
 
   N <- 100
   thin <- 10
@@ -129,17 +129,21 @@ test_that("MH_marginal_sigma2 same in C++ as in R",{
   beta <- c(1,2)
   alpha <- 1.2
   sigma20 <- 0.5
-  prior <- 2
 
 
-  set.seed(123)
-  # N will always equal 1 for MH
-  R.result <- MH.marginal.sigma2(N = 1, omega2, logt,X,beta,alpha,sigma20,prior)
+  for (prior in 1:3){
+    set.seed(123)
+    # N will always equal 1 for MH
+    R.result <- MH.marginal.sigma2(N = 1, omega2, logt,X,beta,alpha,sigma20,prior)
 
-  set.seed(123)
-  Cpp.result <- MH_marginal_sigma2(omega2, logt,X,beta,alpha,sigma20, prior)
+    set.seed(123)
+    Cpp.result <- MH_marginal_sigma2(omega2, logt,X,beta,alpha,sigma20, prior)
 
-  expect_equal(R.result,Cpp.result)
+    expect_equal(R.result,Cpp.result)
+  }
+
+
+
 })
 
 test_that("alpha_beta same in C++ as in R",{
@@ -186,14 +190,15 @@ test_that("alpha_sigma2 same in C++ as in R",{
     return(aux)
   }
 
-  R.result <- alpha.sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2), c(1,2),
-                           0.4, 2)
+  for (prior in 1:3){
+    R.result <- alpha.sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2), c(1,2),
+                             0.4, prior)
 
-  Cpp.result <- alpha_sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
-                             c(1,2), 0.4, 2)
+    Cpp.result <- alpha_sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
+                               c(1,2), 0.4, prior)
 
-  expect_equal(R.result, Cpp.result)
-
+    expect_equal(R.result, Cpp.result)
+  }
 })
 
 test_that("MH_marginal_alpha same in C++ as in R",{
@@ -251,11 +256,14 @@ test_that("MH_marginal_alpha same in C++ as in R",{
     list(alpha = alpha, ind = ind)
   }
 
-  R.result <- MH.marginal.alpha(N = 1, 0.2, c(1,2), matrix(seq(4), ncol=2), c(2,1),
-                                0.3, 0.4, 2)
-  Cpp.result <- MH_marginal_alpha(0.2, c(1,2), matrix(seq(4), ncol=2),
-                                  c(2,1), 0.3, 0.4, 2)
-  expect_equal(R.result, Cpp.result)
+  for (prior in 1:3){
+    R.result <- MH.marginal.alpha(N = 1, 0.2, c(1,2), matrix(seq(4), ncol=2), c(2,1),
+                                  0.3, 0.4, prior)
+    Cpp.result <- MH_marginal_alpha(0.2, c(1,2), matrix(seq(4), ncol=2),
+                                    c(2,1), 0.3, 0.4, prior)
+    expect_equal(R.result, Cpp.result)
+  }
+
 
 })
 
@@ -331,12 +339,15 @@ test_that("alpha_alpha same in C++ as in R",{
     return(aux)
   }
 
-  R.result <- alpha.alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
-                          3, 2)
+  for (prior in 1:3){
 
-  Cpp.result <- alpha_alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
-                            3, 2)
-  expect_equal(R.result, Cpp.result)
+    R.result <- alpha.alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
+                            3, prior)
+
+    Cpp.result <- alpha_alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
+                              3, prior)
+    expect_equal(R.result, Cpp.result)
+  }
 })
 
 test_that("d_normp same in C++ as in R",{

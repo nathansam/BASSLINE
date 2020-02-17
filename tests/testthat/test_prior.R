@@ -42,10 +42,9 @@ test_that("prior_alpha same result in C++ as in R",{
     return(aux)
   }
 
-  expect_equal(prior.alpha(c(1, 2), 1, 1), prior_alpha(c(1, 2), 1, 1))
-  expect_equal(prior.alpha(c(1, 2), 1, 2), prior_alpha(c(1, 2), 1, 2))
-  expect_equal(prior.alpha(c(1, 2), 1, 3), prior_alpha(c(1, 2), 1, 3))
-
+  for (prior in 1:3){
+    expect_equal(prior.alpha(c(1, 2), 1, prior), prior_alpha(c(1, 2), 1, prior))
+  }
 })
 
 test_that("prior_LEP same result in C++ as in R",{
@@ -61,11 +60,14 @@ test_that("prior_LEP same result in C++ as in R",{
     return(aux)
   }
 
-  expect_equal(prior.LEP(c(1, 2), 1, c(1, 2), 1, F),
-               prior_LEP(c(1, 2), 1, c(1, 2), 1, F) )
+  for (prior in 1:3){
 
-  expect_equal(prior.LEP(c(1, 2), 1, c(1 ,2), 1, T),
-               prior_LEP(c(1, 2), 1, c(1, 2), 1, T))
+    expect_equal(prior.LEP(c(1, 2), 1, c(1, 2), prior, F),
+                 prior_LEP(c(1, 2), 1, c(1, 2), prior, F) )
+
+    expect_equal(prior.LEP(c(1, 2), 1, c(1 ,2), prior, T),
+                 prior_LEP(c(1, 2), 1, c(1, 2), prior, T))
+  }
 })
 
 test_that("Unexpected arguments for prior funcs return 0", {
@@ -74,7 +76,6 @@ test_that("Unexpected arguments for prior funcs return 0", {
   expect_equal(prior_nu_single(1, prior = 1), 0)
   expect_equal(prior_alpha(c(1, 2), 1, 4), 0)
   expect_equal(prior_alpha_single(2, 1, 4), 0)
-
 })
 
 test_that("J_alpha same in C++ as in R",{
@@ -120,8 +121,8 @@ test_that("II_alpha same in C++ as in R",{
 test_that("rtnorm returns same results as truncnorm::rtruncnorm",{
   # Test when all arguments are vectors
   set.seed(123)
-  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf), mu = c(0, 0),
-                       sd = c(1,1))
+  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf),
+                       mu = c(0, 0), sd = c(1,1))
   set.seed(123)
   R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
                                     b= c(Inf, Inf) , mean = c(0, 0),
@@ -130,8 +131,8 @@ test_that("rtnorm returns same results as truncnorm::rtruncnorm",{
 
   #  Test when SD isn't a vector
   set.seed(123)
-  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf), mu = c(0, 0),
-                       sd = 1)
+  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf),
+                       mu = c(0, 0), sd = 1)
   set.seed(123)
   R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
                                     b= c(Inf, Inf) , mean = c(0, 0), sd= 1)

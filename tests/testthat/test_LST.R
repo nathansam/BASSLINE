@@ -9,6 +9,34 @@ test_that("MCMC_LST returns expected number of rows when burn = 0",{
   expect_equal(nrow(LST), N / thin + 1)
 })
 
+test_that("LML_LST Returns Expected Result",{
+  if(.Machine$sizeof.pointer == 8){
+
+    set.seed(123)
+    LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                  Cens = cancer[,2], X = cancer[,3:11])
+    LST.LML <- LML_LST(thin = 20, Time = cancer[,1], Cens = cancer[,2],
+                     X = cancer[,3:11], chain = LST)
+    testthat::expect_equal(round(as.numeric(LST.LML),2), c( -714.06, -2.16,
+                                                           -1.62, 1.15,
+                                                           14.52, -730.26))
+  }
+})
+
+
+test_that("DIC_LST Returns Expected Result",{
+  if(.Machine$sizeof.pointer == 8){
+
+    set.seed(123)
+    LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
+                    Cens = cancer[,2], X = cancer[,3:11])
+    LST.DIC <- DIC_LST(Time = cancer[,1], Cens = cancer[,2],
+                       X = cancer[,3:11], chain = LST)
+    testthat::expect_equal(round(LST.DIC,2), 1445.54)
+  }
+})
+
+
 ################################################################################
 ############################## INTERNAL FUNCTIONS ##############################
 ################################################################################
@@ -17,7 +45,7 @@ test_that("Expected value for alpha_nu when nu1 > 0",{
   if(.Machine$sizeof.pointer == 8){
 
     set.seed(123)
-    val <- alpha_nu(1, nu1 =2, 1, 2)
+    val <- alpha_nu(1, nu1 = 2, 1, 2)
 
     expect_equal(round(val, 4), 0.6657)
   }
@@ -64,6 +92,7 @@ test_that("prior_LST is the same in C++ as in R",{
     return(aux)
   }
 
+
   expect_equal(prior.LST.R(c(1, 2), 1, 1, 2, T),
                prior_LST(c(1, 2), 1, 1, 2, T))
   expect_equal(prior.LST.R(c(1, 2), 1, 1, 2, F),
@@ -87,7 +116,12 @@ test_that("alpha_nu same in C++ as in R",{
     return(aux)
   }
 
-  expect_equal(alpha.nu(1, 2, c(1, 2), 2), alpha_nu(1, 2, c(1, 2), 2))
+  for (prior in 1:3){
+    expect_equal(alpha.nu(1, 2, c(1, 2), prior), alpha_nu(1, 2, c(1, 2), prior))
+
+  }
+
+
 
 })
 
@@ -127,15 +161,18 @@ test_that("MH_nu_LST same in C++ as in R",{
     list(nu = nu, ind = ind)
   }
 
-  set.seed(123)
-  MH.nu.LST.R <- MH.nu.LST(N = 1, omega2 = 0.5, beta = c(1, 2),
-                           lambda = c(3, 4), nu0 = 0.2, prior = 2)
+  for (prior in 1:3){
 
-  set.seed(123)
-  MH.nu.LST.Cpp <- MH_nu_LST(omega2 = 0.5, beta = c(1, 2),
+    set.seed(123)
+    MH.nu.LST.R <- MH.nu.LST(N = 1, omega2 = 0.5, beta = c(1, 2),
                              lambda = c(3, 4), nu0 = 0.2, prior = 2)
 
-  expect_equal(MH.nu.LST.R, MH.nu.LST.Cpp)
+    set.seed(123)
+    MH.nu.LST.Cpp <- MH_nu_LST(omega2 = 0.5, beta = c(1, 2),
+                               lambda = c(3, 4), nu0 = 0.2, prior = 2)
+
+    expect_equal(MH.nu.LST.R, MH.nu.LST.Cpp)
+  }
 
 })
 
