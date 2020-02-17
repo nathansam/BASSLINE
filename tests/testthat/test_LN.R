@@ -7,10 +7,10 @@ test_that("MCMC_LN returns expected number of rows when burn = 5,thin = 10",{
 
   N <- 100
   thin <- 10
-  burn <- 5
+  burn <- 10
   LN <- MCMC_LN(N = N, thin = thin, burn = burn, Time = cancer[,1],
                   Cens = cancer[,2], X = cancer[,3:11])
-  expect_equal(nrow(LN), N / thin + 1 - burn)
+  expect_equal(nrow(LN), N / thin + 1 - (burn/thin))
 })
 
 test_that("LML_LN Returns Expected Result",{
@@ -21,8 +21,8 @@ test_that("LML_LN Returns Expected Result",{
                   Cens = cancer[,2], X = cancer[,3:11])
     LN.LML <- LML_LN(thin = 20, Time = cancer[,1], Cens = cancer[,2],
                      X = cancer[,3:11], chain = LN)
-    testthat::expect_equal(round(as.numeric(LN.LML),2), c( -716.08, -0.21,
-                                                           0.85, 14.75,
+    testthat::expect_equal(round(as.numeric(LN.LML),2), c( -715.29, -0.20,
+                                                           0.85, 15.54,
                                                            -731.89))
     }
 })
@@ -35,7 +35,7 @@ test_that("DIC_LN Returns Expected Result",{
                   Cens = cancer[,2], X = cancer[,3:11])
     LN.DIC <- DIC_LN(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
                      chain = LN)
-    testthat::expect_equal(round(LN.DIC, 4), 1446.2871)
+    testthat::expect_equal(round(LN.DIC, 4), 1450.0062)
     }
 })
 
@@ -48,7 +48,7 @@ test_that("CaseDeletion_LN Returns Expected Result",{
     LN.CD <- CaseDeletion_LN(Time = cancer[,1], Cens = cancer[,2],
                              X = cancer[,3:11], chain = LN)
     means <- round(c(mean(LN.CD[,1]), mean(LN.CD[,2]), mean(LN.CD[,3])), 4)
-    testthat::expect_equal(means, c(-5.2836, 0.0310, 0.5898))}
+    testthat::expect_equal(means, c(-5.2990, 0.0425, 0.6047))}
 })
 
 ################################################################################

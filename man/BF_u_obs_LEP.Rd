@@ -22,7 +22,7 @@ BF_u_obs_LEP(
 )
 }
 \arguments{
-\item{N}{Total number of iterations.}
+\item{N}{Total number of iterations. Must be a multiple of thin.}
 
 \item{thin}{Thinning period.}
 

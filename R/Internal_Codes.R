@@ -1351,16 +1351,25 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
         stop("burn should be a non-negative integer.\n")
     }
 
-    if (N / thin  < burn) {
-        stop("The number of non-discarded iterations will be zero!\n Adjust N, thin or burn.\n")
+    if (N < burn) {
+        stop("N must be greater than burn.\n")
+    }
+
+    if (burn %% thin != 0) {
+        stop("burn must a multiple of thin.\n")
+    }
+
+    if (N %% thin != 0) {
+        stop("N must a multiple of thin.\n")
     }
 
     if (all(Time > 0) == F) {
         stop("All values in Time should be non-negative.\n")
     }
+
     if (length(Time) != num.obs) {
     stop("Time is not the correct length.\n")
-        }
+    }
 
     if ( all(Cens == 1 | Cens == 0) == F) {
         stop("Cens should be either 0 or 1 for each observation\n")

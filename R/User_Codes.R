@@ -6,9 +6,9 @@
 #' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
 #'     Gaussian random walk proposals for the log-normal model
 #'     (no mixture)
-#' @param N Total number of iterations.
+#' @param N Total number of iterations. Must be a multiple of thin.
 #' @param thin Thinning period.
-#' @param burn Burn-in period.
+#' @param burn Burn-in period. Must be a multiple of thin.
 #' @param Time Vector containing the survival times.
 #' @param Cens Censoring indication (1: observed, 0: right-censored).
 #' @param X Design matrix with dimensions \eqn{n} x  \eqn{k} where \eqn{n} is
@@ -110,7 +110,7 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", logt.cols)
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
 
@@ -456,7 +456,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
 
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
 
@@ -870,7 +870,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", lambda.cols, logt.cols)
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
 
@@ -1300,7 +1300,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [- burn.period, ]
     }
 
@@ -1785,7 +1785,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
     return(chain)

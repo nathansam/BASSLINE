@@ -23,7 +23,7 @@ BF_lambda_obs_LST(
 )
 }
 \arguments{
-\item{N}{Total number of iterations.}
+\item{N}{Total number of iterations. Must be a multiple of thin.}
 
 \item{thin}{Thinning period.}
 
