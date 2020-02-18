@@ -180,8 +180,7 @@ MCMCR.sigma2.LN <- function(N, thin, Time, Cens, X, beta0, sigma20, logt0,
 
 ### OTHER FUNCTIONS REQUIRED FOR THE IMPLEMENTATION OF THE LOG-STUDENT'S T MODEL
 
-################## LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL .LST FUNCTIONS)
-### POSSIBLE
+
 log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
     n <- length(Time)
     aux <- rep(0, n)

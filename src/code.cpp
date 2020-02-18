@@ -912,3 +912,50 @@ NumericVector rtnorm(int n, NumericVector lower, NumericVector upper,
   }
   return rv;
 }
+
+// LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL LST FUNCTIONS)
+// [[Rcpp::export]]
+double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X,
+                   arma::vec beta, double sigma2, double nu, int set,
+                   double eps_l, double eps_r) {
+  const unsigned int n = Time.length();
+  NumericVector aux(n);
+  NumericVector MEAN = Rcpp::wrap(X * beta);
+
+
+  NumericVector sigma2Vec(n, sigma2);
+  NumericVector nuVec(n, nu);
+
+  NumericVector TimeGreater(n);
+
+  for (unsigned int i = 0; i < n; ++i){
+    if (Time[i] > eps_l){
+      TimeGreater[i] = 1;
+    } else{
+      TimeGreater[i] = 0;
+    }
+  }
+
+
+  if (set == 1) {
+    aux = Cens * (TimeGreater *
+      log(Rcpp::pt((log(Time + eps_r) - MEAN) / sqrt(sigma2), nu) -
+        Rcpp::pt((log(abs(Time - eps_l)) - MEAN) / sqrt(sigma2),
+                 nu)) +
+                   (1 - TimeGreater) *
+                     log(Rcpp::pt((log(Time + eps_r) - MEAN) / sqrt(sigma2),
+                                  nu) - 0)) +
+                       (1 - Cens) *
+                         log(1 - Rcpp::pt((log(Time) - MEAN) / sqrt(sigma2),
+                                          nu));
+  } else {
+    // set == 0
+    aux = Cens * (Rcpp::dt((log(Time) - MEAN) / sqrt(sigma2),
+                             nu, true) -
+                               log(sqrt(sigma2) * Time)) +
+                               (1 - Cens) * log(1 - Rcpp::pt((log(Time) - MEAN)
+                                                               / sqrt(sigma2),
+                                                               nu));
+  }
+  return(sum(aux));
+}
