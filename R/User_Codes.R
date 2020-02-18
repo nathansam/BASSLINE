@@ -510,7 +510,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     }
 
     # Log-LIKELIHOOD ORDINATE
-    LL.ord <- log.lik.LST(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
+    LL.ord <- log_lik_LST(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
                           nu = nu.star, set, eps_l, eps_r)
     cat("Likelihood ordinate ready!\n")
 
@@ -632,14 +632,14 @@ DIC_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
     LL <- rep(0, times = N)
 
     for (iter in 1:N) {
-        LL[iter] <- log.lik.LST(Time, Cens, X,
+        LL[iter] <- log_lik_LST(Time, Cens, X,
                                 beta = as.vector(chain[iter, 1:k]),
                                 sigma2 = chain[iter, k + 1],
                                 nu = chain[iter, k + 2], set, eps_l, eps_r)
     }
 
     aux <- apply(chain[, 1:(k + 2)], 2, "median")
-    pd <- -2 * mean(LL) + 2 * log.lik.LST(Time, Cens, X, beta = aux[1:k],
+    pd <- -2 * mean(LL) + 2 * log_lik_LST(Time, Cens, X, beta = aux[1:k],
                                           sigma2 = aux[k + 1],
                                           nu = aux[k + 2], set, eps_l, eps_r)
     pd.aux <- k + 2

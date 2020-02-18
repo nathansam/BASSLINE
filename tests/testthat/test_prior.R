@@ -63,7 +63,7 @@ test_that("prior_LEP same result in C++ as in R",{
   for (prior in 1:3){
 
     expect_equal(prior.LEP(c(1, 2), 1, c(1, 2), prior, F),
-                 prior_LEP(c(1, 2), 1, c(1, 2), prior, F) )
+                 prior_LEP(c(1, 2), 1, c(1, 2), prior, F))
 
     expect_equal(prior.LEP(c(1, 2), 1, c(1 ,2), prior, T),
                  prior_LEP(c(1, 2), 1, c(1, 2), prior, T))
@@ -72,7 +72,7 @@ test_that("prior_LEP same result in C++ as in R",{
 
 test_that("Unexpected arguments for prior funcs return 0", {
 
-  expect_equal(prior_nu(c(1,2), prior = 1), 0)
+  expect_equal(prior_nu(c(1, 2), prior = 1), 0)
   expect_equal(prior_nu_single(1, prior = 1), 0)
   expect_equal(prior_alpha(c(1, 2), 1, 4), 0)
   expect_equal(prior_alpha_single(2, 1, 4), 0)
@@ -88,7 +88,7 @@ test_that("J_alpha same in C++ as in R",{
   }
 
   expect_equal(J.alpha(1.1, 1), J_alpha_single(1.1, 1))
-  expect_equal(J.alpha(c(1.1,1.2), 1), J_alpha(c(1.1, 1.2), 1))
+  expect_equal(J.alpha(c(1.1, 1.2), 1), J_alpha(c(1.1, 1.2), 1))
   expect_equal(J_alpha(1.1, 1), J_alpha_single(1.1, 1))
 
 })

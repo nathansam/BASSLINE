@@ -121,3 +121,7 @@ rtnorm <- function(n, lower, upper, mu, sd) {
     .Call(`_BASSLINE_rtnorm`, n, lower, upper, mu, sd)
 }
 
+log_lik_LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
+    .Call(`_BASSLINE_log_lik_LST`, Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r)
+}
+
