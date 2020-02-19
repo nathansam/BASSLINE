@@ -285,7 +285,7 @@ MCMC.LST.NonAdapt <- function(N, thin, Q, Time, Cens, X, beta0, sigma20, nu0,
             logt[iter / thin + 1, ] <- logt.aux
             lambda[iter / thin + 1, ] <- lambda.aux
         }
-        if ((iter - 1) %*% 1e+05 == 0) {
+        if ((iter - 1) %% 1e+05 == 0) {
             cat(paste("Iteration :", iter, "\n"))
         }
     }
