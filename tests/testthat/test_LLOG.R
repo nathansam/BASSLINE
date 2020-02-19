@@ -1,17 +1,17 @@
 ################################################################################
 ################################ USER FUNCTIONS ################################
 ################################################################################
-test_that("MCMC_LLOG returns expected num of rows when burn = 20 ,thin = 10",{
+test_that("MCMC_LLOG returns expected num of rows when burn = 20 ,thin = 10", {
 
   N <- 100
   burn <- 20
   thin <- 10
-  LLOG <- MCMC_LLOG(N = N, thin = thin, burn = burn, Time = cancer[,1],
-                    Cens = cancer[,2], X = cancer[,3:11])
+  LLOG <- MCMC_LLOG(N = N, thin = thin, burn = burn, Time = cancer[, 1],
+                    Cens = cancer[, 2], X = cancer[, 3:11])
   expect_equal(nrow(LLOG), N / thin + 1 - burn / thin)
 })
 
-test_that("RS_lambda_obs_LLOG returns same result in C++ as in R",{
+test_that("RS_lambda_obs_LLOG returns same result in C++ as in R", {
 
   RS.lambda.obs.LLOG <- function(logt, X, beta, sigma2, obs, N.AKS) {
     lambda <- 0

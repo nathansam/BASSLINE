@@ -1,14 +1,14 @@
 ################################################################################
 ################################ USER FUNCTIONS ################################
 ################################################################################
-test_that("MCMC_LEP returns expected number of rows when burn = 20,thin = 10",{
+test_that("MCMC_LEP returns expected number of rows when burn = 20,thin = 10", {
 
   N <- 100
   thin <- 10
   burn <- 20
-  LEP <- MCMC_LEP(N = N, thin = thin, burn = burn, Time = cancer[,1],
-                  Cens = cancer[,2], X = cancer[,3:11])
-  expect_equal(nrow(LEP), N / thin + 1 - burn/thin)
+  LEP <- MCMC_LEP(N = N, thin = thin, burn = burn, Time = cancer[, 1],
+                  Cens = cancer[, 2], X = cancer[, 3:11])
+  expect_equal(nrow(LEP), N / thin + 1 - burn / thin)
 })
 
 ################################################################################
@@ -17,7 +17,7 @@ test_that("MCMC_LEP returns expected number of rows when burn = 20,thin = 10",{
 
 
 
-test_that("II_alpha same result in C++ as in R",{
+test_that("II_alpha same result in C++ as in R", {
   set.seed(1)
   II.alpha <- function(alpha) {
       aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
@@ -26,7 +26,7 @@ test_that("II_alpha same result in C++ as in R",{
   expect_equivalent(II_alpha(0.5), II.alpha(0.5))
 })
 
-test_that("I_alpha same result in C++ as in R",{
+test_that("I_alpha same result in C++ as in R", {
   set.seed(1)
   I.alpha <- function(alpha) {
    aux <- sqrt(1 / alpha ^ 3) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) +
@@ -36,7 +36,7 @@ test_that("I_alpha same result in C++ as in R",{
   expect_equivalent(I_alpha(0.5), I.alpha(0.5))
 })
 
-test_that("J_alpha same result in C++ as in R",{
+test_that("J_alpha same result in C++ as in R", {
   set.seed(123)
   J.alpha <- function(alpha, k) {
       aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
@@ -47,7 +47,7 @@ test_that("J_alpha same result in C++ as in R",{
   expect_equivalent(J_alpha(2, 2), J.alpha(2, 2))
 })
 
-test_that("d_texp same result in C++ as in R",{
+test_that("d_texp same result in C++ as in R", {
 
   dtexp <- function(x, rate, trunc) {
     if (x >= trunc) {
@@ -57,11 +57,11 @@ test_that("d_texp same result in C++ as in R",{
     }
     return(aux)
   }
-  expect_equal(d_texp(x = 2.5,trunc = 1.5), dtexp(2.5, 1, 1.5))
-  expect_equal(d_texp(x = 1.5,trunc = 2.5), 0)
+  expect_equal(d_texp(x = 2.5, trunc = 1.5), dtexp(2.5, 1, 1.5))
+  expect_equal(d_texp(x = 1.5, trunc = 2.5), 0)
 })
 
-test_that("MH_marginal_sigma2 same in C++ as in R",{
+test_that("MH_marginal_sigma2 same in C++ as in R", {
   MH.marginal.sigma2 <- function(N = 1, omega2, logt, X, beta, alpha,
                                  sigma20, prior) {
     k <- length(beta)
@@ -124,29 +124,31 @@ test_that("MH_marginal_sigma2 same in C++ as in R",{
 
   # Test params
   omega2 <- 0.5
-  logt <- c (2,3)
+  logt <- c(2, 3)
   X <- matrix(seq(4), ncol = 2)
-  beta <- c(1,2)
+  beta <- c(1, 2)
   alpha <- 1.2
   sigma20 <- 0.5
 
 
-  for (prior in 1:3){
+  for (prior in 1:3) {
     set.seed(123)
     # N will always equal 1 for MH
-    R.result <- MH.marginal.sigma2(N = 1, omega2, logt,X,beta,alpha,sigma20,prior)
+    R.result <- MH.marginal.sigma2(N = 1, omega2, logt, X, beta, alpha,
+                                   sigma20, prior)
 
     set.seed(123)
-    Cpp.result <- MH_marginal_sigma2(omega2, logt,X,beta,alpha,sigma20, prior)
+    Cpp.result <- MH_marginal_sigma2(omega2, logt, X, beta, alpha, sigma20,
+                                     prior)
 
-    expect_equal(R.result,Cpp.result)
+    expect_equal(R.result, Cpp.result)
   }
 
 
 
 })
 
-test_that("alpha_beta same in C++ as in R",{
+test_that("alpha_beta same in C++ as in R", {
 
   alpha.beta <- function(beta.0, beta.1, logt, X, sigma2, alpha) {
     l1 <- -sum(abs((logt - X %*% beta.1) / sqrt(sigma2)) ^ alpha)
@@ -156,16 +158,16 @@ test_that("alpha_beta same in C++ as in R",{
     return(aux)
   }
 
-  R.result <- alpha.beta(c(1,2), c(2,3), c(0.2,0.3),
-                         matrix(c(1,2,3,4), ncol = 2), 0.2, 0.5 )
+  R.result <- alpha.beta(c(1, 2), c(2, 3), c(0.2, 0.3),
+                         matrix(c(1, 2, 3, 4), ncol = 2), 0.2, 0.5)
 
-  Cpp.result <- alpha_beta(c(1,2), c(2,3), c(0.2,0.3),
-                         matrix(c(1,2,3,4), ncol = 2), 0.2, 0.5 )
+  Cpp.result <- alpha_beta(c(1, 2), c(2, 3), c(0.2, 0.3),
+                         matrix(c(1, 2, 3, 4), ncol = 2), 0.2, 0.5)
 
   expect_equal(R.result, Cpp.result)
   })
 
-test_that("alpha_sigma2 same in C++ as in R",{
+test_that("alpha_sigma2 same in C++ as in R", {
   alpha.sigma2 <- function(sigma2.0, sigma2.1, logt, X, beta, alpha, prior) {
     if (sigma2.1 <= 0) {
       aux <- 0
@@ -190,18 +192,18 @@ test_that("alpha_sigma2 same in C++ as in R",{
     return(aux)
   }
 
-  for (prior in 1:3){
-    R.result <- alpha.sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2), c(1,2),
-                             0.4, prior)
+  for (prior in 1:3) {
+    R.result <- alpha.sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
+                             c(1, 2), 0.4, prior)
 
     Cpp.result <- alpha_sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
-                               c(1,2), 0.4, prior)
+                               c(1, 2), 0.4, prior)
 
     expect_equal(R.result, Cpp.result)
   }
 })
 
-test_that("MH_marginal_alpha same in C++ as in R",{
+test_that("MH_marginal_alpha same in C++ as in R", {
   MH.marginal.alpha <- function(N = 1, omega2, logt, X, beta, sigma2,
                                 alpha0, prior) {
     k <- dim(X)[2]
@@ -256,18 +258,18 @@ test_that("MH_marginal_alpha same in C++ as in R",{
     list(alpha = alpha, ind = ind)
   }
 
-  for (prior in 1:3){
-    R.result <- MH.marginal.alpha(N = 1, 0.2, c(1,2), matrix(seq(4), ncol=2), c(2,1),
-                                  0.3, 0.4, prior)
-    Cpp.result <- MH_marginal_alpha(0.2, c(1,2), matrix(seq(4), ncol=2),
-                                    c(2,1), 0.3, 0.4, prior)
+  for (prior in 1:3) {
+    R.result <- MH.marginal.alpha(N = 1, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
+                                  c(2, 1), 0.3, 0.4, prior)
+    Cpp.result <- MH_marginal_alpha(0.2, c(1, 2), matrix(seq(4), ncol = 2),
+                                    c(2, 1), 0.3, 0.4, prior)
     expect_equal(R.result, Cpp.result)
   }
 
 
 })
 
-test_that("MH_marginal_beta_j same in C++ as in R",{
+test_that("MH_marginal_beta_j same in C++ as in R", {
   MH.marginal.beta.j <- function(N = 1, omega2, logt, X, sigma2, alpha,
                                  beta0, j) {
     k <- length(beta0)
@@ -320,7 +322,7 @@ test_that("MH_marginal_beta_j same in C++ as in R",{
   expect_equal(R.result, Cpp.result)
 })
 
-test_that("alpha_alpha same in C++ as in R",{
+test_that("alpha_alpha same in C++ as in R", {
   alpha.alpha <- function(alpha0, alpha1, logt, X, beta, sigma2, prior) {
     k <- dim(X)[2]
     n <- dim(X)[1]
@@ -339,18 +341,18 @@ test_that("alpha_alpha same in C++ as in R",{
     return(aux)
   }
 
-  for (prior in 1:3){
+  for (prior in 1:3) {
 
-    R.result <- alpha.alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
-                            3, prior)
+    R.result <- alpha.alpha(1.1, 1.2, c(1, 2), matrix(seq(4), ncol = 2),
+                            c(2, 1), 3, prior)
 
-    Cpp.result <- alpha_alpha(1.1, 1.2, c(1,2), matrix(seq(4), ncol = 2), c(2,1),
-                              3, prior)
+    Cpp.result <- alpha_alpha(1.1, 1.2, c(1, 2), matrix(seq(4), ncol = 2),
+                              c(2, 1), 3, prior)
     expect_equal(R.result, Cpp.result)
   }
 })
 
-test_that("d_normp same in C++ as in R",{
+test_that("d_normp same in C++ as in R", {
   #### DENSITY FUNCTION OF THE EXPONENTIAL POWER DISTRIBUTION
   #### (BASED ON library normalp).
   ### POSSIBLE
@@ -370,8 +372,8 @@ test_that("d_normp same in C++ as in R",{
     dsty
   }
 
-  R.result <- dnormp(c(1,2), c(0,0) , c(1,1), c(2,2), log = T)
-  Cpp.result <- d_normp(c(1,2), c(0,0) , c(1,1), c(2,2), logs = T)
+  R.result <- dnormp(c(1, 2), c(0, 0) , c(1, 1), c(2, 2), log = T)
+  Cpp.result <- d_normp(c(1, 2), c(0, 0) , c(1, 1), c(2, 2), logs = T)
   expect_equal(R.result, Cpp.result)
 })
 
@@ -412,7 +414,7 @@ test_that("pnorm same in C++ as in R",{
 
 })
 
-test_that("log_lik_LEP same in C++ as in R",{
+test_that("log_lik_LEP same in C++ as in R", {
 
   log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l,
                           eps_r) {
@@ -446,44 +448,42 @@ test_that("log_lik_LEP same in C++ as in R",{
     return(sum(aux))
   }
 
-  # Set = 1
-  R.result <- log.lik.LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol=2), c(1, 2),
-                          0.2, 1.2, 1, 0.3, 0.4)
-  Cpp.result <- log_lik_LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol=2), c(1, 2),
-                            0.2, 1.2, 1, 0.3,0.4)
-  expect_equal(R.result, Cpp.result)
+    R.result <- log.lik.LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol = 2), c(1, 2),
+                            0.2, 1.2, 1, 0.3, 0.4)
+    Cpp.result <- log_lik_LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol = 2),
+                              c(1, 2), 0.2, 1.2, 1, 0.3, 0.4)
+    expect_equal(R.result, Cpp.result)
 })
 
-# test_that("Post_u_obs_LEP same in C++ as in R",{
-#   LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#                   Cens = cancer[,2], X = cancer[,3:11])
-#   alpha <- mean(LEP[,11])
-#   uref <- 1.6 + 1 / alpha
-#
-#
-#   Post.u.obs.LEP <- function(obs, ref, X, chain) {
-#     N <- dim(chain)[1]
-#     n <- dim(X)[1]
-#     k <- dim(X)[2]
-#     aux1 <- rep(0, times = N)
-#     aux2 <- rep(0, times = N)
-#
-#     for (iter in 1:N) {
-#       trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
-#                           as.vector(chain[iter, 1:k])) /
-#                       sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
-#
-#       aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
-#     }
-#     aux <- mean(aux1)
-#     return(aux)
-#   }
-#
-#   R.result <- Post.u.obs.LEP(obs = 1, ref = uref, X = cancer[,3:11],
-#                              chain = LEP )
-#   Cpp.result <- Post_u_obs_LEP(obs = 1, ref = uref, X = cancer[,3:11],
-#                                chain = LEP)
-#
-#  expect_equal(R.result, Cpp.result)
-# })
+test_that("Post_u_obs_LEP same in C++ as in R", {
+  LEP <- MCMC_LEP(N = 40, thin = 20, burn = 20, Time = cancer[, 1],
+                  Cens = cancer[, 2], X = cancer[, 3:11])
+  alpha <- mean(LEP[, 11])
+  uref <- 1.6 + 1 / alpha
 
+
+  Post.u.obs.LEP <- function(obs, ref, X, chain) {
+    N <- dim(chain)[1]
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    aux1 <- rep(0, times = N)
+    aux2 <- rep(0, times = N)
+
+    for (iter in 1:N) {
+      trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
+                          as.vector(chain[iter, 1:k])) /
+                      sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
+
+      aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
+    }
+    aux <- mean(aux1)
+    return(aux)
+  }
+
+  R.result <- Post.u.obs.LEP(obs = 1, ref = uref, X = cancer[, 3:11],
+                             chain = LEP)
+  Cpp.result <- Post_u_obs_LEP(obs = 1, ref = uref, X = cancer[, 3:11],
+                               chain = LEP)
+
+ expect_equal(R.result, Cpp.result)
+})

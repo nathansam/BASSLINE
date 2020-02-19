@@ -1,14 +1,14 @@
-test_that("Check for when N is negative",{
+test_that("Check for when N is negative", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = -1, thin = 10, burn = 1,
-                                          Time = c(1,2), Cens = c(0,1),
+                                          Time = c(1, 2), Cens = c(0, 1),
                                           X = mat, beta0 = c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
-                                          set = 1, eps_l = 0.5, eps_r =1),
+                                          set = 1, eps_l = 0.5, eps_r = 1),
                          "N should be an integer greater than zero.\n")
 })
 
-test_that("Check for when N is zero",{
+test_that("Check for when N is zero", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 0, thin = 10, burn = 1,
                                           Time = c(1, 2), Cens = c(0, 1),
@@ -18,7 +18,7 @@ test_that("Check for when N is zero",{
                          "N should be an integer greater than zero.\n")
 })
 
-test_that("Check for when N is not an integer",{
+test_that("Check for when N is not an integer", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 0.2, thin = 10, burn = 1,
                                           Time = c(1, 2), Cens = c(0, 1),
@@ -29,7 +29,7 @@ test_that("Check for when N is not an integer",{
 })
 
 
-test_that("Check for when thin is negative",{
+test_that("Check for when thin is negative", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = -1, burn = 1,
                                           Time = c(1, 2), Cens = c(0, 1),
@@ -39,7 +39,7 @@ test_that("Check for when thin is negative",{
                          "thin should be a integer > 2.\n")
 })
 
-test_that("Check for when burn is negative",{
+test_that("Check for when burn is negative", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = -10,
                                           Time = c(1, 2), Cens = c(0, 1),
@@ -50,7 +50,7 @@ test_that("Check for when burn is negative",{
 })
 
 
-test_that("Check for when N  is less than burn",{
+test_that("Check for when N  is less than burn", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 6, thin = 2, burn = 10,
                                           Time = c(1, 2), Cens = c(0, 1),
@@ -60,7 +60,7 @@ test_that("Check for when N  is less than burn",{
                          "N must be greater than burn.\n")
 })
 
-test_that("Check for when burn is not a multiple of thin",{
+test_that("Check for when burn is not a multiple of thin", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 11,
                                           Time = c(1, 2), Cens = c(0, 1),
@@ -70,7 +70,7 @@ test_that("Check for when burn is not a multiple of thin",{
                          "burn must a multiple of thin.\n")
 })
 
-test_that("Check for when N is not a multiple of thin",{
+test_that("Check for when N is not a multiple of thin", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 101, thin = 10, burn = 10,
                                           Time = c(1, 2), Cens = c(0, 1),
@@ -80,7 +80,7 @@ test_that("Check for when N is not a multiple of thin",{
                          "N must a multiple of thin.\n")
 })
 
-test_that("Check for when Time is negative",{
+test_that("Check for when Time is negative", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = c(1, -5), Cens = c(0, 1),
@@ -91,7 +91,7 @@ test_that("Check for when Time is negative",{
 })
 
 
-test_that("Check for when Time is not of correct length",{
+test_that("Check for when Time is not of correct length", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = c(1, 5, 6), Cens = c(0, 1),
@@ -102,7 +102,7 @@ test_that("Check for when Time is not of correct length",{
 })
 
 
-test_that("Check for when Cens is not 0/1",{
+test_that("Check for when Cens is not 0/1", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = c(1, 1), Cens = c(2, 1),
@@ -112,7 +112,7 @@ test_that("Check for when Cens is not 0/1",{
                          "Cens should be either 0 or 1 for each observation\n")
 })
 
-test_that("Check for when Cens is not of correct length",{
+test_that("Check for when Cens is not of correct length", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = seq(2), Cens = c(0, 1, 1),
@@ -123,10 +123,10 @@ test_that("Check for when Cens is not of correct length",{
 })
 
 
-test_that("Check for when X is not a matrix",{
+test_that("Check for when X is not a matrix", {
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = seq(5),
-                                          Cens = c(0, 1, 0, 0, 1) ,
+                                          Cens = c(0, 1, 0, 0, 1),
                                           X = c(0, 1, 0, 0, 1),
                                           beta0 = c(0.2, 0.2),
                                           sigma20 = 1,  prior = 1,
@@ -134,7 +134,7 @@ test_that("Check for when X is not a matrix",{
                          "X is not a matrix.\n")
 })
 
-test_that("Check for when beta0 is not of correct length",{
+test_that("Check for when beta0 is not of correct length", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = seq(2), Cens = c(0, 1),
@@ -144,7 +144,7 @@ test_that("Check for when beta0 is not of correct length",{
                          "beta0 is not the correct length.\n")
 })
 
-test_that("Check for when prior is not an expected value",{
+test_that("Check for when prior is not an expected value", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = seq(2), Cens = c(0, 1),
@@ -154,7 +154,7 @@ test_that("Check for when prior is not an expected value",{
                          "prior should be 1, 2 or 3. See documentation\n")
 })
 
-test_that("Check for when set is not an expected value",{
+test_that("Check for when set is not an expected value", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_error(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = seq(2), Cens = c(0, 1),
@@ -164,7 +164,7 @@ test_that("Check for when set is not an expected value",{
                          "set should be 1 or 2. See documentation\n")
 })
 
-test_that("Check for all values are correct",{
+test_that("Check for all values are correct", {
   mat <- matrix(seq(4), nrow = 2)
   testthat::expect_equal(MCMC.param.check(N = 100, thin = 10, burn = 10,
                                           Time = seq(2), Cens = c(0, 1),
