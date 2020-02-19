@@ -185,18 +185,18 @@ to a point).</p></td>
 
 <span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LN.html'>MCMC_LN</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
               <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : 1.62 
-#&gt;  Initial beta 2 : -0.35 
-#&gt;  Initial beta 3 : 0.01 
-#&gt;  Initial beta 4 : -1.4 
-#&gt;  Initial beta 5 : -1.83 
-#&gt;  Initial beta 6 : 0.66 
-#&gt;  Initial beta 7 : -1.84 
-#&gt;  Initial beta 8 : 1.1 
-#&gt;  Initial beta 9 : -1.26 
+#&gt; Initial beta 1 : 0.85 
+#&gt;  Initial beta 2 : 0.66 
+#&gt;  Initial beta 3 : -1.06 
+#&gt;  Initial beta 4 : 0.46 
+#&gt;  Initial beta 5 : 0.62 
+#&gt;  Initial beta 6 : 0.99 
+#&gt;  Initial beta 7 : 0.01 
+#&gt;  Initial beta 8 : 0.54 
+#&gt;  Initial beta 9 : -0.57 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 1.19 
+#&gt; Initial sigma^2 : 1.63 
 #&gt; </div><div class='input'><span class='no'>LN.CD</span> <span class='kw'>&lt;-</span> <span class='fu'>CaseDeletion_LN</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
                          <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LN</span>)</div></pre>
   </div>

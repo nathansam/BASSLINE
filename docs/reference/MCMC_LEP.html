@@ -144,7 +144,7 @@ Gaussian random walk proposals for the log-exponential model</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>N</th>
-      <td><p>Total number of iterations.</p></td>
+      <td><p>Total number of iterations. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>thin</th>
@@ -152,7 +152,7 @@ Gaussian random walk proposals for the log-exponential model</p>
     </tr>
     <tr>
       <th>burn</th>
-      <td><p>Burn-in period.</p></td>
+      <td><p>Burn-in period. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>Time</th>
@@ -232,33 +232,33 @@ the adaptive variances have been stabilized.</p>
 
 <span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LEP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                 <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -1.16 
-#&gt;  Initial beta 2 : -1.38 
-#&gt;  Initial beta 3 : -0.33 
-#&gt;  Initial beta 4 : 0.63 
-#&gt;  Initial beta 5 : 0.79 
-#&gt;  Initial beta 6 : 0.3 
-#&gt;  Initial beta 7 : 0.23 
-#&gt;  Initial beta 8 : -0.23 
-#&gt;  Initial beta 9 : 1.62 
+#&gt; Initial beta 1 : -2.58 
+#&gt;  Initial beta 2 : 0.65 
+#&gt;  Initial beta 3 : -0.5 
+#&gt;  Initial beta 4 : -0.55 
+#&gt;  Initial beta 5 : -0.1 
+#&gt;  Initial beta 6 : -0.54 
+#&gt;  Initial beta 7 : 0.77 
+#&gt;  Initial beta 8 : 0.13 
+#&gt;  Initial beta 9 : -0.33 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.05 
+#&gt; Initial sigma^2 : 0.43 
 #&gt; 
 #&gt; Sampling initial alpha from a Uniform(1, 2) distribution
-#&gt; Initial alpha : 1.52 
+#&gt; Initial alpha : 1.84 
 #&gt; 
-#&gt; AR beta 1 : 0.37 
-#&gt;  AR beta 2 : 0.46 
-#&gt;  AR beta 3 : 0.57 
-#&gt;  AR beta 4 : 0.47 
-#&gt;  AR beta 5 : 0.62 
+#&gt; AR beta 1 : 0.49 
+#&gt;  AR beta 2 : 0.62 
+#&gt;  AR beta 3 : 0.7 
+#&gt;  AR beta 4 : 0.64 
+#&gt;  AR beta 5 : 0.75 
 #&gt;  AR beta 6 : 0.02 
-#&gt;  AR beta 7 : 0.03 
-#&gt;  AR beta 8 : 0.01 
-#&gt;  AR beta 9 : 0.52 
-#&gt; AR sigma2 : 0.87 
-#&gt; AR alpha : 0.14 </div><div class='input'>
+#&gt;  AR beta 7 : 0.06 
+#&gt;  AR beta 8 : 0.02 
+#&gt;  AR beta 9 : 0.7 
+#&gt; AR sigma2 : 0.89 
+#&gt; AR alpha : 0.1 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

@@ -145,7 +145,7 @@ Gaussian random walk proposals for the log-student's T model (no mixture)</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>N</th>
-      <td><p>Total number of iterations.</p></td>
+      <td><p>Total number of iterations. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>thin</th>
@@ -153,7 +153,7 @@ Gaussian random walk proposals for the log-student's T model (no mixture)</p>
     </tr>
     <tr>
       <th>burn</th>
-      <td><p>Burn-in period.</p></td>
+      <td><p>Burn-in period. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>Time</th>
@@ -237,23 +237,23 @@ evaluate if the adaptive variances have been stabilized.</p>
 
 <span class='no'>LST</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LST</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                 <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -0.68 
-#&gt;  Initial beta 2 : 1.16 
-#&gt;  Initial beta 3 : 1.8 
-#&gt;  Initial beta 4 : -0.35 
-#&gt;  Initial beta 5 : 0.03 
-#&gt;  Initial beta 6 : 0.23 
-#&gt;  Initial beta 7 : -0.82 
-#&gt;  Initial beta 8 : 1.8 
-#&gt;  Initial beta 9 : 1.07 
+#&gt; Initial beta 1 : -0.53 
+#&gt;  Initial beta 2 : -0.44 
+#&gt;  Initial beta 3 : -0.33 
+#&gt;  Initial beta 4 : -0.88 
+#&gt;  Initial beta 5 : -1.41 
+#&gt;  Initial beta 6 : -0.27 
+#&gt;  Initial beta 7 : 0.38 
+#&gt;  Initial beta 8 : 0.74 
+#&gt;  Initial beta 9 : -0.12 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.72 
+#&gt; Initial sigma^2 : 1.87 
 #&gt; 
 #&gt; Sampling initial nu from a Gamma(2, 2) distribution
-#&gt; Initial nu : 2.2 
+#&gt; Initial nu : 2.94 
 #&gt; 
-#&gt; AR nu : 0.55 </div><div class='input'>
+#&gt; AR nu : 0.66 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

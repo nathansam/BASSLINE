@@ -154,7 +154,7 @@ log-Student’s t model, in which case a reduced chain given
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>N</th>
-      <td><p>Total number of iterations.</p></td>
+      <td><p>Total number of iterations. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>thin</th>
@@ -231,48 +231,47 @@ updates</p></td>
 
 <span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LEP.html'>MCMC_LEP</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                 <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -0.78 
-#&gt;  Initial beta 2 : -1.94 
-#&gt;  Initial beta 3 : 0.64 
-#&gt;  Initial beta 4 : 0.27 
-#&gt;  Initial beta 5 : -0.85 
-#&gt;  Initial beta 6 : 1 
-#&gt;  Initial beta 7 : 0.11 
-#&gt;  Initial beta 8 : -0.96 
-#&gt;  Initial beta 9 : -0.5 
+#&gt; Initial beta 1 : -0.44 
+#&gt;  Initial beta 2 : -0.45 
+#&gt;  Initial beta 3 : 0.69 
+#&gt;  Initial beta 4 : 1.27 
+#&gt;  Initial beta 5 : -1.02 
+#&gt;  Initial beta 6 : -0.85 
+#&gt;  Initial beta 7 : -0.96 
+#&gt;  Initial beta 8 : -0.18 
+#&gt;  Initial beta 9 : -0.92 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.44 
+#&gt; Initial sigma^2 : 1.59 
 #&gt; 
 #&gt; Sampling initial alpha from a Uniform(1, 2) distribution
-#&gt; Initial alpha : 1.26 
+#&gt; Initial alpha : 1 
 #&gt; 
-#&gt; Inf.sigma2
-#&gt; AR beta 1 : 0.61 
-#&gt;  AR beta 2 : 0.69 
-#&gt;  AR beta 3 : 0.77 
-#&gt;  AR beta 4 : 0.7 
-#&gt;  AR beta 5 : 0.77 
+#&gt; AR beta 1 : 0.57 
+#&gt;  AR beta 2 : 0.68 
+#&gt;  AR beta 3 : 0.76 
+#&gt;  AR beta 4 : 0.71 
+#&gt;  AR beta 5 : 0.84 
 #&gt;  AR beta 6 : 0.02 
-#&gt;  AR beta 7 : 0.06 
+#&gt;  AR beta 7 : 0.05 
 #&gt;  AR beta 8 : 0.02 
-#&gt;  AR beta 9 : 0.74 
-#&gt; AR sigma2 : 0.86 
-#&gt; AR alpha : 0.11 </div><div class='input'><span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>LEP</span>[,<span class='fl'>11</span>])
+#&gt;  AR beta 9 : 0.78 
+#&gt; AR sigma2 : 0.87 
+#&gt; AR alpha : 0.1 </div><div class='input'><span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>LEP</span>[,<span class='fl'>11</span>])
 <span class='no'>uref</span> <span class='kw'>&lt;-</span> <span class='fl'>1.6</span> + <span class='fl'>1</span> / <span class='no'>alpha</span>
 <span class='no'>LEP.Outlier</span> <span class='kw'>&lt;-</span> <span class='fu'>BF_u_obs_LEP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span><span class='fl'>1</span> , <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>uref</span>,
                             <span class='kw'>obs</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
-                            <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; AR beta 1 : 0.4 
-#&gt;  AR beta 2 : 0.61 
-#&gt;  AR beta 3 : 0.67 
-#&gt;  AR beta 4 : 0.59 
-#&gt;  AR beta 5 : 0.71 
-#&gt;  AR beta 6 : 0.01 
-#&gt;  AR beta 7 : 0.06 
-#&gt;  AR beta 8 : 0 
-#&gt;  AR beta 9 : 0.64 
-#&gt; AR sigma2 : 0.93 
-#&gt; AR alpha : 0.05 </div><div class='input'>
+                            <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; AR beta 1 : 0.5 
+#&gt;  AR beta 2 : 0.62 
+#&gt;  AR beta 3 : 0.71 
+#&gt;  AR beta 4 : 0.71 
+#&gt;  AR beta 5 : 0.73 
+#&gt;  AR beta 6 : 0.02 
+#&gt;  AR beta 7 : 0.02 
+#&gt;  AR beta 8 : 0.01 
+#&gt;  AR beta 9 : 0.68 
+#&gt; AR sigma2 : 0.94 
+#&gt; AR alpha : 0.08 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

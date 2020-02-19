@@ -185,18 +185,18 @@ to a point).</p></td>
 
 <span class='no'>LLAP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LLAP.html'>MCMC_LLAP</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                   <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -0.01 
-#&gt;  Initial beta 2 : 0.47 
-#&gt;  Initial beta 3 : 0.41 
-#&gt;  Initial beta 4 : -1.11 
-#&gt;  Initial beta 5 : 0.18 
-#&gt;  Initial beta 6 : 0 
-#&gt;  Initial beta 7 : 0.15 
-#&gt;  Initial beta 8 : 0.21 
-#&gt;  Initial beta 9 : 0.03 
+#&gt; Initial beta 1 : 0.55 
+#&gt;  Initial beta 2 : -0.51 
+#&gt;  Initial beta 3 : -0.4 
+#&gt;  Initial beta 4 : 0.89 
+#&gt;  Initial beta 5 : -0.5 
+#&gt;  Initial beta 6 : 3.08 
+#&gt;  Initial beta 7 : -2.13 
+#&gt;  Initial beta 8 : 0.02 
+#&gt;  Initial beta 9 : 0.28 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.74 
+#&gt; Initial sigma^2 : 1.23 
 #&gt; </div><div class='input'><span class='no'>LLAP.CD</span> <span class='kw'>&lt;-</span> <span class='fu'>CaseDeletion_LLAP</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
                              <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LLAP</span>)</div></pre>
   </div>

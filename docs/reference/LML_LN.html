@@ -192,18 +192,18 @@ to a point).</p></td>
 
 <span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LN.html'>MCMC_LN</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
               <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -1.61 
-#&gt;  Initial beta 2 : 0.72 
-#&gt;  Initial beta 3 : 0.48 
-#&gt;  Initial beta 4 : 0.8 
-#&gt;  Initial beta 5 : -0.26 
-#&gt;  Initial beta 6 : -1.17 
-#&gt;  Initial beta 7 : -1.43 
-#&gt;  Initial beta 8 : 0.06 
-#&gt;  Initial beta 9 : -0.26 
+#&gt; Initial beta 1 : -0.29 
+#&gt;  Initial beta 2 : 2.8 
+#&gt;  Initial beta 3 : -0.17 
+#&gt;  Initial beta 4 : 1.04 
+#&gt;  Initial beta 5 : -0.45 
+#&gt;  Initial beta 6 : 0.21 
+#&gt;  Initial beta 7 : -0.47 
+#&gt;  Initial beta 8 : -0.17 
+#&gt;  Initial beta 9 : -0.3 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.63 
+#&gt; Initial sigma^2 : 0.58 
 #&gt; </div><div class='input'><span class='no'>LN.LML</span> <span class='kw'>&lt;-</span> <span class='fu'>LML_LN</span>(<span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
                          <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LN</span>)</div><div class='output co'>#&gt; Likelihood ordinate ready!
 #&gt; Prior ordinate ready!

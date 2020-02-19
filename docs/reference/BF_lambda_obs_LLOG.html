@@ -167,18 +167,18 @@ the number of observations and \(k\) is the number of covariates
 
 <span class='no'>LLOG</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LLOG.html'>MCMC_LLOG</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                   <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : 1.25 
-#&gt;  Initial beta 2 : 0.68 
-#&gt;  Initial beta 3 : -0.89 
-#&gt;  Initial beta 4 : -0.16 
-#&gt;  Initial beta 5 : -0.32 
-#&gt;  Initial beta 6 : 1.91 
-#&gt;  Initial beta 7 : -0.01 
-#&gt;  Initial beta 8 : 1.55 
-#&gt;  Initial beta 9 : 0.95 
+#&gt; Initial beta 1 : 0.32 
+#&gt;  Initial beta 2 : -0.72 
+#&gt;  Initial beta 3 : 1.06 
+#&gt;  Initial beta 4 : 1.21 
+#&gt;  Initial beta 5 : -0.07 
+#&gt;  Initial beta 6 : -0.97 
+#&gt;  Initial beta 7 : -0.23 
+#&gt;  Initial beta 8 : 0.04 
+#&gt;  Initial beta 9 : 0.08 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 2.26 
+#&gt; Initial sigma^2 : 1.19 
 #&gt; </div><div class='input'><span class='no'>LLOG.Outlier</span> <span class='kw'>&lt;-</span> <span class='fu'>BF_lambda_obs_LLOG</span>(<span class='fl'>1</span>,<span class='fl'>1</span>, <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LLOG</span>)</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

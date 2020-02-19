@@ -144,7 +144,7 @@ Gaussian random walk proposals for the log-normal model
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>N</th>
-      <td><p>Total number of iterations.</p></td>
+      <td><p>Total number of iterations. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>thin</th>
@@ -152,7 +152,7 @@ Gaussian random walk proposals for the log-normal model
     </tr>
     <tr>
       <th>burn</th>
-      <td><p>Burn-in period.</p></td>
+      <td><p>Burn-in period. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>Time</th>
@@ -221,18 +221,18 @@ evaluate if the adaptive variances have been stabilized.</p>
 
 <span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'>MCMC_LN</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
               <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -1.51 
-#&gt;  Initial beta 2 : -2.27 
-#&gt;  Initial beta 3 : 0.17 
-#&gt;  Initial beta 4 : -0.1 
-#&gt;  Initial beta 5 : 0.47 
-#&gt;  Initial beta 6 : -0.68 
-#&gt;  Initial beta 7 : 1.82 
-#&gt;  Initial beta 8 : 0.51 
-#&gt;  Initial beta 9 : 0.47 
+#&gt; Initial beta 1 : -1.45 
+#&gt;  Initial beta 2 : 0.38 
+#&gt;  Initial beta 3 : 0.81 
+#&gt;  Initial beta 4 : -0.52 
+#&gt;  Initial beta 5 : 0.18 
+#&gt;  Initial beta 6 : 1 
+#&gt;  Initial beta 7 : 1.67 
+#&gt;  Initial beta 8 : 1.43 
+#&gt;  Initial beta 9 : 0.16 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 1.07 
+#&gt; Initial sigma^2 : 1.06 
 #&gt; </div><div class='input'>
 </div></pre>
   </div>

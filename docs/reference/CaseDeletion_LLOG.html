@@ -185,18 +185,18 @@ to a point).</p></td>
 
 <span class='no'>LLOG</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LLOG.html'>MCMC_LLOG</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
                   <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -1.2 
-#&gt;  Initial beta 2 : -0.96 
-#&gt;  Initial beta 3 : 1.41 
-#&gt;  Initial beta 4 : -1.08 
-#&gt;  Initial beta 5 : 1.94 
-#&gt;  Initial beta 6 : -3.43 
-#&gt;  Initial beta 7 : -0.03 
-#&gt;  Initial beta 8 : -0.81 
-#&gt;  Initial beta 9 : -0.48 
+#&gt; Initial beta 1 : 1.02 
+#&gt;  Initial beta 2 : -0.25 
+#&gt;  Initial beta 3 : -0.04 
+#&gt;  Initial beta 4 : 0.31 
+#&gt;  Initial beta 5 : 3.76 
+#&gt;  Initial beta 6 : 1.92 
+#&gt;  Initial beta 7 : 0.75 
+#&gt;  Initial beta 8 : 0.47 
+#&gt;  Initial beta 9 : -3.12 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.41 
+#&gt; Initial sigma^2 : 0.68 
 #&gt; </div><div class='input'><span class='no'>LLOG.CD</span> <span class='kw'>&lt;-</span> <span class='fu'>CaseDeletion_LLOG</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
                              <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LLOG</span>)</div></pre>
   </div>

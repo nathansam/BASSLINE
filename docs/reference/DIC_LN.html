@@ -177,20 +177,20 @@ to a point).</p></td>
 
 <span class='no'>LN</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LN.html'>MCMC_LN</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
               <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : 0.48 
-#&gt;  Initial beta 2 : 0.25 
-#&gt;  Initial beta 3 : 1.5 
-#&gt;  Initial beta 4 : -0.3 
-#&gt;  Initial beta 5 : -0.88 
-#&gt;  Initial beta 6 : 0.33 
-#&gt;  Initial beta 7 : -2.14 
-#&gt;  Initial beta 8 : 0.62 
-#&gt;  Initial beta 9 : -0.82 
+#&gt; Initial beta 1 : -1.22 
+#&gt;  Initial beta 2 : 0.22 
+#&gt;  Initial beta 3 : 0.53 
+#&gt;  Initial beta 4 : -1.58 
+#&gt;  Initial beta 5 : 2.78 
+#&gt;  Initial beta 6 : 0.14 
+#&gt;  Initial beta 7 : -0.45 
+#&gt;  Initial beta 8 : 1.61 
+#&gt;  Initial beta 9 : 0.26 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 1.89 
+#&gt; Initial sigma^2 : 0.34 
 #&gt; </div><div class='input'><span class='no'>LN.DIC</span> <span class='kw'>&lt;-</span> <span class='fu'>DIC_LN</span>(<span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>],
-                 <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LN</span>)</div><div class='output co'>#&gt; Effective number of parameters : 6.88 
+                 <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LN</span>)</div><div class='output co'>#&gt; Effective number of parameters : 9.26 
 #&gt; Actual number of parameters : 10 </div><div class='input'>
 </div></pre>
   </div>
