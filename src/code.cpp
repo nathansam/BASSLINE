@@ -856,35 +856,24 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
     slower = (lower  -mu) / sd;
     supper = (upper - mu) / sd;
 
-    tr = R::pnorm(supper, 0.0, 1.0, true, false) - R::pnorm(slower, 0.0, 1.0,
-                                                            true, false);
+    while(sample == 1){
+      z = R::runif(slower, supper);
 
-    if(tr > 0.5){                   // if sampling >0.5 of a normal density possibly quicker just to sample and reject
-      while(sample == 1){
-        z = R::rnorm(0.0,1.0);
-        if(z > slower && z < supper){
-          sample = 0;
+      if(slower <= 0.0 && 0.0 <= supper){
+        pz = -z * z / 2.0;
+      }else{
+        if(supper < 0.0){
+          pz = (supper * supper - z * z) / 2.0;
+        }else{
+          pz = (slower * slower - z * z) / 2.0;
         }
       }
-    }else{
-      while(sample == 1){
-        z = R::runif(slower, supper);
-
-        if(slower <= 0.0 && 0.0 <= supper){
-          pz = -z * z / 2.0;
-        }else{
-          if(supper < 0.0){
-            pz = (supper * supper - z * z) / 2.0;
-          }else{
-            pz = (slower * slower - z * z) / 2.0;
-          }
-        }
-        u = - R::rexp(1.0);
-        if(u < pz){
-          sample = 0;
-        }
+      u = - R::rexp(1.0);
+      if(u < pz){
+        sample = 0;
       }
     }
+
   }
   if(lower < -1e+32){
     return(mu - z * sd);
@@ -922,4 +911,51 @@ NumericVector rtnorm(int n, NumericVector lower, NumericVector upper,
     rv[i] = rtnormsingle(mu[i], sd[i],lower[i], upper[i]);
   }
   return rv;
+}
+
+// LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL LST FUNCTIONS)
+// [[Rcpp::export]]
+double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X,
+                   arma::vec beta, double sigma2, double nu, int set,
+                   double eps_l, double eps_r) {
+  const unsigned int n = Time.length();
+  NumericVector aux(n);
+  NumericVector MEAN = Rcpp::wrap(X * beta);
+
+
+  NumericVector sigma2Vec(n, sigma2);
+  NumericVector nuVec(n, nu);
+
+  NumericVector TimeGreater(n);
+
+  for (unsigned int i = 0; i < n; ++i){
+    if (Time[i] > eps_l){
+      TimeGreater[i] = 1;
+    } else{
+      TimeGreater[i] = 0;
+    }
+  }
+
+
+  if (set == 1) {
+    aux = Cens * (TimeGreater *
+      log(Rcpp::pt((log(Time + eps_r) - MEAN) / sqrt(sigma2), nu) -
+        Rcpp::pt((log(abs(Time - eps_l)) - MEAN) / sqrt(sigma2),
+                 nu)) +
+                   (1 - TimeGreater) *
+                     log(Rcpp::pt((log(Time + eps_r) - MEAN) / sqrt(sigma2),
+                                  nu) - 0)) +
+                       (1 - Cens) *
+                         log(1 - Rcpp::pt((log(Time) - MEAN) / sqrt(sigma2),
+                                          nu));
+  } else {
+    // set == 0
+    aux = Cens * (Rcpp::dt((log(Time) - MEAN) / sqrt(sigma2),
+                             nu, true) -
+                               log(sqrt(sigma2) * Time)) +
+                               (1 - Cens) * log(1 - Rcpp::pt((log(Time) - MEAN)
+                                                               / sqrt(sigma2),
+                                                               nu));
+  }
+  return(sum(aux));
 }

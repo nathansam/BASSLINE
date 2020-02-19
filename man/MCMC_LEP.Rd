@@ -22,11 +22,11 @@ MCMC_LEP(
 )
 }
 \arguments{
-\item{N}{Total number of iterations.}
+\item{N}{Total number of iterations. Must be a multiple of thin.}
 
 \item{thin}{Thinning period.}
 
-\item{burn}{Burn-in period.}
+\item{burn}{Burn-in period. Must be a multiple of thin.}
 
 \item{Time}{Vector containing the survival times.}
 

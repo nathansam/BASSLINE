@@ -6,9 +6,9 @@
 #' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
 #'     Gaussian random walk proposals for the log-normal model
 #'     (no mixture)
-#' @param N Total number of iterations.
+#' @param N Total number of iterations. Must be a multiple of thin.
 #' @param thin Thinning period.
-#' @param burn Burn-in period.
+#' @param burn Burn-in period. Must be a multiple of thin.
 #' @param Time Vector containing the survival times.
 #' @param Cens Censoring indication (1: observed, 0: right-censored).
 #' @param X Design matrix with dimensions \eqn{n} x  \eqn{k} where \eqn{n} is
@@ -110,7 +110,7 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", logt.cols)
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
 
@@ -410,9 +410,9 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
         accept.nu <- accept.nu + MH.nu$ind
         pnu.aux <- pnu.aux + MH.nu$ind
 
-        if ((iter - 1) %% Q == 0) {
+        if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
             shape1.aux <- (nu.aux + 1) / 2
-            rate1.aux <- 0.5 * (nu.aux + ((logt.aux - X %*% beta.aux)^2) /
+            rate1.aux <- 0.5 * (nu.aux + ((logt.aux - X %*% beta.aux) ^ 2) /
                                     sigma2.aux)
             lambda.aux <- stats::rgamma(n, shape = rep(shape1.aux, times = n),
                                         rate = rate1.aux)
@@ -425,7 +425,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
             pnu.aux <- pnu.aux / 50
             Pnu.aux <- as.numeric(pnu.aux < ar)
             ls.nu.aux <- ls.nu.aux + ((-1) ^ Pnu.aux) *
-                           min(0.01, 1 / sqrt(iter))
+                min(0.01, 1 / sqrt(iter))
             i_batch <- 0
             pnu.aux <- 0
         }
@@ -454,8 +454,9 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", "nu", lambda.cols, logt.cols,
                          "ls.nu")
 
+
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
 
@@ -509,7 +510,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
     }
 
     # Log-LIKELIHOOD ORDINATE
-    LL.ord <- log.lik.LST(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
+    LL.ord <- log_lik_LST(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
                           nu = nu.star, set, eps_l, eps_r)
     cat("Likelihood ordinate ready!\n")
 
@@ -631,14 +632,14 @@ DIC_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
     LL <- rep(0, times = N)
 
     for (iter in 1:N) {
-        LL[iter] <- log.lik.LST(Time, Cens, X,
+        LL[iter] <- log_lik_LST(Time, Cens, X,
                                 beta = as.vector(chain[iter, 1:k]),
                                 sigma2 = chain[iter, k + 1],
                                 nu = chain[iter, k + 2], set, eps_l, eps_r)
     }
 
     aux <- apply(chain[, 1:(k + 2)], 2, "median")
-    pd <- -2 * mean(LL) + 2 * log.lik.LST(Time, Cens, X, beta = aux[1:k],
+    pd <- -2 * mean(LL) + 2 * log_lik_LST(Time, Cens, X, beta = aux[1:k],
                                           sigma2 = aux[k + 1],
                                           nu = aux[k + 2], set, eps_l, eps_r)
     pd.aux <- k + 2
@@ -831,7 +832,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
             }
         }
 
-        if ((iter - 1) %% Q == 0) {
+        if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
             mu.aux <- sqrt(sigma2.aux) / abs(logt.aux - X %*% beta.aux)
             if (sum(is.na(mu.aux)) == 0) {
                 draw.aux <- VGAM::rinv.gaussian(n = n, mu = mu.aux,
@@ -869,7 +870,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
     colnames(chain) <- c(beta.cols, "sigma2", lambda.cols, logt.cols)
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
 
@@ -1299,7 +1300,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [- burn.period, ]
     }
 
@@ -1749,7 +1750,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        if ((iter - 1) %% Q == 0) {
+        if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
             for (obs in 1:n) {
                 lambda.aux[obs] <-  1 / RS_lambda_obs_LLOG(logt = logt.aux,
                                                            X = X,
@@ -1784,7 +1785,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
 
     if (burn > 0) {
-        burn.period <- 1:burn
+        burn.period <- 1:(burn/thin)
         chain <- chain [-burn.period, ]
     }
     return(chain)
