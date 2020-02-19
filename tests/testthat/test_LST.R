@@ -57,7 +57,7 @@ test_that("Expected value for alpha_nu when nu1 == 0", {
   expect_equal(val, 0)
 })
 
-test_that("log.lik.LST same in C++ as in R", {
+test_that("log_lik_LST same in C++ as in R", {
 
   log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
     n <- length(Time)
@@ -90,17 +90,17 @@ test_that("log.lik.LST same in C++ as in R", {
 
   if (.Machine$sizeof.pointer == 8) {
 
-    for (set in 1:2) {
+    for (set in 0:1) {
 
       set.seed(123)
       R.result <- log.lik.LST(Time = cancer[, 1], Cens = cancer[, 2],
                               X = cancer[, 3:11], beta = seq(9),
-                              sigma2 = 1, nu = 1, set = 1,
+                              sigma2 = 1, nu = 1, set = set,
                               eps_l = 0.5, eps_r = 0.5)
       set.seed(123)
-      Cpp.result <- log.lik.LST(Time = cancer[, 1], Cens = cancer[, 2],
+      Cpp.result <- log_lik_LST(Time = cancer[, 1], Cens = cancer[, 2],
                                 X = cancer[, 3:11], beta = seq(9),
-                                sigma2 = 1, nu = 1, set = 1,
+                                sigma2 = 1, nu = 1, set = set,
                                 eps_l = 0.5, eps_r = 0.5)
 
       expect_equal(R.result, Cpp.result)
