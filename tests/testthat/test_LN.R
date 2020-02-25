@@ -56,16 +56,28 @@ test_that("CaseDeletion_LN Returns Expected Result", {
 ############################## INTERNAL FUNCTIONS ##############################
 ################################################################################
 
-test_that("Prior_LN returns expect value for prior = 1", {
+test_that("Prior_LN returns expect values", {
 
-  beta <- c(4, 1, 4)
+
+  prior.LN<-function(beta,sigma2,prior,log){
+    k <- length(beta)
+    if(prior == 1) p<- 1 + k / 2
+    if(prior == 2) p<- 1
+    if(prior==3) p <- 1
+    if(log == FALSE) aux <- sigma2 ^ ( - p)
+    if(log == TRUE) aux <- -p * log(sigma2)
+    return(aux)
+  }
+
+  betas <- c(4, 1, 4)
   sigma2 <- 0.1
 
-  p <- 1 + length(beta) / 2
-  aux <- -p * log(sigma2)
-  expect_equivalent(prior_LN(beta = c(4, 1, 4), sigma2 = 0.1, prior = 1,
-                             logs = T), aux)
-
+  for (prior in 1:3){
+    for (logs in c(T, F)){
+      expect_equivalent(prior_LN(betas, sigma2, prior, logs),
+                        prior.LN(betas, sigma2, prior, logs ))
+    }
+  }
 })
 
 test_that("Prior_LN returns expected value for prior = 2", {
@@ -79,15 +91,6 @@ test_that("Prior_LN returns expected value for prior = 2", {
 
 })
 
-test_that("Prior_LN returns expected value for prior = 3 & logs = FALSE", {
-
-  beta <- c(4, 1, 4)
-  sigma2 <- 0.1
-  p <- 1
-  aux <- -p * sigma2
-  expect_equivalent(prior_LN(beta = c(4, 1, 4), sigma2 = 0.1, prior = 3,
-                             logs = F), aux)
-})
 
 test_that("log.lik.LN returns expected value for set = 0", {
   if (.Machine$sizeof.pointer == 8) {

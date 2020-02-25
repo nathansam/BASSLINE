@@ -28,7 +28,7 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
   }
 
   if (logs == false){
-    aux = sigma2 * (-p);
+    aux = pow(sigma2, -1 * p);
   }
 
   if (logs == true){
