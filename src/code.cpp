@@ -37,31 +37,14 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
   return aux;
 }
 
-
-// [[Rcpp::export]]
-NumericVector prior_nu(NumericVector nu, int prior){
-
-  if (prior == 2){
-
-
-
-    NumericVector aux = sqrt(nu / (nu + 3)) *
-      sqrt (Rcpp::trigamma(nu / 2) - Rcpp::trigamma((nu + 1) / 2) -
-      (2 * (nu + 3)) / (nu * pow(nu + 1, 2)));
-
-    return aux;
-  }
-  return 1;
-
-}
-
 // Non vectorised version of prior_nu
 // Used for alpha_nu
 // [[Rcpp::export]]
 double prior_nu_single(double nu, int prior){
+  double aux;
 
   if (prior == 2){
-    double aux = sqrt(nu / (nu + 3)) *
+     aux = sqrt(nu / (nu + 3)) *
       sqrt (R::trigamma(nu / 2) - R::trigamma((nu + 1) / 2) -
       (2 * (nu + 3)) / (nu * pow(nu + 1, 2)));
     return aux;
@@ -74,18 +57,16 @@ double prior_nu_single(double nu, int prior){
 //########### PRIOR FOR (BETA,SIGMA2,NU) (LOG-STUDENT'S T MODEL ONLY)###########
 
 // [[Rcpp::export]]
-NumericVector prior_LST(NumericVector beta, double sigma2, NumericVector nu,
+double prior_LST(NumericVector beta, double sigma2, double nu,
                         int prior, bool logs) {
+  double aux;
 
   if (logs == false) {
-    NumericVector aux = prior_LN(beta, sigma2, prior,
-                                 false) * prior_nu(nu, prior);
-    return aux;
+    aux = prior_LN(beta, sigma2, prior, false) * prior_nu_single(nu, prior);
   } else {
-    NumericVector aux = prior_LN(beta, sigma2, prior,
-                                 true) + log(prior_nu(nu, prior));
-    return aux;
+    aux = prior_LN(beta, sigma2, prior, true) + log(prior_nu_single(nu, prior));
   }
+  return aux;
 }
 
 

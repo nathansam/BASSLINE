@@ -112,11 +112,11 @@ test_that("prior_LST is the same in C++ as in R", {
   prior.LST.R <- function(beta, sigma2, nu, prior, log) {
     if (log == FALSE) {
       aux <- prior_LN(beta, sigma2, prior, logs = FALSE) *
-        prior_nu(nu, prior)
+        prior_nu_single(nu, prior)
     }
     if (log == TRUE) {
       aux <- prior_LN(beta, sigma2, prior, logs = TRUE) +
-        log(prior_nu(nu, prior))
+        log(prior_nu_single(nu, prior))
     }
     return(aux)
   }
@@ -140,7 +140,7 @@ test_that("alpha_nu same in C++ as in R", {
                                             shape = nu0 / 2,
                                             rate = nu0 / 2,
                                             log = TRUE))) *
-                   (prior_nu(nu1, prior) / prior_nu(nu0, prior)))
+                   (prior_nu_single(nu1, prior) / prior_nu_single(nu0, prior)))
     }
     return(aux)
   }
@@ -235,3 +235,32 @@ test_that("Post_lambda_obs_LST same in C++ as in R", {
   Cpp.result <- Post_lambda_obs_LST(1, 1, cancer[, 3:11], LST)
   expect_equal(R.result, Cpp.result)
 })
+
+test_that("Prior_nu_single same in C++ as in R", {
+
+  IIJ.nu <- function(nu, prior)
+  {
+    if (prior == 2){
+    aux <- sqrt(nu / (nu + 3)) *
+      sqrt(trigamma(nu / 2) - trigamma((nu + 1) / 2) - (2 * (nu + 3)) /
+        (nu * (nu + 1) ^ 2))
+    return(aux)
+    }
+  }
+
+  nu <- runif(10, 0, 10)
+
+  prior <- 2
+
+  for (i in 1:10){
+    aux <- IIJ.nu(nu[i], prior)
+    expect_equal(aux, prior_nu_single(nu[i], prior))
+  }
+})
+
+test_that("prior_nu_single returns expected value for nu = 1 & prior = 2", {
+  prior.val <- prior_nu_single(1, 2)
+  expect_equal(round(prior.val, 4), 0.5679)
+})
+
+

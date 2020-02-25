@@ -1,16 +1,3 @@
-test_that("prior_nu returns expected value for nu = 1 & prior = 2", {
-  prior.val <- prior_nu(1, 2)
-  expect_equal(round(prior.val, 4), 0.5679)
-})
-
-
-test_that("prior_nu same result in C++ as in R", {
-  nu <- seq(1, 10)
-  aux <- sqrt(nu / (nu + 3)) * sqrt(trigamma(nu / 2) - trigamma((nu + 1) / 2) -
-                                     (2 * (nu + 3)) / (nu * (nu + 1) ^ 2))
-  expect_equivalent(prior_nu(nu, 2), aux)
-})
-
 test_that("r_GIG same result in C++ as in R", {
   set.seed(123)
   n <- 1
@@ -72,7 +59,6 @@ test_that("prior_LEP same result in C++ as in R", {
 
 test_that("Unexpected arguments for prior funcs return 0", {
 
-  expect_equal(prior_nu(c(1, 2), prior = 1), 0)
   expect_equal(prior_nu_single(1, prior = 1), 0)
   expect_equal(prior_alpha(c(1, 2), 1, 4), 0)
   expect_equal(prior_alpha_single(2, 1, 4), 0)

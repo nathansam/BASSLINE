@@ -20,18 +20,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// prior_nu
-NumericVector prior_nu(NumericVector nu, int prior);
-RcppExport SEXP _BASSLINE_prior_nu(SEXP nuSEXP, SEXP priorSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type nu(nuSEXP);
-    Rcpp::traits::input_parameter< int >::type prior(priorSEXP);
-    rcpp_result_gen = Rcpp::wrap(prior_nu(nu, prior));
-    return rcpp_result_gen;
-END_RCPP
-}
 // prior_nu_single
 double prior_nu_single(double nu, int prior);
 RcppExport SEXP _BASSLINE_prior_nu_single(SEXP nuSEXP, SEXP priorSEXP) {
@@ -45,14 +33,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // prior_LST
-NumericVector prior_LST(NumericVector beta, double sigma2, NumericVector nu, int prior, bool logs);
+double prior_LST(NumericVector beta, double sigma2, double nu, int prior, bool logs);
 RcppExport SEXP _BASSLINE_prior_LST(SEXP betaSEXP, SEXP sigma2SEXP, SEXP nuSEXP, SEXP priorSEXP, SEXP logsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< NumericVector >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type nu(nuSEXP);
+    Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
     Rcpp::traits::input_parameter< int >::type prior(priorSEXP);
     Rcpp::traits::input_parameter< bool >::type logs(logsSEXP);
     rcpp_result_gen = Rcpp::wrap(prior_LST(beta, sigma2, nu, prior, logs));
@@ -452,7 +440,6 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_prior_LN", (DL_FUNC) &_BASSLINE_prior_LN, 4},
-    {"_BASSLINE_prior_nu", (DL_FUNC) &_BASSLINE_prior_nu, 2},
     {"_BASSLINE_prior_nu_single", (DL_FUNC) &_BASSLINE_prior_nu_single, 2},
     {"_BASSLINE_prior_LST", (DL_FUNC) &_BASSLINE_prior_LST, 5},
     {"_BASSLINE_J_alpha", (DL_FUNC) &_BASSLINE_J_alpha, 2},

@@ -5,10 +5,6 @@ prior_LN <- function(beta, sigma2, prior, logs) {
     .Call(`_BASSLINE_prior_LN`, beta, sigma2, prior, logs)
 }
 
-prior_nu <- function(nu, prior) {
-    .Call(`_BASSLINE_prior_nu`, nu, prior)
-}
-
 prior_nu_single <- function(nu, prior) {
     .Call(`_BASSLINE_prior_nu_single`, nu, prior)
 }
