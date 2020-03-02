@@ -1066,7 +1066,7 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
 
 
     for (int i = 0; i < rate_aux.n_elem; i++){
-      if (rate_aux[i] > 0 & isnan(rate_aux[i]) == false) {
+      if (rate_aux[i] > 0 & std::isnan(rate_aux[i]) == false) {
         sigma2_aux = pow(R::rgamma(shape_aux, 1.0 / rate_aux[i]), -1);
       }
 
