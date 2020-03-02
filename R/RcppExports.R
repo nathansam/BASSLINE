@@ -125,7 +125,15 @@ mvrnormArma <- function(n, mu, Sigma) {
     .Call(`_BASSLINE_mvrnormArma`, n, mu, Sigma)
 }
 
+mvrnormArma2 <- function(n, mu, Sigma) {
+    .Call(`_BASSLINE_mvrnormArma2`, n, mu, Sigma)
+}
+
 logt_update_SMLN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
     .Call(`_BASSLINE_logt_update_SMLN`, Time, Cens, X, beta, sigma2, set, eps_l, eps_r)
+}
+
+MCMC_LN_CPP <- function(N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set, eps_l, eps_r) {
+    .Call(`_BASSLINE_MCMC_LN_CPP`, N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set, eps_l, eps_r)
 }
 

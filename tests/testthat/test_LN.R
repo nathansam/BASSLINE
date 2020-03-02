@@ -13,6 +13,101 @@ test_that("MCMC_LN returns expected number of rows when burn = 5,thin = 10", {
   expect_equal(nrow(LN), N / thin + 1 - (burn / thin))
 })
 
+
+test_that("MCMC_LN same in C++ as in R", {
+  MCMC_LN_old <- function(N, thin, burn, Time, Cens, X, beta0 = NULL,
+                          sigma20 = NULL, prior = 2, set = 1, eps_l = 0.5,
+                          eps_r = 0.5) {
+
+    # Sample starting values if not given
+    if (is.null(beta0)) beta0 <- beta.sample(n = ncol(X))
+    if (is.null(sigma20)) sigma20 <- sigma2.sample()
+
+    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
+                     prior, set, eps_l, eps_r)
+
+    k <- length(beta0)
+    n <- length(Time)
+    N.aux <- round(N / thin, 0)
+    if (prior == 1) {
+        p <- 1 + k / 2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    beta[1, ] <- beta0
+    sigma2 <- rep(0, times = N.aux + 1)
+    sigma2[1] <- sigma20
+    logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    logt[1, ] <- log(Time)
+
+    beta.aux <- beta[1, ]
+    sigma2.aux <- sigma2[1]
+    logt.aux <- logt[1, ]
+
+    for (iter in 2:(N + 1)) {
+        mu.aux <- solve(t(X) %*% X) %*% t(X) %*% logt.aux
+        Sigma.aux <- sigma2.aux * solve(t(X) %*% X)
+        beta.aux <- mvrnormArma(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+
+
+        shape.aux <- (n + 2 * p - 2) / 2
+        rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% (logt.aux - X %*%
+                                                                beta.aux)
+        if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
+            sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
+                                         rate = rate.aux)) ^ (-1)
+        }
+
+
+        logt.aux <- logt_update_SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
+                                     eps_l, eps_r)
+
+        if (iter %% thin == 0) {
+            beta[iter / thin + 1, ] <- beta.aux
+            sigma2[iter / thin + 1] <- sigma2.aux
+            logt[iter / thin + 1, ] <- logt.aux
+        }
+        if ((iter - 1) %% 1e+05 == 0) {
+            cat(paste("Iteration :", iter, "\n"))
+        }
+    }
+
+    chain <- cbind(beta, sigma2, logt)
+
+
+
+    beta.cols <- paste("beta.", seq(ncol(X)), sep = "")
+    logt.cols <- paste("logt.", seq(length(Time)), sep = "")
+    colnames(chain) <- c(beta.cols, "sigma2", logt.cols)
+
+    if (burn > 0) {
+      burn.period <- 1:(burn / thin)
+      chain <- chain [-burn.period, ]
+    }
+
+    return(chain)
+  }
+
+#
+#   set.seed(123)
+#   Result.Cpp <- MCMC_LN(N = 1000, thin = 20, burn = 40,
+#                         Time = cancer[, 1], Cens = cancer[, 2],
+#                         X = cancer[, 3:11])
+#
+#   set.seed(123)
+#   Result.R <- MCMC_LN_old(N = 1000, thin = 20, burn = 40,
+#                                         Time = cancer[, 1], Cens = cancer[, 2],
+#                                         X = cancer[, 3:11])
+#
+#   testthat::expect_equal(Result.Cpp, Result.R)
+
+
+
+})
+
 test_that("LML_LN Returns Expected Result", {
   if (.Machine$sizeof.pointer == 8) {
 
@@ -21,9 +116,9 @@ test_that("LML_LN Returns Expected Result", {
                   Cens = cancer[, 2], X = cancer[, 3:11])
     LN.LML <- LML_LN(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
                      X = cancer[, 3:11], chain = LN)
-    testthat::expect_equal(round(as.numeric(LN.LML), 2), c(-717.04, -0.14,
-                                                           0.97, 13.89,
-                                                           -732.05))
+    testthat::expect_equal(round(as.numeric(LN.LML), 2), c(-716.00, -0.17,
+                                                           0.92, 14.79,
+                                                           -731.88))
     }
 })
 
@@ -35,7 +130,7 @@ test_that("DIC_LN Returns Expected Result", {
                   Cens = cancer[, 2], X = cancer[, 3:11])
     LN.DIC <- DIC_LN(Time = cancer[, 1], Cens = cancer[, 2], X = cancer[, 3:11],
                      chain = LN)
-    testthat::expect_equal(round(LN.DIC, 4), 1443.6846)
+    testthat::expect_equal(round(LN.DIC, 4), 1444.9356)
     }
 })
 
@@ -48,7 +143,7 @@ test_that("CaseDeletion_LN Returns Expected Result", {
     LN.CD <- CaseDeletion_LN(Time = cancer[, 1], Cens = cancer[, 2],
                              X = cancer[, 3:11], chain = LN)
     means <- round(c(mean(LN.CD[, 1]), mean(LN.CD[, 2]), mean(LN.CD[, 3])), 4)
-    testthat::expect_equal(means, c(-5.2903, 0.0389, 0.6021))
+    testthat::expect_equal(means, c(-5.2886, 0.0388, 0.6002))
   }
 })
 

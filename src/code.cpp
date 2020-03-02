@@ -959,6 +959,14 @@ NumericVector mvrnormArma(int n, arma::vec mu, arma::mat Sigma) {
 }
 
 // [[Rcpp::export]]
+arma::vec mvrnormArma2(int n, arma::vec mu, arma::mat Sigma) {
+  int ncols = Sigma.n_cols;
+  arma::mat Y = arma::randn(n, ncols);
+  Y = arma::repmat(mu, 1, n).t() + Y * arma::chol(Sigma);
+  return Y.t();
+}
+
+// [[Rcpp::export]]
 NumericVector logt_update_SMLN (NumericVector Time, NumericVector Cens,
                                 arma::mat X, arma::vec beta, double sigma2,
                                 int set, double eps_l, double eps_r) {
@@ -995,4 +1003,93 @@ NumericVector logt_update_SMLN (NumericVector Time, NumericVector Cens,
       rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
   }
   return(aux);
+}
+
+
+
+// [[Rcpp::export]]
+arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
+                           NumericVector Cens, arma::mat X, arma::vec beta0,
+                           double sigma20, int prior, int set,
+                           double eps_l, double eps_r) {
+
+      int k = beta0.n_elem; // How many betas?
+      int n = Time.n_elem; // How many observations?
+      int N_aux = N / thin;
+
+      double p;
+
+      if (prior == 1) {
+        p = 1 + k / 2;
+      }
+      if (prior == 2) {
+        p = 1;
+      }
+
+      // empty matrix with N_aux + 1 rows and k cols
+      arma::mat beta = arma::zeros(N_aux + 1, k);
+
+      beta.row(0) = beta0.t();
+
+      arma::vec sigma2(N_aux + 1);
+      sigma2[0] = sigma20;
+
+      arma::mat logt = arma::zeros(N_aux + 1, n);
+      logt.row(0) = log(Time).t();
+
+      arma::vec beta_aux = beta0;
+
+      double sigma2_aux = sigma2[0];
+      arma::vec logt_aux = log(Time);
+
+
+      // Identity matrix
+      arma::mat D = arma::eye<arma::mat>(X.n_cols, X.n_cols);
+
+  for (int iter = 1; iter < N + 1; iter ++) {
+
+
+
+    arma::vec  mu_aux = arma::solve(X.t() * X, D) * X.t() * logt_aux;
+    arma::mat Sigma_aux = sigma2_aux * solve(X.t() * X, D);
+
+
+    arma::vec beta_aux = mvrnormArma2(1, mu_aux, Sigma_aux);
+
+
+
+    double shape_aux = (n + 2.0 * p - 2.0) / 2.0;
+
+    arma::vec rate_aux = 0.5 * (logt_aux - X * beta_aux).t() * (logt_aux - X *
+      beta_aux);
+
+
+
+    for (int i = 0; i < rate_aux.n_elem; i++){
+      if (rate_aux[i] > 0 & isnan(rate_aux[i]) == false) {
+        sigma2_aux = pow(R::rgamma(shape_aux, 1.0 / rate_aux[i]), -1);
+      }
+
+
+    }
+
+    logt_aux = logt_update_SMLN(Rcpp::wrap(Time), Rcpp::wrap(Cens), X, beta_aux,
+                                sigma2_aux, set, eps_l, eps_r);
+
+      if (iter % thin == 0) {
+        beta.row(iter / thin) = beta_aux.t();
+        sigma2[iter / thin] = sigma2_aux;
+        logt.row(iter / thin) = logt_aux.t();
+      }
+
+      if ((iter - 1) % 100000 == 0) {
+        Rcpp::Rcout << "Iteration :" << iter << std::endl;
+      }
+  }
+
+
+
+  arma::mat chain = arma::join_horiz(beta, sigma2);
+  chain = arma::join_horiz(chain, logt);
+  return chain;
 }
