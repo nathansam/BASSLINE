@@ -54,9 +54,9 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.LM
 
-LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-              Cens = cancer[,2], X = cancer[,3:11])
-LN.LML <- LML_LN(thin = 20, Time = cancer[,1], Cens = cancer[,2],
-                         X = cancer[,3:11], chain = LN)
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+              Cens = cancer[, 2], X = cancer[, 3:11])
+LN.LML <- LML_LN(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
+                         X = cancer[, 3:11], chain = LN)
 
 }

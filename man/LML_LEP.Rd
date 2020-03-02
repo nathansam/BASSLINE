@@ -54,9 +54,9 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations (especially for the log-exponential power model).
 
-LEP <- MCMC_LEP(N = 100, thin = 2, burn = 20, Time = cancer[,1],
-                Cens = cancer[,2], X = cancer[,3:11])
-LEP.LML <- LML_LEP(thin = 2, Time = cancer[,1], Cens = cancer[,2],
-                   X = cancer[,3:11], chain = LEP)
+LEP <- MCMC_LEP(N = 100, thin = 2, burn = 20, Time = cancer[, 1],
+                Cens = cancer[, 2], X = cancer[, 3:11])
+LEP.LML <- LML_LEP(thin = 2, Time = cancer[, 1], Cens = cancer[, 2],
+                   X = cancer[, 3:11], chain = LEP)
 
 }

@@ -25,8 +25,8 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-              Cens = cancer[,2], X = cancer[,3:11])
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+              Cens = cancer[, 2], X = cancer[, 3:11])
 Trace_plot(1, LN)
 
 }

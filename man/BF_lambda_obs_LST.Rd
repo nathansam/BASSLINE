@@ -79,12 +79,12 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-                Cens = cancer[,2], X = cancer[,3:11])
+LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+                Cens = cancer[, 2], X = cancer[, 3:11])
 
 LST.Outlier <- BF_lambda_obs_LST(N = 100, thin = 20 , burn = 1, ref = 1,
-                                 obs = 1, Time = cancer[,1],
-                                 Cens = cancer[,2], X = cancer[,3:11],
+                                 obs = 1, Time = cancer[, 1],
+                                 Cens = cancer[, 2], X = cancer[, 3:11],
                                  chain = LST)
 
 }

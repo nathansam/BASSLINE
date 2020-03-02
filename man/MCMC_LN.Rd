@@ -56,8 +56,8 @@ to a point).}
 (default value: 0.5)}
 }
 \value{
-A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
-chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+A matrix with \eqn{(N - burn) / thin + 1} rows. The columns are the
+MCMC chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
 \eqn{\theta} (1 column, if appropriate), \eqn{\log(t)} (\eqn{n} columns,
 simulated via data augmentation) and the logarithm of the adaptive
 variances (the number varies among models). The latter allows the user to
@@ -75,7 +75,7 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-              Cens = cancer[,2], X = cancer[,3:11])
+LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+              Cens = cancer[, 2], X = cancer[, 3:11])
 
 }

@@ -77,12 +77,12 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations (especially for the log-exponential power model).
 
-LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-                Cens = cancer[,2], X = cancer[,3:11])
-alpha <- mean(LEP[,11])
+LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+                Cens = cancer[, 2], X = cancer[, 3:11])
+alpha <- mean(LEP[, 11])
 uref <- 1.6 + 1 / alpha
 LEP.Outlier <- BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref,
-                            obs = 1, Time = cancer[,1], Cens = cancer[,2],
-                            cancer[,3:11], chain = LEP)
+                            obs = 1, Time = cancer[, 1], Cens = cancer[, 2],
+                            cancer[, 3:11], chain = LEP)
 
 }

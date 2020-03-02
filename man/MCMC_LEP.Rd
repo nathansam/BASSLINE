@@ -83,7 +83,7 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations (especially for the log-exponential power model).
 
-LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-                Cens = cancer[,2], X = cancer[,3:11])
+LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+                Cens = cancer[, 2], X = cancer[, 3:11])
 
 }

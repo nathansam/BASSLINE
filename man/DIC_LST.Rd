@@ -41,9 +41,9 @@ library(BASSLINE)
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-                Cens = cancer[,2], X = cancer[,3:11])
-LST.DIC <- DIC_LST(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
-                   chain = LST)
+LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+                Cens = cancer[, 2], X = cancer[, 3:11])
+LST.DIC <- DIC_LST(Time = cancer[, 1], Cens = cancer[, 2],
+                   X = cancer[, 3:11], chain = LST)
 
 }

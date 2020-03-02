@@ -34,8 +34,8 @@ log-Student’s t model, in which case a reduced chain given
 # This is only an illustration. Run longer chains for more accurate
 # estimations.
 
-LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-                  Cens = cancer[,2], X = cancer[,3:11])
-LLAP.outlier <- BF_lambda_obs_LLAP(1,1, X = cancer[,3:11], chain = LLAP)
+LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+                  Cens = cancer[, 2], X = cancer[, 3:11])
+LLAP.outlier <- BF_lambda_obs_LLAP(1,1, X = cancer[, 3:11], chain = LLAP)
 
 }
