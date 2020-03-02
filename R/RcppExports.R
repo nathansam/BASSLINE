@@ -121,3 +121,11 @@ log_lik_LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
     .Call(`_BASSLINE_log_lik_LST`, Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r)
 }
 
+mvrnormArma <- function(n, mu, Sigma) {
+    .Call(`_BASSLINE_mvrnormArma`, n, mu, Sigma)
+}
+
+logt_update_SMLN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
+    .Call(`_BASSLINE_logt_update_SMLN`, Time, Cens, X, beta, sigma2, set, eps_l, eps_r)
+}
+

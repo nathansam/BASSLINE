@@ -21,9 +21,9 @@ test_that("LML_LN Returns Expected Result", {
                   Cens = cancer[, 2], X = cancer[, 3:11])
     LN.LML <- LML_LN(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
                      X = cancer[, 3:11], chain = LN)
-    testthat::expect_equal(round(as.numeric(LN.LML), 2), c(-715.29, -0.20,
-                                                           0.85, 15.54,
-                                                           -731.89))
+    testthat::expect_equal(round(as.numeric(LN.LML), 2), c(-717.04, -0.14,
+                                                           0.97, 13.89,
+                                                           -732.05))
     }
 })
 
@@ -35,7 +35,7 @@ test_that("DIC_LN Returns Expected Result", {
                   Cens = cancer[, 2], X = cancer[, 3:11])
     LN.DIC <- DIC_LN(Time = cancer[, 1], Cens = cancer[, 2], X = cancer[, 3:11],
                      chain = LN)
-    testthat::expect_equal(round(LN.DIC, 4), 1450.0062)
+    testthat::expect_equal(round(LN.DIC, 4), 1443.6846)
     }
 })
 
@@ -48,7 +48,7 @@ test_that("CaseDeletion_LN Returns Expected Result", {
     LN.CD <- CaseDeletion_LN(Time = cancer[, 1], Cens = cancer[, 2],
                              X = cancer[, 3:11], chain = LN)
     means <- round(c(mean(LN.CD[, 1]), mean(LN.CD[, 2]), mean(LN.CD[, 3])), 4)
-    testthat::expect_equal(means, c(-5.2990, 0.0425, 0.6047))
+    testthat::expect_equal(means, c(-5.2903, 0.0389, 0.6021))
   }
 })
 
@@ -113,3 +113,27 @@ test_that("log.lik.LN returns expected values for set = 1", {
     expect_equal(round(lik, 4), -1926.7085)
   }
 })
+
+
+
+test_that("logt_update_SMLN same in C++ as in R",{
+  Time <- seq(4)
+  Cens <- c(0, 1, 0, 1)
+  X <- matrix(seq(16), nrow = 4)
+  beta <- c(2, 3, 4, 5)
+  sigma2 <- 1.5; eps_l <- 0.5; eps_r <- 0.5
+
+  for (set in 0:1){
+
+    set.seed(123)
+    result.R <- logt.update.SMLN(Time, Cens, X, beta, sigma2, set, eps_l,
+                                 eps_r)
+    set.seed(123)
+    result.Cpp <- logt_update_SMLN(Time, Cens, X, beta, sigma2, set, eps_l,
+                                   eps_r)
+
+    expect_equal(as.numeric(result.R), as.numeric(result.Cpp))
+  }
+})
+
+

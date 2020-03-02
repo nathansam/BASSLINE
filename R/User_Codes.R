@@ -29,8 +29,8 @@
 #'     (default value: 0.5).
 #' @param eps_r Upper imprecision \eqn{(\epsilon_r)} for set observations
 #'     (default value: 0.5)
-#' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
-#'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+#' @return A matrix with \eqn{(N - burn) / thin + 1} rows. The columns are the
+#'     MCMC chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
 #'     \eqn{\theta} (1 column, if appropriate), \eqn{\log(t)} (\eqn{n} columns,
 #'     simulated via data augmentation) and the logarithm of the adaptive
 #'     variances (the number varies among models). The latter allows the user to
@@ -42,8 +42,8 @@
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'               Cens = cancer[,2], X = cancer[,3:11])
+#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'               Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
 MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
@@ -80,7 +80,8 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
     for (iter in 2:(N + 1)) {
         mu.aux <- solve(t(X) %*% X) %*% t(X) %*% logt.aux
         Sigma.aux <- sigma2.aux * solve(t(X) %*% X)
-        beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+        beta.aux <- mvrnormArma(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+
 
         shape.aux <- (n + 2 * p - 2) / 2
         rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% (logt.aux - X %*%
@@ -90,7 +91,8 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
                                          rate = rate.aux)) ^ (-1)
         }
 
-        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
+
+        logt.aux <- logt_update_SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
                                      eps_l, eps_r)
 
         if (iter %% thin == 0) {
@@ -127,10 +129,10 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.LM
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'               Cens = cancer[,2], X = cancer[,3:11])
-#' LN.LML <- LML_LN(thin = 20, Time = cancer[,1], Cens = cancer[,2],
-#'                          X = cancer[,3:11], chain = LN)
+#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'               Cens = cancer[, 2], X = cancer[, 3:11])
+#' LN.LML <- LML_LN(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
+#'                          X = cancer[, 3:11], chain = LN)
 #'
 #' @export
 LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
@@ -218,9 +220,9 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.LM
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'               Cens = cancer[,2], X = cancer[,3:11])
-#' LN.DIC <- DIC_LN(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
+#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'               Cens = cancer[, 2], X = cancer[, 3:11])
+#' LN.DIC <- DIC_LN(Time = cancer[, 1], Cens = cancer[, 2], X = cancer[, 3:11],
 #'                  chain = LN)
 #'
 #' @export
@@ -270,10 +272,10 @@ DIC_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.LM
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'               Cens = cancer[,2], X = cancer[,3:11])
-#' LN.CD <- CaseDeletion_LN(Time = cancer[,1], Cens = cancer[,2],
-#'                          X = cancer[,3:11], chain = LN)
+#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'               Cens = cancer[, 2], X = cancer[, 3:11])
+#' LN.CD <- CaseDeletion_LN(Time = cancer[, 1], Cens = cancer[, 2],
+#'                          X = cancer[, 3:11], chain = LN)
 #'
 #' @export
 CaseDeletion_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
@@ -333,8 +335,8 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
+#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
 MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
@@ -393,7 +395,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
             AUX <- solve(AUX1)
             mu.aux <- AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux <- sigma2.aux * AUX
-            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- mvrnormArma(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         shape.aux <- (n + 2 * p - 2) / 2
@@ -474,11 +476,11 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
+#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
 #'
-#' LST.LML <- LML_LST(thin = 20, Time = cancer[,1], Cens = cancer[,2],
-#'                    X = cancer[,3:11], chain = LST)
+#' LST.LML <- LML_LST(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
+#'                    X = cancer[, 3:11], chain = LST)
 #'
 #' @export
 LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
@@ -618,10 +620,10 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
-#' LST.DIC <- DIC_LST(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
-#'                    chain = LST)
+#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LST.DIC <- DIC_LST(Time = cancer[, 1], Cens = cancer[, 2],
+#'                    X = cancer[, 3:11], chain = LST)
 #'
 #' @export
 DIC_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
@@ -668,10 +670,10 @@ DIC_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
-#' LST.CD <- CaseDeletion_LST(Time = cancer[,1], Cens = cancer[,2],
-#'                            cancer[,3:11], chain = LST)
+#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LST.CD <- CaseDeletion_LST(Time = cancer[, 1], Cens = cancer[, 2],
+#'                            cancer[, 3:11], chain = LST)
 #'
 #' @export
 CaseDeletion_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
@@ -728,12 +730,12 @@ CaseDeletion_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
+#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' LST.Outlier <- BF_lambda_obs_LST(N = 100, thin = 20 , burn = 1, ref = 1,
-#'                                  obs = 1, Time = cancer[,1],
-#'                                  Cens = cancer[,2], X = cancer[,3:11],
+#'                                  obs = 1, Time = cancer[, 1],
+#'                                  Cens = cancer[, 2], X = cancer[, 3:11],
 #'                                  chain = LST)
 #'
 #' @export
@@ -769,8 +771,8 @@ BF_lambda_obs_LST <- function(N, thin, burn, ref, obs, Time, Cens, X,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
+#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
 MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
@@ -818,7 +820,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
             AUX <- solve(AUX1)
             mu.aux <- AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux <- sigma2.aux * AUX
-            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- mvrnormArma(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         shape.aux <- (n + 2 * p - 2) / 2
@@ -888,8 +890,8 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
+#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
 LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
@@ -984,10 +986,10 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
-#' LLAP.DIC <- DIC_LLAP(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
-#'                      chain = LLAP)
+#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLAP.DIC <- DIC_LLAP(Time = cancer[, 1], Cens = cancer[, 2],
+#'                      X = cancer[, 3:11], chain = LLAP)
 #'
 #' @export
 DIC_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
@@ -1034,10 +1036,10 @@ DIC_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
-#' LLAP.CD <- CaseDeletion_LLAP(Time = cancer[,1], Cens = cancer[,2],
-#'                              X = cancer[,3:11], chain = LLAP)
+#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLAP.CD <- CaseDeletion_LLAP(Time = cancer[, 1], Cens = cancer[, 2],
+#'                              X = cancer[, 3:11], chain = LLAP)
 #'
 #' @export
 CaseDeletion_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
@@ -1091,9 +1093,9 @@ CaseDeletion_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
-#' LLAP.outlier <- BF_lambda_obs_LLAP(1,1, X = cancer[,3:11], chain = LLAP)
+#' LLAP <- MCMC_LLAP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLAP.outlier <- BF_lambda_obs_LLAP(1,1, X = cancer[, 3:11], chain = LLAP)
 #'
 #' @export
 BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
@@ -1144,8 +1146,8 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations (especially for the log-exponential power model).
 #'
-#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
+#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
 MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
@@ -1317,10 +1319,10 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations (especially for the log-exponential power model).
 #'
-#' LEP <- MCMC_LEP(N = 100, thin = 2, burn = 20, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
-#' LEP.LML <- LML_LEP(thin = 2, Time = cancer[,1], Cens = cancer[,2],
-#'                    X = cancer[,3:11], chain = LEP)
+#' LEP <- MCMC_LEP(N = 100, thin = 2, burn = 20, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LEP.LML <- LML_LEP(thin = 2, Time = cancer[, 1], Cens = cancer[, 2],
+#'                    X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
 LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
@@ -1536,10 +1538,10 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations (especially for the log-exponential power model).
 #'
-#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
-#' LEP.DIC <- DIC_LEP(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
-#'                    chain = LEP)
+#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LEP.DIC <- DIC_LEP(Time = cancer[, 1], Cens = cancer[, 2],
+#'                    X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
 DIC_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
@@ -1586,10 +1588,10 @@ DIC_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations (especially for the log-exponential power model).
 #'
-#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
-#' LEP.CD <- CaseDeletion_LEP(Time = cancer[,1], Cens = cancer[,2],
-#'                            X = cancer[,3:11], chain = LEP)
+#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LEP.CD <- CaseDeletion_LEP(Time = cancer[, 1], Cens = cancer[, 2],
+#'                            X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
 CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
@@ -1647,13 +1649,13 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations (especially for the log-exponential power model).
 #'
-#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                 Cens = cancer[,2], X = cancer[,3:11])
-#' alpha <- mean(LEP[,11])
+#' LEP <- MCMC_LEP(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' alpha <- mean(LEP[, 11])
 #' uref <- 1.6 + 1 / alpha
 #' LEP.Outlier <- BF_u_obs_LEP(N = 100, thin = 20, burn =1 , ref = uref,
-#'                             obs = 1, Time = cancer[,1], Cens = cancer[,2],
-#'                             cancer[,3:11], chain = LEP)
+#'                             obs = 1, Time = cancer[, 1], Cens = cancer[, 2],
+#'                             cancer[, 3:11], chain = LEP)
 #'
 #' @export
 BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
@@ -1692,8 +1694,8 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
 MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
@@ -1739,7 +1741,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
             AUX <- solve(AUX1)
             mu.aux <- AUX %*% t(X) %*% Lambda %*% logt.aux
             Sigma.aux <- sigma2.aux * AUX
-            beta.aux <- MASS::mvrnorm(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+            beta.aux <- mvrnormArma(n = 1, mu = mu.aux, Sigma = Sigma.aux)
         }
 
         shape.aux <- (n + 2 * p - 2) / 2
@@ -1806,10 +1808,10 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
-#' LLOG.LML <- LML_LLOG(thin = 20, Time = cancer[,1], Cens = cancer[,2],
-#'                      X = cancer[,3:11], chain = LLOG)
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.LML <- LML_LLOG(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
+#'                      X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
 LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
@@ -1903,10 +1905,10 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
-#' LLOG.DIC <- DIC_LLOG(Time = cancer[,1], Cens = cancer[,2], X = cancer[,3:11],
-#'                      chain = LLOG)
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.DIC <- DIC_LLOG(Time = cancer[, 1], Cens = cancer[, 2],
+#'                      X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
 DIC_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
@@ -1953,10 +1955,10 @@ DIC_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
-#' LLOG.CD <- CaseDeletion_LLOG(Time = cancer[,1], Cens = cancer[,2],
-#'                              X = cancer[,3:11], chain = LLOG)
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.CD <- CaseDeletion_LLOG(Time = cancer[, 1], Cens = cancer[, 2],
+#'                              X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
 CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
@@ -2008,9 +2010,9 @@ CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'                   Cens = cancer[,2], X = cancer[,3:11])
-#' LLOG.Outlier <- BF_lambda_obs_LLOG(1,1, X = cancer[,3:11], chain = LLOG)
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.Outlier <- BF_lambda_obs_LLOG(1,1, X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
 BF_lambda_obs_LLOG <- function(ref, obs, X, chain) {
@@ -2048,8 +2050,8 @@ BF_lambda_obs_LLOG <- function(ref, obs, X, chain) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[,1],
-#'               Cens = cancer[,2], X = cancer[,3:11])
+#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'               Cens = cancer[, 2], X = cancer[, 3:11])
 #' Trace_plot(1, LN)
 #'
 #' @export

@@ -169,8 +169,6 @@ test_that("MH_nu_LST same in C++ as in R", {
       y <- abs(y)
       u.aux <- stats::runif(1, min = 0, max = 1)
 
-
-
       log.aux <- sum(stats::dgamma(lambda, shape = y / 2, rate = y / 2,
                                    log = TRUE)) -
         sum(stats::dgamma(lambda,
@@ -190,15 +188,15 @@ test_that("MH_nu_LST same in C++ as in R", {
     list(nu = nu, ind = ind)
   }
 
-  for (prior in 1:3) {
+  for (prior in 2) {
 
     set.seed(123)
     MH.nu.LST.R <- MH.nu.LST(N = 1, omega2 = 0.5, beta = c(1, 2),
-                             lambda = c(3, 4), nu0 = 0.2, prior = 2)
+                             lambda = c(3, 4), nu0 = 0.2, prior = prior)
 
     set.seed(123)
     MH.nu.LST.Cpp <- MH_nu_LST(omega2 = 0.5, beta = c(1, 2),
-                               lambda = c(3, 4), nu0 = 0.2, prior = 2)
+                               lambda = c(3, 4), nu0 = 0.2, prior = prior)
 
     expect_equal(MH.nu.LST.R, MH.nu.LST.Cpp)
   }

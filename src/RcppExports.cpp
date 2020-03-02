@@ -437,6 +437,37 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mvrnormArma
+NumericVector mvrnormArma(int n, arma::vec mu, arma::mat Sigma);
+RcppExport SEXP _BASSLINE_mvrnormArma(SEXP nSEXP, SEXP muSEXP, SEXP SigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type Sigma(SigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(mvrnormArma(n, mu, Sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
+// logt_update_SMLN
+NumericVector logt_update_SMLN(NumericVector Time, NumericVector Cens, arma::mat X, arma::vec beta, double sigma2, int set, double eps_l, double eps_r);
+RcppExport SEXP _BASSLINE_logt_update_SMLN(SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type Time(TimeSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type Cens(CensSEXP);
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
+    Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
+    Rcpp::traits::input_parameter< int >::type set(setSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_l(eps_lSEXP);
+    Rcpp::traits::input_parameter< double >::type eps_r(eps_rSEXP);
+    rcpp_result_gen = Rcpp::wrap(logt_update_SMLN(Time, Cens, X, beta, sigma2, set, eps_l, eps_r));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_prior_LN", (DL_FUNC) &_BASSLINE_prior_LN, 4},
@@ -469,6 +500,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_BASSLINE_Post_lambda_obs_LST", (DL_FUNC) &_BASSLINE_Post_lambda_obs_LST, 4},
     {"_BASSLINE_rtnorm", (DL_FUNC) &_BASSLINE_rtnorm, 5},
     {"_BASSLINE_log_lik_LST", (DL_FUNC) &_BASSLINE_log_lik_LST, 9},
+    {"_BASSLINE_mvrnormArma", (DL_FUNC) &_BASSLINE_mvrnormArma, 3},
+    {"_BASSLINE_logt_update_SMLN", (DL_FUNC) &_BASSLINE_logt_update_SMLN, 8},
     {NULL, NULL, 0}
 };
 

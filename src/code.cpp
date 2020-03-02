@@ -37,8 +37,7 @@ double prior_LN(NumericVector beta, double sigma2, int prior, bool logs){
   return aux;
 }
 
-// Non vectorised version of prior_nu
-// Used for alpha_nu
+// Prior for nu
 // [[Rcpp::export]]
 double prior_nu_single(double nu, int prior){
   double aux;
@@ -793,6 +792,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
     upper = 1e35;
   }
 
+
   double z, pz, u, slower, supper, tr, alpha;
   bool sample = 1;
 
@@ -805,17 +805,17 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
       z = R::rnorm(mu, sd);
       return z;
 
-    }else{
-      if(upper > 1e32){
+    }else if(upper > 1e32){
         tr = (lower - mu) / sd;
       }else{
         tr = (mu - upper) / sd;
       }
       if(tr < 0){
         /* if sampling >0.5 of a normal density possibly quicker just to
-         * sample and reject */
+           sample and reject */
         while(sample == 1){
           z = R::rnorm(0.0, 1.0);
+
           if(z > tr){
             sample = 0;
           }
@@ -823,6 +823,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
       }else{
         alpha = (tr + sqrt((tr * tr) + 4.0)) / 2.0;
         while(sample == 1){
+
           z = R::rexp(1.0/alpha) + tr;
           pz = - ((alpha - z) * (alpha - z) / 2.0);
           u = -R::rexp(1.0);
@@ -830,11 +831,10 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
             sample = 0;
           }
         }
-      }
-    }
+  }
   }else{
 
-    slower = (lower  -mu) / sd;
+    slower = (lower - mu) / sd;
     supper = (upper - mu) / sd;
 
     while(sample == 1){
@@ -849,12 +849,19 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
           pz = (slower * slower - z * z) / 2.0;
         }
       }
+
       u = - R::rexp(1.0);
+
+      /*
+
+      Rcpp::Rcout << "z: " << z << std::endl;
+      Rcpp::Rcout << "u: " << u << std::endl;
+      Rcpp::Rcout << "pz: " << pz << std::endl;*/
+
       if(u < pz){
         sample = 0;
       }
     }
-
   }
   if(lower < -1e+32){
     return(mu - z * sd);
@@ -886,10 +893,9 @@ NumericVector rtnorm(int n, NumericVector lower, NumericVector upper,
     upper = NumericVector (n, upper[0]);
   }
 
-
   NumericVector rv (n);
   for( int i = 0; i < n; i++){
-    rv[i] = rtnormsingle(mu[i], sd[i],lower[i], upper[i]);
+    rv[i] = rtnormsingle(mu[i], sd[i], lower[i], upper[i]);
   }
   return rv;
 }
@@ -939,4 +945,54 @@ double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X,
                                                                nu));
   }
   return(sum(aux));
+}
+
+// [[Rcpp::export]]
+NumericVector mvrnormArma(int n, arma::vec mu, arma::mat Sigma) {
+  int ncols = Sigma.n_cols;
+  arma::mat Y = arma::randn(n, ncols);
+  Y = arma::repmat(mu, 1, n).t() + Y * arma::chol(Sigma);
+  Rcpp::NumericVector tmp = Rcpp::wrap(Y);
+  tmp.attr("dim") = R_NilValue;
+
+  return tmp;
+}
+
+// [[Rcpp::export]]
+NumericVector logt_update_SMLN (NumericVector Time, NumericVector Cens,
+                                arma::mat X, arma::vec beta, double sigma2,
+                                int set, double eps_l, double eps_r) {
+  int n = Time.length();
+  NumericVector aux(n);
+  arma::vec temp = X * beta;
+
+  NumericVector MEAN = Rcpp::wrap(X * beta);
+
+  NumericVector sdVec (n, sqrt(sigma2));
+
+
+  NumericVector maxUpper(n, 1e35);
+
+
+  if (set == 1) {
+    NumericVector TimeGreater(n);
+
+    for (int i = 0; i < n; i = i + 1){
+      if (Time[i] > eps_l){
+        TimeGreater[i] = 1;
+      }
+    }
+
+    NumericVector minLower(n, -1e35);
+
+    aux = Cens * (TimeGreater *
+      rtnorm(n, log(abs(Time - eps_l)), log(Time + eps_r), MEAN, sdVec) +
+         (1 - TimeGreater) * rtnorm(n, minLower, log(Time + eps_r), MEAN,
+           sdVec)) + (1 - Cens) *
+             rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
+  } else{
+    aux = Cens * log(Time) + (1 - Cens) *
+      rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
+  }
+  return(aux);
 }

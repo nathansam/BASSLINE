@@ -107,40 +107,41 @@ test_that("II_alpha same in C++ as in R", {
 test_that("rtnorm returns same results as truncnorm::rtruncnorm", {
   # Test when all arguments are vectors
   set.seed(123)
-  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf),
+  Cpp.result <- rtnorm(n = 2, lower = c(-1, -1), upper = c(1, 1),
                        mu = c(0, 0), sd = c(1, 1))
   set.seed(123)
-  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
-                                    b = c(Inf, Inf), mean = c(0, 0),
+  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-1, -1),
+                                    b = c(1, 1), mean = c(0, 0),
                                     sd = c(1, 1))
   expect_equal(Cpp.result, R.result)
 
   #  Test when SD isn't a vector
   set.seed(123)
-  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = c(Inf, Inf),
+  Cpp.result <- rtnorm(n = 2, lower = c(-1, -1), upper = c(Inf, Inf),
                        mu = c(0, 0), sd = 1)
   set.seed(123)
-  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
+  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-1, -1),
                                     b = c(Inf, Inf), mean = c(0, 0), sd = 1)
   expect_equal(Cpp.result, R.result)
 
   # Test when lower / a isn't a vector
   set.seed(123)
-  Cpp.result <- rtnorm(n = 2, lower = -Inf, upper = c(Inf, Inf), mu = c(0, 0),
+  Cpp.result <- rtnorm(n = 2, lower = -1, upper = c(1, 1), mu = c(0, 0),
                        sd = c(1, 1))
   set.seed(123)
-  R.result <- truncnorm::rtruncnorm(n = 2, a = -Inf,
-                                    b = c(Inf, Inf), mean = c(0, 0),
+  R.result <- truncnorm::rtruncnorm(n = 2, a = -1,
+                                    b = c(1, 1), mean = c(0, 0),
                                     sd = c(1, 1))
   expect_equal(Cpp.result, R.result)
 
   # Test when upper / b isn't a vector
   set.seed(123)
-  Cpp.result <- rtnorm(n = 2, lower = c(-Inf, -Inf), upper = Inf, mu = c(0, 0),
+  Cpp.result <- rtnorm(n = 2, lower = c(-1, -1), upper = Inf, mu = c(0, 0),
                        sd = c(1, 1))
   set.seed(123)
-  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-Inf, -Inf),
+  R.result <- truncnorm::rtruncnorm(n = 2, a = c(-1, -1),
                                     b = Inf, mean = c(0, 0),
                                     sd = c(1, 1))
+
   expect_equal(Cpp.result, R.result)
 })
