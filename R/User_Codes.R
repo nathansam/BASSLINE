@@ -56,61 +56,10 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
     MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
                      prior, set, eps_l, eps_r)
 
-     # k <- length(beta0)
-     # n <- length(Time)
-     # N.aux <- round(N / thin, 0)
-     # if (prior == 1) {
-     #     p <- 1 + k / 2
-     # }
-     # if (prior == 2) {
-     #     p <- 1
-     # }
-     #
-     # beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
-     # beta[1, ] <- beta0
-     # sigma2 <- rep(0, times = N.aux + 1)
-     # sigma2[1] <- sigma20
-     # logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
-     # logt[1, ] <- log(Time)
-     #
-     # beta.aux <- beta[1, ]
-     # sigma2.aux <- sigma2[1]
-     # logt.aux <- logt[1, ]
-     #
-     # for (iter in 2:(N + 1)) {
-     #     mu.aux <- solve(t(X) %*% X) %*% t(X) %*% logt.aux
-     #     Sigma.aux <- sigma2.aux * solve(t(X) %*% X)
-     #     beta.aux <- mvrnormArma(n = 1, mu = mu.aux, Sigma = Sigma.aux)
-     #
-     #
-     #     shape.aux <- (n + 2 * p - 2) / 2
-     #     rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% (logt.aux - X %*%
-     #                                                             beta.aux)
-     #     if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
-     #         sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
-     #                                      rate = rate.aux)) ^ (-1)
-     #     }
-     #
-     #
-     #     logt.aux <- logt_update_SMLN(Time, Cens, X, beta.aux, sigma2.aux, set,
-     #                                  eps_l, eps_r)
-     #
-     #     if (iter %% thin == 0) {
-     #         beta[iter / thin + 1, ] <- beta.aux
-     #         sigma2[iter / thin + 1] <- sigma2.aux
-     #         logt[iter / thin + 1, ] <- logt.aux
-     #     }
-     #     if ((iter - 1) %% 1e+05 == 0) {
-     #         cat(paste("Iteration :", iter, "\n"))
-     #     }
-     # }
-     #
-     # chain <- cbind(beta, sigma2, logt)
-
     chain <-  MCMC_LN_CPP(N, thin, burn, Time, Cens, X, beta0, sigma20, prior,
                           set, eps_l, eps_r)
 
-    beta.cols <- paste("beta.", seq(ncol(X)), sep = "")
+    beta.cols <- paste("beta.", colnames(X), sep = "")
     logt.cols <- paste("logt.", seq(length(Time)), sep = "")
     colnames(chain) <- c(beta.cols, "sigma2", logt.cols)
 
@@ -118,7 +67,6 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
         burn.period <- 1:(burn / thin)
         chain <- chain [-burn.period, ]
     }
-
     return(chain)
 }
 
