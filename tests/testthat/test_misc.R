@@ -7,7 +7,8 @@ test_that("Title & labels for Trace_plot are as expected", {
                 Cens = cancer[, 2], X = cancer[, 3:11])
 
   p <- Trace_plot(1, LN)
-  expect_equal(as.character(p$labels[1]), "Trace Plot for Variable beta.1")
+  expect_equal(as.character(p$labels[1]),
+               "Trace Plot for Variable beta.Intercept")
   expect_equal(as.character(p$labels[2]), "Iteration")
   expect_equal(as.character(p$labels[3]), "Value")
 })
