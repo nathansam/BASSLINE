@@ -852,25 +852,17 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
 
       u = - R::rexp(1.0);
 
-      /*
-
-      Rcpp::Rcout << "z: " << z << std::endl;
-      Rcpp::Rcout << "u: " << u << std::endl;
-      Rcpp::Rcout << "pz: " << pz << std::endl;*/
-
       if(u < pz){
         sample = 0;
       }
     }
   }
-  if(lower < -1e+32){
+  if(lower < -1e32){
     return(mu - z * sd);
   }else{
     return(z * sd + mu);
   }
 }
-
-
 
 // C++ adaptation of Jarrod Hadfield's MCMCglmm::rtnorm
 // [[Rcpp::export]]
@@ -970,22 +962,16 @@ arma::vec mvrnormArma2(int n, arma::vec mu, arma::mat Sigma) {
 NumericVector logt_update_SMLN (NumericVector Time, NumericVector Cens,
                                 arma::mat X, arma::vec beta, double sigma2,
                                 int set, double eps_l, double eps_r) {
-  int n = Time.length();
+  const int n = Time.length();
   NumericVector aux(n);
-  arma::vec temp = X * beta;
 
   NumericVector MEAN = Rcpp::wrap(X * beta);
-
   NumericVector sdVec (n, sqrt(sigma2));
-
-
   NumericVector maxUpper(n, 1e35);
-
 
   if (set == 1) {
     NumericVector TimeGreater(n);
-
-    for (int i = 0; i < n; i = i + 1){
+    for (int i = 0; i < n; i++){
       if (Time[i] > eps_l){
         TimeGreater[i] = 1;
       }
@@ -996,8 +982,7 @@ NumericVector logt_update_SMLN (NumericVector Time, NumericVector Cens,
     aux = Cens * (TimeGreater *
       rtnorm(n, log(abs(Time - eps_l)), log(Time + eps_r), MEAN, sdVec) +
          (1 - TimeGreater) * rtnorm(n, minLower, log(Time + eps_r), MEAN,
-           sdVec)) + (1 - Cens) *
-             rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
+           sdVec)) + (1 - Cens) * rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
   } else{
     aux = Cens * log(Time) + (1 - Cens) *
       rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
@@ -1062,14 +1047,16 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
 
     arma::vec rate_aux = 0.5 * (logt_aux - X * beta_aux).t() * (logt_aux - X *
       beta_aux);
+    
+    
+    int max_i = rate_aux.n_elem;
 
-
-
-    for (int i = 0; i < rate_aux.n_elem; i++){
-      if (rate_aux[i] > 0 & std::isnan(rate_aux[i]) == false) {
+    for (int i = 0; i < max_i; i++){
+      if (rate_aux[i] > 0 && std::isnan(rate_aux[i]) == false) {
         sigma2_aux = pow(R::rgamma(shape_aux, 1.0 / rate_aux[i]), -1);
       }
 
+      
 
     }
 
