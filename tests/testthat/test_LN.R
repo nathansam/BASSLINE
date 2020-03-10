@@ -108,44 +108,6 @@ test_that("MCMC_LN same in C++ as in R", {
 
 })
 
-test_that("LML_LN Returns Expected Result", {
-  if (.Machine$sizeof.pointer == 8) {
-
-    set.seed(123)
-    LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-                  Cens = cancer[, 2], X = cancer[, 3:11])
-    LN.LML <- LML_LN(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
-                     X = cancer[, 3:11], chain = LN)
-    testthat::expect_equal(round(as.numeric(LN.LML), 2), c(-716.00, -0.17,
-                                                           0.92, 14.79,
-                                                           -731.88))
-    }
-})
-
-test_that("DIC_LN Returns Expected Result", {
-  if (.Machine$sizeof.pointer == 8) {
-    set.seed(123)
-
-    LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-                  Cens = cancer[, 2], X = cancer[, 3:11])
-    LN.DIC <- DIC_LN(Time = cancer[, 1], Cens = cancer[, 2], X = cancer[, 3:11],
-                     chain = LN)
-    testthat::expect_equal(round(LN.DIC, 4), 1444.9356)
-    }
-})
-
-test_that("CaseDeletion_LN Returns Expected Result", {
-
-  if (.Machine$sizeof.pointer == 8) {
-    set.seed(123)
-    LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-                  Cens = cancer[, 2], X = cancer[, 3:11])
-    LN.CD <- CaseDeletion_LN(Time = cancer[, 1], Cens = cancer[, 2],
-                             X = cancer[, 3:11], chain = LN)
-    means <- round(c(mean(LN.CD[, 1]), mean(LN.CD[, 2]), mean(LN.CD[, 3])), 4)
-    testthat::expect_equal(means, c(-5.2886, 0.0388, 0.6002))
-  }
-})
 
 ################################################################################
 ############################## INTERNAL FUNCTIONS ##############################
@@ -156,8 +118,8 @@ test_that("Prior_LN returns expect values", {
 
   prior.LN<-function(beta,sigma2,prior,log){
     k <- length(beta)
-    if(prior == 1) p<- 1 + k / 2
-    if(prior == 2) p<- 1
+    if(prior == 1) p <- 1 + k / 2
+    if(prior == 2) p <- 1
     if(prior==3) p <- 1
     if(log == FALSE) aux <- sigma2 ^ ( - p)
     if(log == TRUE) aux <- -p * log(sigma2)

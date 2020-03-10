@@ -404,16 +404,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // rtnorm
-NumericVector rtnorm(int n, NumericVector lower, NumericVector upper, NumericVector mu, NumericVector sd);
+arma::colvec rtnorm(int n, arma::vec lower, arma::vec upper, arma::vec mu, arma::vec sd);
 RcppExport SEXP _BASSLINE_rtnorm(SEXP nSEXP, SEXP lowerSEXP, SEXP upperSEXP, SEXP muSEXP, SEXP sdSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type n(nSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type lower(lowerSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type upper(upperSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type mu(muSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type sd(sdSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type lower(lowerSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type upper(upperSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type mu(muSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type sd(sdSEXP);
     rcpp_result_gen = Rcpp::wrap(rtnorm(n, lower, upper, mu, sd));
     return rcpp_result_gen;
 END_RCPP
@@ -464,13 +464,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // logt_update_SMLN
-NumericVector logt_update_SMLN(NumericVector Time, NumericVector Cens, arma::mat X, arma::vec beta, double sigma2, int set, double eps_l, double eps_r);
+arma::vec logt_update_SMLN(arma::vec Time, arma::vec Cens, arma::mat X, arma::vec beta, double sigma2, int set, double eps_l, double eps_r);
 RcppExport SEXP _BASSLINE_logt_update_SMLN(SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericVector >::type Time(TimeSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Cens(CensSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Time(TimeSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Cens(CensSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
@@ -482,7 +482,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // MCMC_LN_CPP
-arma::mat MCMC_LN_CPP(int N, int thin, int burn, arma::vec Time, NumericVector Cens, arma::mat X, arma::vec beta0, double sigma20, int prior, int set, double eps_l, double eps_r);
+arma::mat MCMC_LN_CPP(int N, int thin, int burn, arma::vec Time, arma::vec Cens, arma::mat X, arma::vec beta0, double sigma20, int prior, int set, double eps_l, double eps_r);
 RcppExport SEXP _BASSLINE_MCMC_LN_CPP(SEXP NSEXP, SEXP thinSEXP, SEXP burnSEXP, SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP beta0SEXP, SEXP sigma20SEXP, SEXP priorSEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -491,7 +491,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
     Rcpp::traits::input_parameter< int >::type burn(burnSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type Time(TimeSEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type Cens(CensSEXP);
+    Rcpp::traits::input_parameter< arma::vec >::type Cens(CensSEXP);
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type beta0(beta0SEXP);
     Rcpp::traits::input_parameter< double >::type sigma20(sigma20SEXP);

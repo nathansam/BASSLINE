@@ -86,13 +86,11 @@ NumericVector J_alpha(NumericVector alpha, int k){
 // [[Rcpp::export]]
 double J_alpha_single(double alpha, int k){
   double aux = pow(alpha * (alpha - 1.0) * std::tgamma(1.0 - 1.0 / alpha) /
-                   std::tgamma(1.0 / alpha) ,
-                   (k / 2.0)) * (1.0 / alpha) *
-                     sqrt((1.0 + 1.0 / alpha) *
-                        R::trigamma(1.0 + 1.0 / alpha) - 1.0);
+                   std::tgamma(1.0 / alpha), (k / 2.0)) *
+                     (1.0 / alpha) * sqrt((1.0 + 1.0 / alpha) *
+                       R::trigamma(1.0 + 1.0 / alpha) - 1.0);
   return aux;
 }
-
 
 // [[Rcpp::export]]
 NumericVector II_alpha (NumericVector alpha){
@@ -137,12 +135,11 @@ NumericVector prior_alpha(NumericVector alpha, int  k, int prior) {
     aux = II_alpha(alpha);
     return aux;
   }
-
   if (prior == 3){
     aux = I_alpha(alpha);
     return aux;
   }
-  return 1;
+  return 0;
 }
 
 // [[Rcpp::export]]
@@ -158,7 +155,6 @@ double prior_alpha_single(double alpha, int  k, int prior) {
     aux = II_alpha_single(alpha);
     return aux;
   }
-
   if (prior == 3){
     aux = I_alpha_single(alpha);
     return aux;
@@ -174,18 +170,17 @@ NumericVector prior_LEP(NumericVector beta, float sigma2, NumericVector alpha,
   if (logs == false) {
     NumericVector aux = prior_LN(beta, sigma2, prior, logs = FALSE) *
       prior_alpha(alpha, beta.size(), prior);
-    return(aux);
+    return aux;
   } else{
     NumericVector aux = prior_LN(beta, sigma2, prior, logs = TRUE) +
       log(prior_alpha(alpha, beta.size(), prior));
-    return(aux);
+    return aux;
   }
 }
 
-/*
-##### SAMPLING FROM A GENERALIZED INVERSE GAUSSIAN DISTRIBUTION
+/*### SAMPLING FROM A GENERALIZED INVERSE GAUSSIAN DISTRIBUTION
 ##### (REQUIRED FOR SEVERAL .LLOG FUNCTIONS)
-##### BASED ON HOLMES AND HELD (2006)*/
+##### BASED ON HOLMES AND HELD (2006) */
 
 // [[Rcpp::export]]
 double r_GIG(double r) {
@@ -783,7 +778,6 @@ double Post_lambda_obs_LST(const unsigned int obs, double  ref, arma::mat X,
   return aux;
 }
 
-
 double rtnormsingle(double mu, double sd, double lower, double upper){
   if (lower == R_NegInf) {
     lower = -1e35;
@@ -794,6 +788,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
 
 
   double z, pz, u, slower, supper, tr, alpha;
+  int count = 0; // Used to check for user interrupts in while loops
   bool sample = 1;
 
   if(lower >= upper){
@@ -813,7 +808,16 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
       if(tr < 0){
         /* if sampling >0.5 of a normal density possibly quicker just to
            sample and reject */
+
+
         while(sample == 1){
+
+          count = count + 1;
+          if (count == 100){
+            Rcpp::checkUserInterrupt();
+            count = 0;
+          }
+
           z = R::rnorm(0.0, 1.0);
 
           if(z > tr){
@@ -823,6 +827,11 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
       }else{
         alpha = (tr + sqrt((tr * tr) + 4.0)) / 2.0;
         while(sample == 1){
+          count = count + 1;
+          if (count == 100){
+            Rcpp::checkUserInterrupt();
+            count = 0;
+          }
 
           z = R::rexp(1.0/alpha) + tr;
           pz = - ((alpha - z) * (alpha - z) / 2.0);
@@ -838,6 +847,12 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
     supper = (upper - mu) / sd;
 
     while(sample == 1){
+      count = count + 1;
+      if (count == 100){
+        Rcpp::checkUserInterrupt();
+        count = 0;
+      }
+
       z = R::runif(slower, supper);
 
       if(slower <= 0.0 && 0.0 <= supper){
@@ -852,12 +867,6 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
 
       u = - R::rexp(1.0);
 
-      /*
-
-      Rcpp::Rcout << "z: " << z << std::endl;
-      Rcpp::Rcout << "u: " << u << std::endl;
-      Rcpp::Rcout << "pz: " << pz << std::endl;*/
-
       if(u < pz){
         sample = 0;
       }
@@ -870,30 +879,26 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
   }
 }
 
+arma::vec Vect(int n, arma::vec x){
+  // If arma::vec is length 1 then repeat value in vector n times.
+  if (x.n_elem == 1){
+    double xVal = x[0];
+    x = arma::vec(n);
+    x.fill(xVal);
+  }
+  return x;
+}
 
 
 // C++ adaptation of Jarrod Hadfield's MCMCglmm::rtnorm
 // [[Rcpp::export]]
-NumericVector rtnorm(int n, NumericVector lower, NumericVector upper,
-                     NumericVector mu, NumericVector sd){
+arma::colvec rtnorm(int n, arma::vec lower, arma::vec upper,
+                     arma::vec mu, arma::vec sd){
 
-  if (mu.length() == 1) {
-    mu = NumericVector (n, mu[0]);
-  }
+  mu = Vect(n, mu); sd = Vect(n, sd);
+  lower = Vect(n, lower); upper = Vect(n, upper);
 
-  if (sd.length() == 1) {
-    sd = NumericVector (n, sd[0]);
-  }
-
-  if (lower.length() == 1) {
-    lower = NumericVector (n, lower[0]);
-  }
-
-  if (upper.length() == 1) {
-    upper = NumericVector (n, upper[0]);
-  }
-
-  NumericVector rv (n);
+  arma::colvec rv (n);
   for( int i = 0; i < n; i++){
     rv[i] = rtnormsingle(mu[i], sd[i], lower[i], upper[i]);
   }
@@ -908,7 +913,6 @@ double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X,
   const unsigned int n = Time.length();
   NumericVector aux(n);
   NumericVector MEAN = Rcpp::wrap(X * beta);
-
 
   NumericVector sigma2Vec(n, sigma2);
   NumericVector nuVec(n, nu);
@@ -944,7 +948,7 @@ double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X,
                                                                / sqrt(sigma2),
                                                                nu));
   }
-  return(sum(aux));
+  return sum(aux);
 }
 
 // [[Rcpp::export]]
@@ -967,91 +971,89 @@ arma::vec mvrnormArma2(int n, arma::vec mu, arma::mat Sigma) {
 }
 
 // [[Rcpp::export]]
-NumericVector logt_update_SMLN (NumericVector Time, NumericVector Cens,
+arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
                                 arma::mat X, arma::vec beta, double sigma2,
                                 int set, double eps_l, double eps_r) {
-  int n = Time.length();
-  NumericVector aux(n);
-  arma::vec temp = X * beta;
+  int n = Time.n_elem;
+  arma::vec aux(n);
 
-  NumericVector MEAN = Rcpp::wrap(X * beta);
+  arma::vec MEAN = X * beta;
+  arma::vec sdVec (n);
+  sdVec.fill(sqrt(sigma2));
 
-  NumericVector sdVec (n, sqrt(sigma2));
-
-
-  NumericVector maxUpper(n, 1e35);
+  arma::vec maxUpper (n);
+  maxUpper.fill(1e35);
 
 
   if (set == 1) {
-    NumericVector TimeGreater(n);
+    arma::vec TimeGreater(n);
 
-    for (int i = 0; i < n; i = i + 1){
+    for (int i = 0; i < n; i++){
       if (Time[i] > eps_l){
         TimeGreater[i] = 1;
       }
     }
 
-    NumericVector minLower(n, -1e35);
+    arma::vec minLower(n);
+    minLower.fill(-1e35);
 
-    aux = Cens * (TimeGreater *
+    aux = Cens % (TimeGreater %
       rtnorm(n, log(abs(Time - eps_l)), log(Time + eps_r), MEAN, sdVec) +
-         (1 - TimeGreater) * rtnorm(n, minLower, log(Time + eps_r), MEAN,
-           sdVec)) + (1 - Cens) *
+         (1 - TimeGreater) % rtnorm(n, minLower, log(Time + eps_r), MEAN,
+           sdVec)) + (1 - Cens) %
              rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
   } else{
-    aux = Cens * log(Time) + (1 - Cens) *
+    aux = Cens % log(Time) + (1 - Cens) %
       rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
   }
-  return(aux);
+
+
+  return aux;
 }
-
-
 
 // [[Rcpp::export]]
 arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
-                           NumericVector Cens, arma::mat X, arma::vec beta0,
-                           double sigma20, int prior, int set,
-                           double eps_l, double eps_r) {
+                       arma::vec Cens, arma::mat X, arma::vec beta0,
+                       double sigma20, int prior, int set, double eps_l,
+                       double eps_r) {
 
-      int k = beta0.n_elem; // How many betas?
-      int n = Time.n_elem; // How many observations?
-      int N_aux = N / thin;
+    int k = beta0.n_elem; // How many betas?
+    int n = Time.n_elem; // How many observations?
+    int N_aux = N / thin;
 
-      double p;
+    double p;
 
-      if (prior == 1) {
-        p = 1 + k / 2;
-      }
-      if (prior == 2) {
-        p = 1;
-      }
+    if (prior == 1) {
+      p = 1 + k / 2;
+    }
+    if (prior == 2) {
+      p = 1;
+    }
 
-      // empty matrix with N_aux + 1 rows and k cols
-      arma::mat beta = arma::zeros(N_aux + 1, k);
+    // empty matrix with N_aux + 1 rows and k cols
+    arma::mat beta = arma::zeros(N_aux + 1, k);
 
-      beta.row(0) = beta0.t();
+    beta.row(0) = beta0.t();
 
-      arma::vec sigma2(N_aux + 1);
-      sigma2[0] = sigma20;
+    arma::vec sigma2(N_aux + 1);
+    sigma2[0] = sigma20;
 
-      arma::mat logt = arma::zeros(N_aux + 1, n);
-      logt.row(0) = log(Time).t();
+    arma::mat logt = arma::zeros(N_aux + 1, n);
+    logt.row(0) = log(Time).t();
 
-      arma::vec beta_aux = beta0;
+    arma::vec beta_aux = beta0;
+    double sigma2_aux = sigma2[0];
+    arma::vec logt_aux = log(Time);
 
-      double sigma2_aux = sigma2[0];
-      arma::vec logt_aux = log(Time);
-
-
-      // Identity matrix
-      arma::mat D = arma::eye<arma::mat>(X.n_cols, X.n_cols);
+    // Identity matrix
+    arma::mat D = arma::eye<arma::mat>(X.n_cols, X.n_cols);
 
   for (int iter = 1; iter < N + 1; iter ++) {
 
 
-
     arma::vec  mu_aux = arma::solve(X.t() * X, D) * X.t() * logt_aux;
     arma::mat Sigma_aux = sigma2_aux * solve(X.t() * X, D);
+
 
 
     arma::vec beta_aux = mvrnormArma2(1, mu_aux, Sigma_aux);
@@ -1070,11 +1072,15 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
         sigma2_aux = pow(R::rgamma(shape_aux, 1.0 / rate_aux[i]), -1);
       }
 
-
     }
 
-    logt_aux = logt_update_SMLN(Rcpp::wrap(Time), Rcpp::wrap(Cens), X, beta_aux,
+
+
+    // ISSUE HERE!
+    logt_aux = logt_update_SMLN(Time, Cens, X, beta_aux,
                                 sigma2_aux, set, eps_l, eps_r);
+
+
 
       if (iter % thin == 0) {
         beta.row(iter / thin) = beta_aux.t();
@@ -1082,14 +1088,18 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
         logt.row(iter / thin) = logt_aux.t();
       }
 
-      if ((iter - 1) % 100000 == 0) {
+      if ((iter) % 1000 == 0) {
+        Rcpp::checkUserInterrupt();
+      }
+
+      if ((iter) % 100000 == 0) {
         Rcpp::Rcout << "Iteration :" << iter << std::endl;
       }
+  }
+  arma::mat chain = arma::join_horiz(beta, sigma2);
+  chain = arma::join_horiz(chain, logt);
+  return chain;
   }
 
 
 
-  arma::mat chain = arma::join_horiz(beta, sigma2);
-  chain = arma::join_horiz(chain, logt);
-  return chain;
-}

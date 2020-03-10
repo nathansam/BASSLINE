@@ -60,7 +60,7 @@ test_that("prior_LEP same result in C++ as in R", {
 test_that("Unexpected arguments for prior funcs return 0", {
 
   expect_equal(prior_nu_single(1, prior = 1), 0)
-  expect_equal(prior_alpha(c(1, 2), 1, 4), 0)
+  expect_equal(prior_alpha(c(1, 2), 1, 4), numeric(0))
   expect_equal(prior_alpha_single(2, 1, 4), 0)
 })
 
@@ -109,6 +109,8 @@ test_that("rtnorm returns same results as truncnorm::rtruncnorm", {
   set.seed(123)
   Cpp.result <- rtnorm(n = 2, lower = c(-1, -1), upper = c(1, 1),
                        mu = c(0, 0), sd = c(1, 1))
+  Cpp.result <- as.vector(Cpp.result)
+
   set.seed(123)
   R.result <- truncnorm::rtruncnorm(n = 2, a = c(-1, -1),
                                     b = c(1, 1), mean = c(0, 0),
@@ -119,6 +121,8 @@ test_that("rtnorm returns same results as truncnorm::rtruncnorm", {
   set.seed(123)
   Cpp.result <- rtnorm(n = 2, lower = c(-1, -1), upper = c(Inf, Inf),
                        mu = c(0, 0), sd = 1)
+  Cpp.result <- as.vector(Cpp.result)
+
   set.seed(123)
   R.result <- truncnorm::rtruncnorm(n = 2, a = c(-1, -1),
                                     b = c(Inf, Inf), mean = c(0, 0), sd = 1)
@@ -128,6 +132,8 @@ test_that("rtnorm returns same results as truncnorm::rtruncnorm", {
   set.seed(123)
   Cpp.result <- rtnorm(n = 2, lower = -1, upper = c(1, 1), mu = c(0, 0),
                        sd = c(1, 1))
+  Cpp.result <- as.vector(Cpp.result)
+
   set.seed(123)
   R.result <- truncnorm::rtruncnorm(n = 2, a = -1,
                                     b = c(1, 1), mean = c(0, 0),
@@ -138,6 +144,7 @@ test_that("rtnorm returns same results as truncnorm::rtruncnorm", {
   set.seed(123)
   Cpp.result <- rtnorm(n = 2, lower = c(-1, -1), upper = Inf, mu = c(0, 0),
                        sd = c(1, 1))
+  Cpp.result <- as.vector(Cpp.result)
   set.seed(123)
   R.result <- truncnorm::rtruncnorm(n = 2, a = c(-1, -1),
                                     b = Inf, mean = c(0, 0),
