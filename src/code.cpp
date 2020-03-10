@@ -872,12 +872,13 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
       }
     }
   }
-  if(lower < -1e+32){
+  if(lower < -1e32){
     return(mu - z * sd);
   }else{
     return(z * sd + mu);
   }
 }
+
 
 arma::vec Vect(int n, arma::vec x){
   // If arma::vec is length 1 then repeat value in vector n times.
@@ -888,7 +889,6 @@ arma::vec Vect(int n, arma::vec x){
   }
   return x;
 }
-
 
 // C++ adaptation of Jarrod Hadfield's MCMCglmm::rtnorm
 // [[Rcpp::export]]
@@ -984,7 +984,6 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
   arma::vec maxUpper (n);
   maxUpper.fill(1e35);
 
-
   if (set == 1) {
     arma::vec TimeGreater(n);
 
@@ -1002,6 +1001,7 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
          (1 - TimeGreater) % rtnorm(n, minLower, log(Time + eps_r), MEAN,
            sdVec)) + (1 - Cens) %
              rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
+
   } else{
     aux = Cens % log(Time) + (1 - Cens) %
       rtnorm(n, log(Time), maxUpper, MEAN, sdVec);
@@ -1064,14 +1064,14 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
 
     arma::vec rate_aux = 0.5 * (logt_aux - X * beta_aux).t() * (logt_aux - X *
       beta_aux);
+    
+    
+    int max_i = rate_aux.n_elem;
 
-
-
-    for (int i = 0; i < rate_aux.n_elem; i++){
-      if (rate_aux[i] > 0 & std::isnan(rate_aux[i]) == false) {
+    for (int i = 0; i < max_i; i++){
+      if (rate_aux[i] > 0 && std::isnan(rate_aux[i]) == false) {
         sigma2_aux = pow(R::rgamma(shape_aux, 1.0 / rate_aux[i]), -1);
       }
-
     }
 
 
