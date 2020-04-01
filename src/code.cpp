@@ -989,7 +989,7 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
 
     for (int i = 0; i < n; i++){
       if (Time[i] > eps_l){
-        TimeGreater[i] = 1;
+        TimeGreater[i] = 1.0;
       }
     }
 
