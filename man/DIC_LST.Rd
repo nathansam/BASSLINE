@@ -4,7 +4,7 @@
 \alias{DIC_LST}
 \title{Deviance information criterion for the log-student's t model}
 \usage{
-DIC_LST(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5)
+DIC_LST(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5)
 }
 \arguments{
 \item{Time}{Vector containing the survival times.}

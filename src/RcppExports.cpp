@@ -341,7 +341,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // log_lik_LEP
-double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X, arma::vec beta, double sigma2, double alpha, int set, double eps_l, double eps_r);
+double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X, arma::vec beta, double sigma2, double alpha, bool set, double eps_l, double eps_r);
 RcppExport SEXP _BASSLINE_log_lik_LEP(SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP alphaSEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -352,7 +352,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
     Rcpp::traits::input_parameter< double >::type alpha(alphaSEXP);
-    Rcpp::traits::input_parameter< int >::type set(setSEXP);
+    Rcpp::traits::input_parameter< bool >::type set(setSEXP);
     Rcpp::traits::input_parameter< double >::type eps_l(eps_lSEXP);
     Rcpp::traits::input_parameter< double >::type eps_r(eps_rSEXP);
     rcpp_result_gen = Rcpp::wrap(log_lik_LEP(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r));
@@ -419,7 +419,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // log_lik_LST
-double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X, arma::vec beta, double sigma2, double nu, int set, double eps_l, double eps_r);
+double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X, arma::vec beta, double sigma2, double nu, bool set, double eps_l, double eps_r);
 RcppExport SEXP _BASSLINE_log_lik_LST(SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP nuSEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -430,7 +430,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
     Rcpp::traits::input_parameter< double >::type nu(nuSEXP);
-    Rcpp::traits::input_parameter< int >::type set(setSEXP);
+    Rcpp::traits::input_parameter< bool >::type set(setSEXP);
     Rcpp::traits::input_parameter< double >::type eps_l(eps_lSEXP);
     Rcpp::traits::input_parameter< double >::type eps_r(eps_rSEXP);
     rcpp_result_gen = Rcpp::wrap(log_lik_LST(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r));
@@ -464,7 +464,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // logt_update_SMLN
-arma::vec logt_update_SMLN(arma::vec Time, arma::vec Cens, arma::mat X, arma::vec beta, double sigma2, int set, double eps_l, double eps_r);
+arma::vec logt_update_SMLN(arma::vec Time, arma::vec Cens, arma::mat X, arma::vec beta, double sigma2, bool set, double eps_l, double eps_r);
 RcppExport SEXP _BASSLINE_logt_update_SMLN(SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP betaSEXP, SEXP sigma2SEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -474,7 +474,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
     Rcpp::traits::input_parameter< arma::vec >::type beta(betaSEXP);
     Rcpp::traits::input_parameter< double >::type sigma2(sigma2SEXP);
-    Rcpp::traits::input_parameter< int >::type set(setSEXP);
+    Rcpp::traits::input_parameter< bool >::type set(setSEXP);
     Rcpp::traits::input_parameter< double >::type eps_l(eps_lSEXP);
     Rcpp::traits::input_parameter< double >::type eps_r(eps_rSEXP);
     rcpp_result_gen = Rcpp::wrap(logt_update_SMLN(Time, Cens, X, beta, sigma2, set, eps_l, eps_r));
@@ -482,7 +482,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // MCMC_LN_CPP
-arma::mat MCMC_LN_CPP(int N, int thin, int burn, arma::vec Time, arma::vec Cens, arma::mat X, arma::vec beta0, double sigma20, int prior, int set, double eps_l, double eps_r);
+arma::mat MCMC_LN_CPP(int N, int thin, int burn, arma::vec Time, arma::vec Cens, arma::mat X, arma::vec beta0, double sigma20, int prior, bool set, double eps_l, double eps_r);
 RcppExport SEXP _BASSLINE_MCMC_LN_CPP(SEXP NSEXP, SEXP thinSEXP, SEXP burnSEXP, SEXP TimeSEXP, SEXP CensSEXP, SEXP XSEXP, SEXP beta0SEXP, SEXP sigma20SEXP, SEXP priorSEXP, SEXP setSEXP, SEXP eps_lSEXP, SEXP eps_rSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -496,7 +496,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< arma::vec >::type beta0(beta0SEXP);
     Rcpp::traits::input_parameter< double >::type sigma20(sigma20SEXP);
     Rcpp::traits::input_parameter< int >::type prior(priorSEXP);
-    Rcpp::traits::input_parameter< int >::type set(setSEXP);
+    Rcpp::traits::input_parameter< bool >::type set(setSEXP);
     Rcpp::traits::input_parameter< double >::type eps_l(eps_lSEXP);
     Rcpp::traits::input_parameter< double >::type eps_r(eps_rSEXP);
     rcpp_result_gen = Rcpp::wrap(MCMC_LN_CPP(N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set, eps_l, eps_r));

@@ -15,7 +15,7 @@ MCMC_LLOG(
   beta0 = NULL,
   sigma20 = NULL,
   prior = 2,
-  set = 1,
+  set = TRUE,
   eps_l = 0.5,
   eps_r = 0.5,
   N.AKS = 3

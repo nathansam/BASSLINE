@@ -47,7 +47,7 @@
 #'
 #' @export
 MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
-                    prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5) {
+                    prior = 2, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
 
     # Sample starting values if not given
     if (is.null(beta0)) beta0 <- beta.sample(n = ncol(X))
@@ -86,7 +86,7 @@ MCMC_LN <- function(N, thin, burn, Time, Cens, X, beta0 = NULL, sigma20 = NULL,
 #'                          X = cancer[, 3:11], chain = LN)
 #'
 #' @export
-LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
+LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE, eps_l = 0.5,
                    eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- length(Time)
@@ -178,7 +178,7 @@ LML_LN <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
 #'
 #' @export
 
-DIC_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
+DIC_LN <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
@@ -229,7 +229,7 @@ DIC_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #'                          X = cancer[, 3:11], chain = LN)
 #'
 #' @export
-CaseDeletion_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
+CaseDeletion_LN <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
                             eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]
@@ -291,7 +291,7 @@ CaseDeletion_LN <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'
 #' @export
 MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
-                     sigma20 = NULL, nu0 = NULL, prior = 2, set = 1, eps_l = 0.5,
+                     sigma20 = NULL, nu0 = NULL, prior = 2, set = TRUE, eps_l = 0.5,
                      eps_r = 0.5, ar = 0.44) {
 
     # Sample starting values if not given
@@ -434,7 +434,7 @@ MCMC_LST <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
 #'                    X = cancer[, 3:11], chain = LST)
 #'
 #' @export
-LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
+LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = TRUE,
                     eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- length(Time)
@@ -577,7 +577,7 @@ LML_LST <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
 #'                    X = cancer[, 3:11], chain = LST)
 #'
 #' @export
-DIC_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
+DIC_LST <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
@@ -627,7 +627,7 @@ DIC_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #'                            cancer[, 3:11], chain = LST)
 #'
 #' @export
-CaseDeletion_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
+CaseDeletion_LST <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
                              eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]
@@ -691,7 +691,7 @@ CaseDeletion_LST <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'
 #' @export
 BF_lambda_obs_LST <- function(N, thin, burn, ref, obs, Time, Cens, X,
-                              chain, Q = 1, prior = 2, set = 1, eps_l = 0.5,
+                              chain, Q = 1, prior = 2, set = TRUE, eps_l = 0.5,
                               eps_r =0.5, ar = 0.44) {
     chain <- as.matrix(chain)
     aux1 <- Post_lambda_obs_LST(obs, ref, X, chain)
@@ -727,7 +727,7 @@ BF_lambda_obs_LST <- function(N, thin, burn, ref, obs, Time, Cens, X,
 #'
 #' @export
 MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
-                      sigma20 = NULL, prior = 2, set = 1, eps_l = 0.5,
+                      sigma20 = NULL, prior = 2, set = TRUE, eps_l = 0.5,
                       eps_r = 0.5) {
 
     # Sample starting values if not given
@@ -845,7 +845,7 @@ MCMC_LLAP <- function(N, thin, burn, Time, Cens, X, Q = 1, beta0 = NULL,
 #'                   Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
-LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
+LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = TRUE,
                      eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- length(Time)
@@ -943,7 +943,7 @@ LML_LLAP <- function(thin, Time, Cens, X, chain, Q = 1, prior = 2, set = 1,
 #'                      X = cancer[, 3:11], chain = LLAP)
 #'
 #' @export
-DIC_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
+DIC_LLAP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
@@ -993,7 +993,7 @@ DIC_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #'                              X = cancer[, 3:11], chain = LLAP)
 #'
 #' @export
-CaseDeletion_LLAP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
+CaseDeletion_LLAP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
                               eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]
@@ -1102,7 +1102,7 @@ BF_lambda_obs_LLAP <- function(obs, ref, X, chain) {
 #'
 #' @export
 MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
-                     alpha0 = NULL, prior = 2, set = 1, eps_l =0.5, eps_r =0.5,
+                     alpha0 = NULL, prior = 2, set = TRUE, eps_l =0.5, eps_r =0.5,
                      ar = 0.44) {
 
     # Sample starting values if not given
@@ -1276,7 +1276,7 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 #'                    X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
-LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
+LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE, eps_l = 0.5,
                     eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- length(Time)
@@ -1495,7 +1495,7 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = 1, eps_l = 0.5,
 #'                    X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
-DIC_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
+DIC_LEP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
@@ -1545,7 +1545,7 @@ DIC_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #'                            X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
-CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
+CaseDeletion_LEP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
                              eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]
@@ -1610,7 +1610,7 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
 #'
 #' @export
 BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
-                         prior = 2, set = 1, eps_l = 0.5, eps_r = 0.5,
+                         prior = 2, set = TRUE, eps_l = 0.5, eps_r = 0.5,
                          ar = 0.44) {
     chain <- as.matrix(chain)
     aux1 <- Post.u.obs.LEP(obs, ref, X, chain)
@@ -1650,7 +1650,7 @@ BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
 #'
 #' @export
 MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
-                      sigma20 = NULL, prior = 2, set = 1, eps_l = 0.5,
+                      sigma20 = NULL, prior = 2, set = TRUE, eps_l = 0.5,
                       eps_r = 0.5, N.AKS = 3) {
 
     # Sample starting values if not given
@@ -1765,7 +1765,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 #'                      X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
-LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
+LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = TRUE,
                      eps_l = 0.5, eps_r = 0.5, N.AKS = 3) {
     chain <- as.matrix(chain)
     n <- length(Time)
@@ -1862,7 +1862,7 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = 1,
 #'                      X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
-DIC_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
+DIC_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
@@ -1912,7 +1912,7 @@ DIC_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5) {
 #'                              X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
-CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = 1, eps_l = 0.5,
+CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
                               eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]

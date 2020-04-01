@@ -4,7 +4,8 @@
 \name{cancer}
 \alias{cancer}
 \title{VA Lung Cancer Trial Datatset}
-\format{A matrix with 137 rows and 8 variables:
+\format{
+A matrix with 137 rows and 8 variables:
 \describe{
 \item{Time}{Survival time (in days)}
 \item{Cens}{0 or 1. If 0 the observation is right censored}
@@ -19,7 +20,8 @@ able to care for self.}
 \item{MFD}{The time between the diagnosis and the treatment (in months)}
 \item{Age}{Age (in years)}
 \item{Prior}{Prior therapy, 0 or 10}
-}}
+}
+}
 \source{
 Appendix I of Kalbfleisch and Prentice (1980).
 }

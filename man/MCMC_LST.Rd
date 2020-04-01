@@ -16,7 +16,7 @@ MCMC_LST(
   sigma20 = NULL,
   nu0 = NULL,
   prior = 2,
-  set = 1,
+  set = TRUE,
   eps_l = 0.5,
   eps_r = 0.5,
   ar = 0.44

@@ -16,7 +16,7 @@ BF_lambda_obs_LST(
   chain,
   Q = 1,
   prior = 2,
-  set = 1,
+  set = TRUE,
   eps_l = 0.5,
   eps_r = 0.5,
   ar = 0.44

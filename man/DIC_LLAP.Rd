@@ -4,7 +4,7 @@
 \alias{DIC_LLAP}
 \title{Deviance information criterion for the log-Laplace model}
 \usage{
-DIC_LLAP(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5)
+DIC_LLAP(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5)
 }
 \arguments{
 \item{Time}{Vector containing the survival times.}

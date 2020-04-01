@@ -12,7 +12,7 @@ logt.update.SMLN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
     n <- length(Time)
     aux <- rep(0, n)
     MEAN <- X %*% beta
-    if (set == 1) {
+    if (set == TRUE) {
         aux <- Cens * (I(Time > eps_l) *
                          rtnorm(n = n, lower = log(abs(Time - eps_l)),
                                 upper = log(Time + eps_r), mu = MEAN,
@@ -27,7 +27,7 @@ logt.update.SMLN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
                                                           mu = MEAN,
                                                           sd = sqrt(sigma2))
     }
-    if (set == 0) {
+    if (set == FALSE) {
         aux <- Cens * log(Time) + (1 - Cens) *
                  rtnorm(n = n, lower = log(Time), upper = Inf, mu = MEAN,
                         sd = sqrt(sigma2))
@@ -43,7 +43,7 @@ logt.update.LEP <- function(Time, Cens, X, beta, sigma2, alpha, u, set, eps_l,
     aux <- rep(0, n)
     MEAN <- X %*% beta
 
-    if (set == 1) {
+    if (set == TRUE) {
         a <- apply(cbind(MEAN - sqrt(sigma2) * u ^ (1 / alpha),
                          log(abs(Time - eps_l))), 1, max)
         a1 <- as.vector(MEAN - sqrt(sigma2) * u ^ (1 / alpha))
@@ -76,7 +76,7 @@ logt.update.LEP <- function(Time, Cens, X, beta, sigma2, alpha, u, set, eps_l,
               (1 - as.numeric(I(acens < bcens))) * log(Time))
     }
 
-    if (set == 0) {
+    if (set == FALSE) {
         a <- apply(cbind(MEAN - sqrt(sigma2) * u ^ (1 / alpha), log(Time)),
                    1, max)
         b <- as.vector(MEAN + sqrt(sigma2) * u ^ (1 / alpha))
@@ -98,7 +98,7 @@ log.lik.LN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
     aux <- rep(0, times = n)
     MEAN <- X %*% beta
     sigma2 <- rep(sigma2, times = n)
-    if (set == 1) {
+    if (set == TRUE) {
         # IF VERY EXTREME VALUES OF Time WERE OBSERVED,
         #  A NUMERICAL PROBLEM OCCURRED.  WE APPROXIMATED THE
         # LOG-LIKELIHOOD BY THE AREA OF A SQUARE UNDER THE CURVE.
@@ -107,9 +107,9 @@ log.lik.LN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
                       stats::plnorm(abs(Time - eps_l), meanlog = MEAN,
                                     sdlog = sqrt(sigma2))
         # ADD 2 TO AVOID -INF IN LOG (DOES NOT AFFECT THE RESULT)
-        aux.set1 <- aux.set + I(aux.set == 0) * 2
-        aux <- Cens * (I(Time > eps_l) * ((1 - I(aux.set == 0)) *
-                                            log(aux.set1) + I(aux.set == 0) *
+        aux.set1 <- aux.set + I(aux.set == FALSE) * 2
+        aux <- Cens * (I(Time > eps_l) * ((1 - I(aux.set == FALSE)) *
+                                            log(aux.set1) + I(aux.set == FALSE) *
                                             (log(eps_l + eps_r) +
                                              stats::dlnorm(abs(Time - eps_l),
                                                            meanlog = MEAN,
@@ -124,7 +124,7 @@ log.lik.LN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
                                                               sd = sqrt(sigma2),
                                                               log = TRUE))
     }
-    if (set == 0) {
+    if (set == FALSE) {
         aux <- Cens * stats::dlnorm(Time, meanlog = MEAN, sdlog = sqrt(sigma2),
                                     log = TRUE) + (1 - Cens) *
                        log(1 - stats::plnorm(Time, meanlog = MEAN,
@@ -187,7 +187,7 @@ log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
     MEAN <- X %*% beta
     sigma2 <- rep(sigma2, times = n)
     nu <- rep(nu, times = n)
-    if (set == 1) {
+    if (set == TRUE) {
         aux <- Cens * (I(Time > eps_l) *
                         log(stats::pt((log(Time + eps_r) - MEAN) / sqrt(sigma2),
                                        df = nu) -
@@ -200,7 +200,7 @@ log.lik.LST <- function(Time, Cens, X, beta, sigma2, nu, set, eps_l, eps_r) {
                             log(1 - stats::pt((log(Time) - MEAN) / sqrt(sigma2),
                                               df = nu))
     }
-    if (set == 0) {
+    if (set == FALSE) {
         aux <- Cens * (stats::dt((log(Time) - MEAN) / sqrt(sigma2),
                                  df = nu, log = TRUE) -
                          log(sqrt(sigma2) * Time)) +
@@ -586,7 +586,7 @@ log.lik.LLAP <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
     aux <- rep(0, times = n)
     MEAN <- X %*% beta
     sigma2 <- rep(sigma2, times = n)
-    if (set == 1) {
+    if (set == TRUE) {
         aux <- Cens * (I(Time > eps_l) *
                          log(VGAM::plaplace(log(Time + eps_r),
                                             location = MEAN,
@@ -602,7 +602,7 @@ log.lik.LLAP <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
                                               location = MEAN,
                                               scale = sqrt(sigma2)))
     }
-    if (set == 0) {
+    if (set == FALSE) {
         aux <- Cens * (VGAM::dlaplace(log(Time), location = MEAN,
                                       scale = sqrt(sigma2), log = TRUE) -
                          log(Time)) + (1 - Cens) *
@@ -690,7 +690,7 @@ log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
     sigma2 <- rep(sigma2, times = n)
     alpha <- rep(alpha, times = n)
     SP <- as.vector(sqrt(sigma2) * (1 / alpha) ^ (1 / alpha))
-    if (set == 1) {
+    if (set == TRUE) {
         aux1 <- (I(Time > eps_l) * log(pnormp(log(Time + eps_r),
                                               mu = MEAN,
                                               sigmap = SP,
@@ -705,7 +705,7 @@ log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l, eps_r) {
         aux2 <- log(1 - pnormp(log(Time), mu = MEAN, sigmap = SP, p = alpha))
         aux <- ifelse(Cens == 1, aux1, aux2)
     }
-    if (set == 0) {
+    if (set == FALSE) {
         aux <- Cens * (dnormp(log(Time), mu = MEAN, sigmap = SP,
                               p = alpha, log = TRUE) - log(Time)) + (1 - Cens) *
                      log(1 - pnormp(log(Time), mu = MEAN,
@@ -1230,7 +1230,7 @@ log.lik.LLOG <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
     aux <- rep(0, n)
     MEAN <- X %*% beta
     sigma2 <- rep(sigma2, times = n)
-    if (set == 1) {
+    if (set == TRUE) {
         aux <- Cens * (I(Time > eps_l) *
                          log(stats::plogis(log(Time + eps_r), location = MEAN,
                                            scale = sqrt(sigma2)) -
@@ -1246,7 +1246,7 @@ log.lik.LLOG <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
                                                        location = MEAN,
                                                        scale = sqrt(sigma2)))
     }
-    if (set == 0) {
+    if (set == FALSE) {
         aux <- Cens * (stats::dlogis(log(Time),
                                      location = MEAN,
                                      scale = sqrt(sigma2),

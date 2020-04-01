@@ -599,7 +599,7 @@ NumericVector p_normp(NumericVector q, NumericVector mu,
 // LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL .LEP FUNCTIONS)
 // [[Rcpp::export]]
 double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
-                   arma::vec beta, double sigma2, double alpha, int set,
+                   arma::vec beta, double sigma2, double alpha, bool set,
                    double eps_l, double eps_r) {
   const unsigned int n = Time.length();
 
@@ -617,7 +617,7 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
     SP[i] = sqrt(sigma2vec[i]) *  pow(1 / alphavec[i], 1 / alphavec[i]);
   }
 
-  if (set == 1) {
+  if (set == true) {
 
     NumericVector TimeGreater(n);
 
@@ -647,7 +647,7 @@ double log_lik_LEP(NumericVector Time, NumericVector Cens, arma::mat X,
     }
 
   }
-  if (set == 0) {
+  if (set == false) {
     NumericVector aux = Cens * (d_normp(log(Time), MEAN, SP,
                            alphavec) - log(Time)) + (1 - Cens) *
                              log(1 - p_normp(log(Time), MEAN, SP, alphavec));
@@ -908,7 +908,7 @@ arma::colvec rtnorm(int n, arma::vec lower, arma::vec upper,
 // LOG-LIKELIHOOD FUNCTION (REQUIRED FOR SEVERAL LST FUNCTIONS)
 // [[Rcpp::export]]
 double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X,
-                   arma::vec beta, double sigma2, double nu, int set,
+                   arma::vec beta, double sigma2, double nu, bool set,
                    double eps_l, double eps_r) {
   const unsigned int n = Time.length();
   NumericVector aux(n);
@@ -928,7 +928,7 @@ double log_lik_LST(NumericVector Time, NumericVector Cens, arma::mat X,
   }
 
 
-  if (set == 1) {
+  if (set == true) {
     aux = Cens * (TimeGreater *
       log(Rcpp::pt((log(Time + eps_r) - MEAN) / sqrt(sigma2), nu) -
         Rcpp::pt((log(abs(Time - eps_l)) - MEAN) / sqrt(sigma2),
@@ -973,7 +973,7 @@ arma::vec mvrnormArma2(int n, arma::vec mu, arma::mat Sigma) {
 // [[Rcpp::export]]
 arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
                                 arma::mat X, arma::vec beta, double sigma2,
-                                int set, double eps_l, double eps_r) {
+                                bool set, double eps_l, double eps_r) {
   int n = Time.n_elem;
   arma::vec aux(n);
 
@@ -984,7 +984,7 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
   arma::vec maxUpper (n);
   maxUpper.fill(1e35);
 
-  if (set == 1) {
+  if (set == true) {
     arma::vec TimeGreater(n);
 
     for (int i = 0; i < n; i++){
@@ -1014,7 +1014,7 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
 // [[Rcpp::export]]
 arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
                        arma::vec Cens, arma::mat X, arma::vec beta0,
-                       double sigma20, int prior, int set, double eps_l,
+                       double sigma20, int prior, bool set, double eps_l,
                        double eps_r) {
 
     int k = beta0.n_elem; // How many betas?
@@ -1064,8 +1064,8 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
 
     arma::vec rate_aux = 0.5 * (logt_aux - X * beta_aux).t() * (logt_aux - X *
       beta_aux);
-    
-    
+
+
     int max_i = rate_aux.n_elem;
 
     for (int i = 0; i < max_i; i++){

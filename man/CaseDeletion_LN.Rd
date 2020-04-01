@@ -4,7 +4,7 @@
 \alias{CaseDeletion_LN}
 \title{Case deletion analysis for the log-normal model}
 \usage{
-CaseDeletion_LN(Time, Cens, X, chain, set = 1, eps_l = 0.5, eps_r = 0.5)
+CaseDeletion_LN(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5)
 }
 \arguments{
 \item{Time}{Vector containing the survival times.}

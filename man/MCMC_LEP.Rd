@@ -15,7 +15,7 @@ MCMC_LEP(
   sigma20 = NULL,
   alpha0 = NULL,
   prior = 2,
-  set = 1,
+  set = TRUE,
   eps_l = 0.5,
   eps_r = 0.5,
   ar = 0.44
