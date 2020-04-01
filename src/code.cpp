@@ -982,19 +982,19 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
   sdVec.fill(sqrt(sigma2));
 
   arma::vec maxUpper (n);
-  maxUpper.fill(1e35);
+  maxUpper.fill(1e10);
 
   if (set == true) {
     arma::vec TimeGreater(n);
 
     for (int i = 0; i < n; i++){
       if (Time[i] > eps_l){
-        TimeGreater[i] = 1.0;
+        TimeGreater[i] = 1;
       }
     }
 
     arma::vec minLower(n);
-    minLower.fill(-1e35);
+    minLower.fill(-1e10);
 
     aux = Cens % (TimeGreater %
       rtnorm(n, log(abs(Time - eps_l)), log(Time + eps_r), MEAN, sdVec) +
