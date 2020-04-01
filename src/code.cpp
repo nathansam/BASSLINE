@@ -780,10 +780,10 @@ double Post_lambda_obs_LST(const unsigned int obs, double  ref, arma::mat X,
 
 double rtnormsingle(double mu, double sd, double lower, double upper){
   if (lower == R_NegInf) {
-    lower = -1e35;
+    lower = -1e10;
   }
   if (upper == R_PosInf) {
-    upper = 1e35;
+    upper = 1e10;
   }
 
 
@@ -794,13 +794,13 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
   if(lower >= upper){
     return((lower + upper) / 2);
   }
-  if(lower < -1e32 || upper > 1e32){
+  if(lower < -1e9 || upper > 1e9){
 
-    if(lower < -1e32 && upper > 1e32){
+    if(lower < -1e9 && upper > 1e9){
       z = R::rnorm(mu, sd);
       return z;
 
-    }else if(upper > 1e32){
+    }else if(upper > 1e9){
         tr = (lower - mu) / sd;
       }else{
         tr = (mu - upper) / sd;
@@ -872,7 +872,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
       }
     }
   }
-  if(lower < -1e32){
+  if(lower < -1e9){
     return(mu - z * sd);
   }else{
     return(z * sd + mu);
@@ -982,19 +982,19 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
   sdVec.fill(sqrt(sigma2));
 
   arma::vec maxUpper (n);
-  maxUpper.fill(1e35);
+  maxUpper.fill(1e10);
 
   if (set == true) {
     arma::vec TimeGreater(n);
 
     for (int i = 0; i < n; i++){
       if (Time[i] > eps_l){
-        TimeGreater[i] = 1.0;
+        TimeGreater[i] = 1;
       }
     }
 
     arma::vec minLower(n);
-    minLower.fill(-1e35);
+    minLower.fill(-1e10);
 
     aux = Cens % (TimeGreater %
       rtnorm(n, log(abs(Time - eps_l)), log(Time + eps_r), MEAN, sdVec) +
