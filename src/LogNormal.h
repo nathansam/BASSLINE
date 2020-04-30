@@ -1,3 +1,6 @@
+#ifndef LogNormal_H
+#define LogNormal_H
+
 #define RCPP_ARMADILLO_RETURN_ANYVEC_AS_VECTOR
 #include <RcppArmadillo.h>
 
@@ -60,3 +63,5 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
                        arma::vec Cens, arma::mat X, arma::vec beta0,
                        double sigma20, int prior, bool set, double eps_l,
                        double eps_r);
+
+#endif
