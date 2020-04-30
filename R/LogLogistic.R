@@ -1,0 +1,366 @@
+################################################################################
+################### IMPLEMENTATION OF THE LOG-LOGISTIC MODEL ###################
+################################################################################
+# MCMC ALGORITHM
+#' @title MCMC algorithm for the log-logistic model
+#' @description  Adaptive Metropolis-within-Gibbs algorithm with univariate
+#'     Gaussian random walk proposals for the log-logistic model
+#' @inheritParams MCMC_LN
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#' @param N.AKS Maximum number of terms of the Kolmogorov-Smirnov density used
+#'     for the rejection sampling when updating mixing parameters (default
+#'     value: 3)
+#' @return A matrix with \eqn{N / thin + 1} rows. The columns are the MCMC
+#'     chains for \eqn{\beta} (\eqn{k} columns), \eqn{\sigma^2} (1 column),
+#'     \eqn{\theta} (1 column, if appropriate), \eqn{\lambda} (\eqn{n} columns,
+#'     not provided for log-normal model), \eqn{\log(t)} (\eqn{n} columns,
+#'     simulated via data augmentation) and the logarithm of the adaptive
+#'     variances (the number varies among models). The latter allows the user to
+#'     evaluate if the adaptive variances have been stabilized.
+#' @examples
+#' library(BASSLINE)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#'
+#' @export
+MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
+                      sigma20 = NULL, prior = 2, set = TRUE, eps_l = 0.5,
+                      eps_r = 0.5, N.AKS = 3) {
+
+    # Sample starting values if not given
+    if (is.null(beta0)) beta0 <- beta.sample(n = ncol(X))
+    if (is.null(sigma20)) sigma20 <- sigma2.sample()
+
+    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
+                     prior, set, eps_l, eps_r)
+
+
+    k <- length(beta0)
+    n <- length(Time)
+    N.aux <- round(N / thin, 0)
+    if (prior == 1) {
+        p <- 1 + k / 2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
+    beta[1, ] <- beta0
+    sigma2 <- rep(0, times = N.aux + 1)
+    sigma2[1] <- sigma20
+    logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    logt[1, ] <- log(Time)
+    lambda <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
+    lambda[1, ] <- (stats::rgamma(n, shape = 2, rate = 2))^(-1)
+
+    beta.aux <- beta[1, ]
+    sigma2.aux <- sigma2[1]
+    logt.aux <- logt[1, ]
+    lambda.aux <- lambda[1, ]
+
+    for (iter in 2:(N + 1)) {
+        Lambda <- diag(lambda.aux)
+        AUX1 <- (t(X) %*% Lambda %*% X)
+        if (det(AUX1) != 0) {
+            AUX <- solve(AUX1)
+            mu.aux <- AUX %*% t(X) %*% Lambda %*% logt.aux
+            Sigma.aux <- sigma2.aux * AUX
+            beta.aux <- mvrnormArma(n = 1, mu = mu.aux, Sigma = Sigma.aux)
+        }
+
+        shape.aux <- (n + 2 * p - 2) / 2
+        rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
+            (logt.aux - X %*% beta.aux)
+        if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
+            sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
+                                         rate = rate.aux)) ^ (-1)
+        }
+
+        if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
+            for (obs in 1:n) {
+                lambda.aux[obs] <-  1 / RS_lambda_obs_LLOG(logt = logt.aux,
+                                                           X = X,
+                                                           beta = beta.aux,
+                                                           sigma2 = sigma2.aux,
+                                                           obs = obs,
+                                                           N_AKS = N.AKS)$lambda
+            }
+        }
+
+        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux,
+                                     sigma2.aux / lambda.aux, set, eps_l, eps_r)
+
+        if (iter %% thin == 0) {
+            beta[iter / thin + 1, ] <- beta.aux
+            sigma2[iter / thin + 1] <- sigma2.aux
+            logt[iter / thin + 1, ] <- logt.aux
+            lambda[iter / thin + 1, ] <- lambda.aux
+        }
+        if ((iter - 1) %% 1e+05 == 0) {
+            cat(paste("Iteration :", iter, "\n"))
+        }
+    }
+
+    chain <- cbind(beta, sigma2, lambda, logt)
+
+    beta.cols <- paste("beta.", seq(ncol(beta)), sep = "")
+    lambda.cols <- paste("lambda.", seq(ncol(lambda)), sep = "")
+    logt.cols <- paste("logt.", seq(ncol(logt)), sep = "")
+
+    colnames(chain) <- c(beta.cols, "sigma2", lambda.cols, logt.cols)
+
+
+    if (burn > 0) {
+        burn.period <- 1:(burn/thin)
+        chain <- chain [-burn.period, ]
+    }
+    return(chain)
+}
+
+
+#' @title Log-marginal likelihood estimator for the log-logistic model
+#' @inheritParams MCMC_LN
+#' @param Q Update period for the \eqn{\lambda_{i}}’s
+#' @param chain MCMC chains generated by a BASSLINE MCMC function
+#' @param N.AKS Maximum number of terms of the Kolmogorov-Smirnov density used
+#'     for the rejection sampling when updating mixing parameters (default
+#'     value: 3)
+#' @examples
+#' library(BASSLINE)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.LML <- LML_LLOG(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
+#'                      X = cancer[, 3:11], chain = LLOG)
+#'
+#' @export
+LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = TRUE,
+                     eps_l = 0.5, eps_r = 0.5, N.AKS = 3) {
+    chain <- as.matrix(chain)
+    n <- length(Time)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    if (prior == 1) {
+        p <- 1 + k / 2
+    }
+    if (prior == 2) {
+        p <- 1
+    }
+
+    if (k > 1) {
+        beta.star <- apply(chain[, 1:k], 2, "median")
+    } else {
+        beta.star <- stats::median(chain[, 1])
+    }
+    sigma2.star <- stats::median(chain[, k + 1])
+
+    # LIKELIHOOD ORDINATE
+    LL.ord <- log.lik.LLOG(Time, Cens, X, beta = beta.star,
+                           sigma2 = sigma2.star, set, eps_l, eps_r)
+    cat("Likelihood ordinate ready!\n")
+
+    # PRIOR ORDINATE
+    LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
+                       logs = TRUE)
+    cat("Prior ordinate ready!\n")
+
+    # POSTERIOR ORDINATE - sigma 2
+    shape <- (n + 2 * p - 2) / 2
+    po.sigma2 <- rep(0, times = N)
+    for (i in 1:N) {
+        aux1 <- as.vector(t(chain[i, (k + 2 + n):(k + 1 + 2 * n)])) - X %*%
+            as.vector(chain[i, 1:k])
+        aux2 <- diag(as.vector(t(chain[i, (k + 2):(k + 1 + n)])))
+        rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
+        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
+                                            scale = rate.aux)
+    }
+    PO.sigma2 <- mean(po.sigma2)
+    cat("Posterior ordinate sigma2 ready!\n")
+
+    # POSTERIOR ORDINATE - beta
+    chain.beta <- MCMCR.sigma2.LLOG(N = N * thin, thin = thin, Q, Time, Cens, X,
+                                    beta0 = t(chain[N, 1:k]),
+                                    sigma20 = sigma2.star,
+                                    logt0 = t(chain[N, (n + k + 2) :
+                                                        (2 * n + k + 1)]),
+                                    lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
+                                    prior = prior, set, eps_l, eps_r, N.AKS)
+    cat("Reduced chain.beta ready!\n")
+
+    po.beta <- rep(0, times = N)
+    for (i in 1:N) {
+        aux0.beta <- diag(as.vector(t(chain.beta[(i + 1), (k + 1):(n + k)])))
+        aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
+        aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
+        mu.aux <- as.vector(aux2.beta %*% ((chain.beta[(i + 1),
+                                                       (n + k + 1) :
+                                                           (2 * n + k)])))
+        po.beta[i] <- mvtnorm::dmvnorm(beta.star, mean = mu.aux,
+                                       sigma = sigma2.star * aux1.beta)
+    }
+    PO.beta <- mean(po.beta)
+    cat("Posterior ordinate beta ready!\n")
+
+    # TAKING LOGARITHM
+    LPO.sigma2 <- log(PO.sigma2)
+    LPO.beta <- log(PO.beta)
+
+    # MARGINAL LOG-LIKELIHOOD
+    LML <- LL.ord + LP.ord - LPO.sigma2 - LPO.beta
+
+    list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.sigma2 = LPO.sigma2,
+         LPO.beta = LPO.beta, LML = LML)
+}
+#' @title Deviance information criterion for the log-logistic model
+#' @description Deviance information criterion is based on the deviance funcion
+#'     \eqn{D(\theta, y) = -2 log(f(y|\theta))} but also incorporates a
+#'     penalization factor of the complexity of the model
+#' @inheritParams MCMC_LN
+#' @param chain MCMC chains generated by a BASSLINE MCMC function
+#' @examples
+#' library(BASSLINE)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.DIC <- DIC_LLOG(Time = cancer[, 1], Cens = cancer[, 2],
+#'                      X = cancer[, 3:11], chain = LLOG)
+#'
+#' @export
+DIC_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    k <- dim(X)[2]
+    n <- length(Time)
+    LL <- rep(0, times = N)
+
+    for (iter in 1:N) {
+        LL[iter] <- log.lik.LLOG(Time, Cens, X,
+                                 beta = as.vector(chain[iter, 1:k]),
+                                 sigma2 = chain[iter, k + 1],
+                                 set = set, eps_l, eps_r)
+    }
+
+    aux <- apply(chain[, 1:(k + 1)], 2, "median")
+    pd <- -2 * mean(LL) + 2 * log.lik.LLOG(Time, Cens, X,
+                                           beta = aux[1:k], sigma2 = aux[k + 1],
+                                           set = set, eps_l, eps_r)
+    pd.aux <- k + 1
+
+    DIC <- -2 * mean(LL) + pd
+
+    cat(paste("Effective number of parameters :", round(pd, 2), "\n"))
+    cat(paste("Actual number of parameters :", pd.aux), "\n")
+    return(DIC)
+}
+
+#' @title Case deletion analysis for the log-logistic model
+#' @description Leave-one-out cross validation analysis. The function returns a
+#'     matrix with n rows. The first column contains the logarithm of the CPO
+#'     (Geisser and Eddy, 1979). Larger values of the CPO indicate better
+#'     predictive accuracy of the model. The second and third columns contain
+#'     the KL divergence between \eqn{\pi(\beta, \sigma^2,  \theta | t_{-i})}
+#'     and \eqn{\pi(\beta, \sigma^2,  \theta | t)} and its calibration index
+#'     \eqn{p_i}, respectively.
+#' @inheritParams MCMC_LN
+#' @param chain MCMC chains generated by a BASSLINE MCMC function
+#' @examples
+#' library(BASSLINE)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.CD <- CaseDeletion_LLOG(Time = cancer[, 1], Cens = cancer[, 2],
+#'                              X = cancer[, 3:11], chain = LLOG)
+#'
+#' @export
+CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
+                              eps_r = 0.5) {
+    chain <- as.matrix(chain)
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    logCPO <- rep(0, times = n)
+    KL.aux <- rep(0, times = n)
+    N <- dim(chain)[1]
+
+    for (s in 1:n) {
+        aux1 <- rep(0, times = N)
+        aux2 <- rep(0, times = N)
+        for (ITER in 1:N) {
+            aux2[ITER] <- log.lik.LLOG(Time[s], Cens[s], X[s, ],
+                                       beta = as.vector(chain[ITER, 1:k]),
+                                       sigma2 = chain[ITER, (k + 1)], set,
+                                       eps_l, eps_r)
+            aux1[ITER] <- exp(-aux2[ITER])
+        }
+        logCPO[s] <- -log(mean(aux1))
+        KL.aux[s] <- mean(aux2)
+        if (KL.aux[s] - logCPO[s] < 0) {
+            cat(paste("Numerical problems for observation:", s, "\n"))
+        }
+    }
+    KL <- abs(KL.aux - logCPO)
+    CALIBRATION <- 0.5 * (1 + sqrt(1 - exp(-2 * KL)))
+    return(cbind(logCPO, KL, CALIBRATION))
+}
+
+#' @title Outlier detection for observation for the log-logisitc model
+#' @description This returns a unique number corresponding to the Bayes Factor
+#'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
+#'     \eqn{M_1: \Lambda_{obs}\neq \lambda_{ref}} (with all other
+#'     \eqn{\Lambda_j,\neq obs} free). The value of \eqn{\lambda_{ref}} is
+#'     required as input. The user should expect long running times for the
+#'     log-Student’s t model, in which case a reduced chain given
+#'     \eqn{\Lambda_{obs} = \lambda_{ref}} needs to be generated
+#' @inheritParams MCMC_LN
+#' @param ref Reference value \eqn{\lambda_{ref}} or \eqn{u_{ref}}
+#' @param obs Indicates the number of the observation under analysis
+#' @param chain MCMC chains generated by a BASSLINE MCMC function
+#' @examples
+#' library(BASSLINE)
+#'
+#' # Please note: N=1000 is not enough to reach convergence.
+#' # This is only an illustration. Run longer chains for more accurate
+#' # estimations.
+#'
+#' LLOG <- MCMC_LLOG(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'                   Cens = cancer[, 2], X = cancer[, 3:11])
+#' LLOG.Outlier <- BF_lambda_obs_LLOG(1,1, X = cancer[, 3:11], chain = LLOG)
+#'
+#' @export
+BF_lambda_obs_LLOG <- function(ref, obs, X, chain) {
+    chain <- as.matrix(chain)
+    N <- dim(chain)[1]
+    n <- dim(X)[1]
+    k <- dim(X)[2]
+    aux1 <- rep(0, times = N)
+    aux2 <- rep(0, times = N)
+    for (j in 1:N) {
+        aux1[j] <- stats::dnorm(chain[j, (obs + n + k + 1)],
+                                mean = (X[obs, ]) %*% as.vector(chain[j, 1 : k]),
+                                sd = sqrt(chain[j, (k + 1)] / ref))
+        aux2[j] <- stats::dlogis(chain[j, (obs + n + k + 1)],
+                                 location = (X[obs, ]) %*% as.vector(chain[j, 1 : k]),
+                                 scale = sqrt(chain[j, (k + 1)]))
+    }
+
+    aux <- mean(aux1 / aux2)
+    return(aux)
+}
