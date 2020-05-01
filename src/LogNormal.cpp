@@ -134,7 +134,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
   if(lower < -1e9 || upper > 1e9){
 
     if(lower < -1e9 && upper > 1e9){
-      z = R::rnorm(mu, sd);
+      z = ::Rf_rnorm(mu, sd);
       return z;
 
     }else if(upper > 1e9){
@@ -154,7 +154,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
             count = 0;
           }
 
-          z = R::rnorm(0.0, 1.0);
+          z = ::Rf_rnorm(0.0, 1.0);
 
           if(z > tr){
             sample = 0;
@@ -169,9 +169,9 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
           count = 0;
         }
 
-        z = R::rexp(1.0/alpha) + tr;
+        z = ::Rf_rexp(1.0/alpha) + tr;
         pz = - ((alpha - z) * (alpha - z) / 2.0);
-        u = -R::rexp(1.0);
+        u = -1 * ::Rf_rexp(1.0);
         if(u <= pz){
           sample = 0;
         }
@@ -189,7 +189,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
         count = 0;
       }
 
-      z = R::runif(slower, supper);
+      z = ::Rf_runif(slower, supper);
 
       if(slower <= 0.0 && 0.0 <= supper){
         pz = -z * z / 2.0;
@@ -201,7 +201,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
         }
       }
 
-      u = - R::rexp(1.0);
+      u = -1 *  ::Rf_rexp(1.0);
 
       if(u < pz){
         sample = 0;
