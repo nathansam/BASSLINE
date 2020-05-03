@@ -25,6 +25,7 @@ Imports:
 Suggests: 
     testthat,
     knitr,
+    msm,
     rmarkdown,
     coda
 LazyData: true
