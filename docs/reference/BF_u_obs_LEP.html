@@ -10,23 +10,27 @@
 
 
 <!-- jquery -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <!-- Bootstrap -->
-<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/paper/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
+<link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/paper/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous" />
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha256-U5ZEeKfGNOja007MMD3YBI0A3OSZOQbeG6z2f2Y0hu8=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script>
+
+<!-- bootstrap-toc -->
+<link rel="stylesheet" href="../bootstrap-toc.css">
+<script src="../bootstrap-toc.js"></script>
 
 <!-- Font Awesome icons -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css" integrity="sha256-nAmazAk6vS34Xqo0BSrTb+abbtFlgsFK7NKSi6o7Y78=" crossorigin="anonymous" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/v4-shims.min.css" integrity="sha256-6qHlizsOWFskGlwVOKuns+D1nB6ssZrHQrNj1wGplHc=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous" />
 
 <!-- clipboard.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.4/clipboard.min.js" integrity="sha256-FiZwavyI2V6+EXO1U+xzLG3IKldpiTFf3153ea9zikQ=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script>
 
 <!-- headroom.js -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/headroom.min.js" integrity="sha256-DJFC1kqIhelURkuza0AvYal5RxMtpzLjFhsnVIeuk+U=" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.9.4/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script>
 
 <!-- pkgdown -->
 <link href="../pkgdown.css" rel="stylesheet">
@@ -43,7 +47,6 @@ associated to the test \(M_0: \Lambda_{obs} = \lambda_{ref}\) versus
 required as input. The user should expect long running times for the
 log-Student’s t model, in which case a reduced chain given
 \(\Lambda_{obs} = \lambda_{ref}\) needs to be generated" />
-<meta name="twitter:card" content="summary" />
 
 
 
@@ -61,7 +64,7 @@ log-Student’s t model, in which case a reduced chain given
 
   </head>
 
-  <body>
+  <body data-spy="scroll" data-target="#toc">
     <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
@@ -75,7 +78,7 @@ log-Student’s t model, in which case a reduced chain given
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">BASSLINE</a>
-        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9008</span>
+        <span class="version label label-danger" data-toggle="tooltip" data-placement="bottom" title="Unreleased version">0.0.0.9010</span>
       </span>
     </div>
 
@@ -99,7 +102,7 @@ log-Student’s t model, in which case a reduced chain given
       </ul>
       <ul class="nav navbar-nav navbar-right">
         <li>
-  <a href="https://github.com/nathansam/BASSLINE">
+  <a href="https://github.com/nathansam/BASSLINE/">
     <span class="fab fa fab fa-github fa-lg"></span>
      
   </a>
@@ -118,7 +121,7 @@ log-Student’s t model, in which case a reduced chain given
   <div class="col-md-9 contents">
     <div class="page-header">
     <h1>Outlier detection for observation for the log-exponential power model</h1>
-    <small class="dont-index">Source: <a href='https://github.com/nathansam/BASSLINE/blob/master/R/User_Codes.R'><code>R/User_Codes.R</code></a></small>
+    <small class="dont-index">Source: <a href='https://github.com/nathansam/BASSLINE/blob/master/R/LogExponentialPower.R'><code>R/LogExponentialPower.R</code></a></small>
     <div class="hidden name"><code>BF_u_obs_LEP.Rd</code></div>
     </div>
 
@@ -143,7 +146,7 @@ log-Student’s t model, in which case a reduced chain given
   <span class='no'>X</span>,
   <span class='no'>chain</span>,
   <span class='kw'>prior</span> <span class='kw'>=</span> <span class='fl'>2</span>,
-  <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>1</span>,
+  <span class='kw'>set</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
   <span class='kw'>eps_l</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
   <span class='kw'>eps_r</span> <span class='kw'>=</span> <span class='fl'>0.5</span>,
   <span class='kw'>ar</span> <span class='kw'>=</span> <span class='fl'>0.44</span>
@@ -154,7 +157,7 @@ log-Student’s t model, in which case a reduced chain given
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>N</th>
-      <td><p>Total number of iterations.</p></td>
+      <td><p>Total number of iterations. Must be a multiple of thin.</p></td>
     </tr>
     <tr>
       <th>thin</th>
@@ -229,59 +232,56 @@ updates</p></td>
 <span class='co'># This is only an illustration. Run longer chains for more accurate</span>
 <span class='co'># estimations (especially for the log-exponential power model).</span>
 
-<span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LEP.html'>MCMC_LEP</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>],
-                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
-#&gt; Initial beta 1 : -0.78 
-#&gt;  Initial beta 2 : -1.94 
-#&gt;  Initial beta 3 : 0.64 
-#&gt;  Initial beta 4 : 0.27 
-#&gt;  Initial beta 5 : -0.85 
-#&gt;  Initial beta 6 : 1 
-#&gt;  Initial beta 7 : 0.11 
-#&gt;  Initial beta 8 : -0.96 
-#&gt;  Initial beta 9 : -0.5 
+<span class='no'>LEP</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='MCMC_LEP.html'>MCMC_LEP</a></span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span> <span class='fl'>40</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[, <span class='fl'>1</span>],
+                <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[, <span class='fl'>2</span>], <span class='kw'>X</span> <span class='kw'>=</span> <span class='no'>cancer</span>[, <span class='fl'>3</span>:<span class='fl'>11</span>])</div><div class='output co'>#&gt; Sampling initial betas from a Normal(0, 1) distribution
+#&gt; Initial beta 1 : -0.54 
+#&gt;  Initial beta 2 : 1.39 
+#&gt;  Initial beta 3 : -0.26 
+#&gt;  Initial beta 4 : -0.89 
+#&gt;  Initial beta 5 : -1.5 
+#&gt;  Initial beta 6 : 0.09 
+#&gt;  Initial beta 7 : -0.13 
+#&gt;  Initial beta 8 : -1.97 
+#&gt;  Initial beta 9 : 0.9 
 #&gt; 
 #&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution
-#&gt; Initial sigma^2 : 0.44 
+#&gt; Initial sigma^2 : 0.14 
 #&gt; 
 #&gt; Sampling initial alpha from a Uniform(1, 2) distribution
-#&gt; Initial alpha : 1.26 
+#&gt; Initial alpha : 1.24 
 #&gt; 
 #&gt; Inf.sigma2
-#&gt; AR beta 1 : 0.61 
-#&gt;  AR beta 2 : 0.69 
-#&gt;  AR beta 3 : 0.77 
-#&gt;  AR beta 4 : 0.7 
-#&gt;  AR beta 5 : 0.77 
+#&gt; AR beta 1 : 0.46 
+#&gt;  AR beta 2 : 0.56 
+#&gt;  AR beta 3 : 0.62 
+#&gt;  AR beta 4 : 0.58 
+#&gt;  AR beta 5 : 0.67 
 #&gt;  AR beta 6 : 0.02 
-#&gt;  AR beta 7 : 0.06 
-#&gt;  AR beta 8 : 0.02 
-#&gt;  AR beta 9 : 0.74 
-#&gt; AR sigma2 : 0.86 
-#&gt; AR alpha : 0.11 </div><div class='input'><span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>LEP</span>[,<span class='fl'>11</span>])
+#&gt;  AR beta 7 : 0.05 
+#&gt;  AR beta 8 : 0.01 
+#&gt;  AR beta 9 : 0.61 
+#&gt; AR sigma2 : 0.9 
+#&gt; AR alpha : 0.15 </div><div class='input'><span class='no'>alpha</span> <span class='kw'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/mean.html'>mean</a></span>(<span class='no'>LEP</span>[, <span class='fl'>11</span>])
 <span class='no'>uref</span> <span class='kw'>&lt;-</span> <span class='fl'>1.6</span> + <span class='fl'>1</span> / <span class='no'>alpha</span>
 <span class='no'>LEP.Outlier</span> <span class='kw'>&lt;-</span> <span class='fu'>BF_u_obs_LEP</span>(<span class='kw'>N</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>thin</span> <span class='kw'>=</span> <span class='fl'>20</span>, <span class='kw'>burn</span> <span class='kw'>=</span><span class='fl'>1</span> , <span class='kw'>ref</span> <span class='kw'>=</span> <span class='no'>uref</span>,
-                            <span class='kw'>obs</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[,<span class='fl'>2</span>],
-                            <span class='no'>cancer</span>[,<span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; AR beta 1 : 0.4 
-#&gt;  AR beta 2 : 0.61 
-#&gt;  AR beta 3 : 0.67 
-#&gt;  AR beta 4 : 0.59 
-#&gt;  AR beta 5 : 0.71 
-#&gt;  AR beta 6 : 0.01 
-#&gt;  AR beta 7 : 0.06 
+                            <span class='kw'>obs</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>Time</span> <span class='kw'>=</span> <span class='no'>cancer</span>[, <span class='fl'>1</span>], <span class='kw'>Cens</span> <span class='kw'>=</span> <span class='no'>cancer</span>[, <span class='fl'>2</span>],
+                            <span class='no'>cancer</span>[, <span class='fl'>3</span>:<span class='fl'>11</span>], <span class='kw'>chain</span> <span class='kw'>=</span> <span class='no'>LEP</span>)</div><div class='output co'>#&gt; AR beta 1 : 0.32 
+#&gt;  AR beta 2 : 0.46 
+#&gt;  AR beta 3 : 0.52 
+#&gt;  AR beta 4 : 0.48 
+#&gt;  AR beta 5 : 0.58 
+#&gt;  AR beta 6 : 0 
+#&gt;  AR beta 7 : 0.02 
 #&gt;  AR beta 8 : 0 
-#&gt;  AR beta 9 : 0.64 
-#&gt; AR sigma2 : 0.93 
-#&gt; AR alpha : 0.05 </div><div class='input'>
+#&gt;  AR beta 9 : 0.41 
+#&gt; AR sigma2 : 0.82 
+#&gt; AR alpha : 0.16 </div><div class='input'>
 </div></pre>
   </div>
-  <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
-    <h2>Contents</h2>
-    <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-      <li><a href="#examples">Examples</a></li>
-    </ul>
-
+  <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
+    <nav id="toc" data-toggle="toc" class="sticky-top">
+      <h2 data-toc-skip>Contents</h2>
+    </nav>
   </div>
 </div>
 
@@ -292,7 +292,7 @@ updates</p></td>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.4.1.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.</p>
 </div>
 
       </footer>
