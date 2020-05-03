@@ -114,105 +114,130 @@ double prior_alpha_single(double alpha, int  k, int prior) {
   return 0;
 }
 
+int checkInterrupt(int count){
+  count ++;
+  if (count == 100){
+    Rcpp::checkUserInterrupt();
+    count = 0;
+  }
+  return (count);
+}
 
 double rtnormsingle(double mu, double sd, double lower, double upper){
+  // Which algorithm to use
+  int alg;
+  int count = 0;
+  bool done = false;
+  double y, a, u, rho;
 
-  double z, pz, u, slower, supper, tr, alpha;
-  int count = 0; // Used to check for user interrupts in while loops
-  bool sample = 1;
-
-  if (lower == R_NegInf) {
-    lower = -1e10;
-  }
-  if (upper == R_PosInf) {
-    upper = 1e10;
+  if (upper == R_PosInf){
+    upper = 1e35;
   }
 
-  if(lower >= upper){
-    return((lower + upper) / 2);
+  if (lower == R_NegInf){
+    lower = -1e35;
   }
-  if(lower < -1e9 || upper > 1e9){
 
-    if(lower < -1e9 && upper > 1e9){
-      z = R::rnorm(mu, sd);
-      return z;
 
-    }else if(upper > 1e9){
-      tr = (lower - mu) / sd;
-    }else{
-      tr = (mu - upper) / sd;
-    }
-    if(tr < 0){
-      /* if sampling >0.5 of a normal density possibly quicker just to
-       sample and reject */
+  if (lower  > upper){
+    // Bigger lower than upper is not valid
+    alg = -1;
 
-        while(sample == 1){
+  } else if (((lower < 0) & (upper > 1e10)) |
+    ((lower == -1e10) & (upper > 0)) |
+    ((lower < 0) & (upper > 0) & (upper - lower > sqrt(2 * M_PI)))){
+    /* standard "simulate from normal and reject if outside limits" method.
+    Use if bounds are wide. */
+    alg = 0;
 
-          count = count + 1;
-          if (count == 100){
-            Rcpp::checkUserInterrupt();
-            count = 0;
-          }
+  } else if (((lower >= 0) & (upper > lower + 2 * sqrt(exp(1)) /
+    (lower + sqrt(lower * lower + 4)) *
+      exp((lower * 2 - lower * sqrt(lower * lower + 4)) / 4)))){
+    // rejection sampling with exponential proposal. Use if lower >> mean
+    alg = 1;
 
-          z = R::rnorm(0.0, 1.0);
+  } else if ((upper <= 0) & (-lower > -upper + 2*sqrt(exp(1)) /
+    (-upper + sqrt(upper * upper + 4)) * exp((upper * upper -
+      -upper * sqrt(upper * upper + 4)) / 4))){
+      // rejection sampling with exponential proposal. Use if upper << mean.
+      alg = 2;
+  }  else{
+    /* rejection sampling with uniform proposal.
+     * Use if bounds are narrow and central. */
+    alg = 3;
+  }
 
-          if(z > tr){
-            sample = 0;
-          }
-        }
-    }else{
-      alpha = (tr + sqrt((tr * tr) + 4.0)) / 2.0;
-      while(sample == 1){
-        count = count + 1;
-        if (count == 100){
-          Rcpp::checkUserInterrupt();
-          count = 0;
-        }
+  if (alg == - 1){
+    Rcpp::Rcout << "Lower limit of a truncation cannot be biggger than the "<<
+      "upper limit" << std::endl;
+    y = 0;
+    return(0);
+  }
 
-        z = R::rexp(1.0/alpha) + tr;
-        pz = - ((alpha - z) * (alpha - z) / 2.0);
-        u = -R::rexp(1.0);
-        if(u <= pz){
-          sample = 0;
-        }
-      }
-    }
-  }else{
-
-    slower = (lower - mu) / sd;
-    supper = (upper - mu) / sd;
-
-    while(sample == 1){
-      count = count + 1;
-      if (count == 100){
-        Rcpp::checkUserInterrupt();
-        count = 0;
-      }
-
-      z = R::runif(slower, supper);
-
-      if(slower <= 0.0 && 0.0 <= supper){
-        pz = -z * z / 2.0;
-      }else{
-        if(supper < 0.0){
-          pz = (supper * supper - z * z) / 2.0;
-        }else{
-          pz = (slower * slower - z * z) / 2.0;
-        }
-      }
-
-      u = - R::rexp(1.0);
-
-      if(u < pz){
-        sample = 0;
+  if (alg == 0){
+    while (done == false){
+      y = ::Rf_rnorm(0, 1);
+      count = checkInterrupt(count);
+      if ((y > lower) & (y < upper)){
+        done = true;
       }
     }
   }
-  if(lower < -1e9){
-    return(mu - z * sd);
-  }else{
-    return(z * sd + mu);
+
+  if (alg == 1){
+    while (done == false){
+      a = (lower + sqrt(lower * lower + 4)) / 2;
+      y = ::Rf_rexp(a) + lower;
+      u = ::Rf_runif(0, 1);
+
+      count = checkInterrupt(count);
+
+      if ((u <= exp(-pow(y - a, 2) / 2)) & (y <= upper)){
+        done = true;
+      }
+    }
   }
+
+  if (alg == 2){
+    while (done == false){
+      a = (- upper + sqrt(upper * upper + 4)) / 2;
+      y = ::Rf_rexp(a) - upper;
+      u = ::Rf_runif(0, 1);
+
+      count = checkInterrupt(count);
+
+      if ((u <= exp(- pow ( y - a, 2) / 2)) & (y <= -lower)){
+        done = true;
+      }
+    }
+    y = - y;
+  }
+
+  if (alg == 3){
+    while (done == false){
+      y = ::Rf_runif(lower, upper);
+
+      if (lower > 0){
+        rho = exp((lower * lower - y * y) / 2);
+      } else if (upper < 0){
+        rho = exp ((upper * upper - y * y ) / 2);
+      } else{
+        rho = exp ((-y * y)/2);
+      }
+
+      u = Rf_runif(0, 1);
+
+      count = checkInterrupt(count);
+
+      if (u <= rho){
+        done = true;
+      }
+    }
+
+  }
+
+  return (y * sd + mu);
+
 }
 
 arma::vec Vect(int n, arma::vec x){
@@ -225,12 +250,17 @@ arma::vec Vect(int n, arma::vec x){
   return x;
 }
 
-// C++ adaptation of Jarrod Hadfield's MCMCglmm::rtnorm
+/* C++ version of truncated normal based on R function
+ *  msm::rtnorm by Christopher Jackson */
 arma::colvec rtnorm(int n, arma::vec lower, arma::vec upper,
                     arma::vec mu, arma::vec sd){
 
   mu = Vect(n, mu); sd = Vect(n, sd);
   lower = Vect(n, lower); upper = Vect(n, upper);
+
+  // Algorithm works on a mean 0, sd 1 scale
+  lower = (lower - mu) / sd;
+  upper = (upper - mu) / sd;
 
   arma::colvec rv (n);
   for( int i = 0; i < n; i++){
@@ -270,7 +300,9 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
   sdVec.fill(sqrt(sigma2));
 
   arma::vec maxUpper (n);
-  maxUpper.fill(1e10);
+  maxUpper.fill(1e35);
+  arma::vec minLower(n);
+  minLower.fill(-1e35);
 
   if (set == true) {
     arma::vec TimeGreater(n);
@@ -280,9 +312,6 @@ arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
         TimeGreater[i] = 1;
       }
     }
-
-    arma::vec minLower(n);
-    minLower.fill(-1e10);
 
     aux = Cens % (TimeGreater %
       rtnorm(n, log(abs(Time - eps_l)), log(Time + eps_r), MEAN, sdVec) +
@@ -361,7 +390,7 @@ arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
         sigma2_aux = pow(R::rgamma(shape_aux, 1.0 / rate_aux[i]), -1);
       }
     }
-    // ISSUE HERE!
+
     logt_aux = logt_update_SMLN(Time, Cens, X, beta_aux,
                                 sigma2_aux, set, eps_l, eps_r);
 
