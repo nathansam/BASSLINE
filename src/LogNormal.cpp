@@ -143,9 +143,9 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
     // Bigger lower than upper is not valid
     alg = -1;
 
-  } else if ((lower < 0 & upper > 1e10) |
-    (lower == -1e10 & upper > 0) |
-    (lower < 0 & upper > 0 & upper - lower > sqrt(2 * M_PI))){
+  } else if (((lower < 0) & (upper > 1e10)) |
+    ((lower == -1e10) & (upper > 0)) |
+    ((lower < 0) & (upper > 0) & (upper - lower > sqrt(2 * M_PI)))){
     /* standard "simulate from normal and reject if outside limits" method.
     Use if bounds are wide. */
     alg = 0;
@@ -178,7 +178,7 @@ double rtnormsingle(double mu, double sd, double lower, double upper){
     while (done == false){
       y = ::Rf_rnorm(0, 1);
       count = checkInterrupt(count);
-      if (y > lower & y < upper){
+      if ((y > lower) & (y < upper)){
         done = true;
       }
     }
