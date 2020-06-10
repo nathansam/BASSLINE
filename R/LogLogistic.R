@@ -28,16 +28,37 @@
 #'                   Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
-MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
-                      sigma20 = NULL, prior = 2, set = TRUE, eps_l = 0.5,
-                      eps_r = 0.5, N.AKS = 3) {
+MCMC_LLOG <- function(N,
+                      thin,
+                      burn,
+                      Time,
+                      Cens,
+                      X,
+                      Q = 10,
+                      beta0 = NULL,
+                      sigma20 = NULL,
+                      prior = 2,
+                      set = TRUE,
+                      eps_l = 0.5,
+                      eps_r = 0.5,
+                      N.AKS = 3) {
 
     # Sample starting values if not given
     if (is.null(beta0)) beta0 <- beta.sample(n = ncol(X))
     if (is.null(sigma20)) sigma20 <- sigma2.sample()
 
-    MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20,
-                     prior, set, eps_l, eps_r)
+    MCMC.param.check(N,
+                     thin,
+                     burn,
+                     Time,
+                     Cens,
+                     X,
+                     beta0,
+                     sigma20,
+                     prior,
+                     set,
+                     eps_l,
+                     eps_r)
 
 
     k <- length(beta0)
@@ -57,7 +78,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
     logt <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
     logt[1, ] <- log(Time)
     lambda <- matrix(rep(0, times = (N.aux + 1) * n), ncol = n)
-    lambda[1, ] <- (stats::rgamma(n, shape = 2, rate = 2))^(-1)
+    lambda[1, ] <- (stats::rgamma(n, shape = 2, rate = 2)) ^ (-1)
 
     beta.aux <- beta[1, ]
     sigma2.aux <- sigma2[1]
@@ -78,7 +99,8 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
         rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
             (logt.aux - X %*% beta.aux)
         if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
-            sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
+            sigma2.aux <- (stats::rgamma(1,
+                                         shape = shape.aux,
                                          rate = rate.aux)) ^ (-1)
         }
 
@@ -93,8 +115,14 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
             }
         }
 
-        logt.aux <- logt.update.SMLN(Time, Cens, X, beta.aux,
-                                     sigma2.aux / lambda.aux, set, eps_l, eps_r)
+        logt.aux <- logt.update.SMLN(Time,
+                                     Cens,
+                                     X,
+                                     beta.aux,
+                                     sigma2.aux / lambda.aux,
+                                     set,
+                                     eps_l,
+                                     eps_r)
 
         if (iter %% thin == 0) {
             beta[iter / thin + 1, ] <- beta.aux
@@ -117,7 +145,7 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 
 
     if (burn > 0) {
-        burn.period <- 1:(burn/thin)
+        burn.period <- 1:(burn / thin)
         chain <- chain [-burn.period, ]
     }
     return(chain)
@@ -144,8 +172,17 @@ MCMC_LLOG <- function(N, thin, burn, Time, Cens, X, Q = 10, beta0 = NULL,
 #'                      X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
-LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = TRUE,
-                     eps_l = 0.5, eps_r = 0.5, N.AKS = 3) {
+LML_LLOG <- function(thin,
+                     Time,
+                     Cens,
+                     X,
+                     chain,
+                     Q = 10,
+                     prior = 2,
+                     set = TRUE,
+                     eps_l = 0.5,
+                     eps_r = 0.5,
+                     N.AKS = 3) {
     chain <- as.matrix(chain)
     n <- length(Time)
     N <- dim(chain)[1]
@@ -165,12 +202,20 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = TRUE,
     sigma2.star <- stats::median(chain[, k + 1])
 
     # LIKELIHOOD ORDINATE
-    LL.ord <- log.lik.LLOG(Time, Cens, X, beta = beta.star,
-                           sigma2 = sigma2.star, set, eps_l, eps_r)
+    LL.ord <- log.lik.LLOG(Time,
+                           Cens,
+                           X,
+                           beta = beta.star,
+                           sigma2 = sigma2.star,
+                           set,
+                           eps_l,
+                           eps_r)
     cat("Likelihood ordinate ready!\n")
 
     # PRIOR ORDINATE
-    LP.ord <- prior_LN(beta = beta.star, sigma2 = sigma2.star, prior = prior,
+    LP.ord <- prior_LN(beta = beta.star,
+                       sigma2 = sigma2.star,
+                       prior = prior,
                        logs = TRUE)
     cat("Prior ordinate ready!\n")
 
@@ -182,20 +227,30 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = TRUE,
             as.vector(chain[i, 1:k])
         aux2 <- diag(as.vector(t(chain[i, (k + 2):(k + 1 + n)])))
         rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
-        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star, shape = shape,
+        po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star,
+                                            shape = shape,
                                             scale = rate.aux)
     }
     PO.sigma2 <- mean(po.sigma2)
     cat("Posterior ordinate sigma2 ready!\n")
 
     # POSTERIOR ORDINATE - beta
-    chain.beta <- MCMCR.sigma2.LLOG(N = N * thin, thin = thin, Q, Time, Cens, X,
+    chain.beta <- MCMCR.sigma2.LLOG(N = N * thin,
+                                    thin = thin,
+                                    Q,
+                                    Time,
+                                    Cens,
+                                    X,
                                     beta0 = t(chain[N, 1:k]),
                                     sigma20 = sigma2.star,
                                     logt0 = t(chain[N, (n + k + 2) :
                                                         (2 * n + k + 1)]),
                                     lambda0 = t(chain[N, (k + 2):(n + k + 1)]),
-                                    prior = prior, set, eps_l, eps_r, N.AKS)
+                                    prior = prior,
+                                    set,
+                                    eps_l,
+                                    eps_r,
+                                    N.AKS)
     cat("Reduced chain.beta ready!\n")
 
     po.beta <- rep(0, times = N)
@@ -219,8 +274,11 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = TRUE,
     # MARGINAL LOG-LIKELIHOOD
     LML <- LL.ord + LP.ord - LPO.sigma2 - LPO.beta
 
-    list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.sigma2 = LPO.sigma2,
-         LPO.beta = LPO.beta, LML = LML)
+    return(list(LL.ord = LL.ord,
+                LP.ord = LP.ord,
+                LPO.sigma2 = LPO.sigma2,
+                LPO.beta = LPO.beta,
+                LML = LML))
 }
 #' @title Deviance information criterion for the log-logistic model
 #' @description Deviance information criterion is based on the deviance funcion
@@ -241,24 +299,39 @@ LML_LLOG <- function(thin, Time, Cens, X, chain, Q = 10, prior = 2, set = TRUE,
 #'                      X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
-DIC_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
+DIC_LLOG <- function(Time,
+                     Cens,
+                     X,
+                     chain,
+                     set = TRUE,
+                     eps_l = 0.5,
+                     eps_r = 0.5) {
     chain <- as.matrix(chain)
     N <- dim(chain)[1]
     k <- dim(X)[2]
-    n <- length(Time)
     LL <- rep(0, times = N)
 
     for (iter in 1:N) {
-        LL[iter] <- log.lik.LLOG(Time, Cens, X,
+        LL[iter] <- log.lik.LLOG(Time,
+                                 Cens,
+                                 X,
+
                                  beta = as.vector(chain[iter, 1:k]),
                                  sigma2 = chain[iter, k + 1],
-                                 set = set, eps_l, eps_r)
+                                 set = set,
+                                 eps_l,
+                                 eps_r)
     }
 
     aux <- apply(chain[, 1:(k + 1)], 2, "median")
-    pd <- -2 * mean(LL) + 2 * log.lik.LLOG(Time, Cens, X,
-                                           beta = aux[1:k], sigma2 = aux[k + 1],
-                                           set = set, eps_l, eps_r)
+    pd <- -2 * mean(LL) + 2 * log.lik.LLOG(Time,
+                                           Cens,
+                                           X,
+                                           beta = aux[1:k],
+                                           sigma2 = aux[k + 1],
+                                           set = set,
+                                           eps_l,
+                                           eps_r)
     pd.aux <- k + 1
 
     DIC <- -2 * mean(LL) + pd
@@ -291,7 +364,12 @@ DIC_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5)
 #'                              X = cancer[, 3:11], chain = LLOG)
 #'
 #' @export
-CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
+CaseDeletion_LLOG <- function(Time,
+                              Cens,
+                              X,
+                              chain,
+                              set = TRUE,
+                              eps_l = 0.5,
                               eps_r = 0.5) {
     chain <- as.matrix(chain)
     n <- dim(X)[1]
@@ -304,10 +382,14 @@ CaseDeletion_LLOG <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
         aux1 <- rep(0, times = N)
         aux2 <- rep(0, times = N)
         for (ITER in 1:N) {
-            aux2[ITER] <- log.lik.LLOG(Time[s], Cens[s], X[s, ],
+            aux2[ITER] <- log.lik.LLOG(Time[s],
+                                       Cens[s],
+                                       X[s, ],
                                        beta = as.vector(chain[ITER, 1:k]),
-                                       sigma2 = chain[ITER, (k + 1)], set,
-                                       eps_l, eps_r)
+                                       sigma2 = chain[ITER, (k + 1)],
+                                       set,
+                                       eps_l,
+                                       eps_r)
             aux1[ITER] <- exp(-aux2[ITER])
         }
         logCPO[s] <- -log(mean(aux1))

@@ -45,8 +45,11 @@ double prior_alpha_single(double alpha, int  k, int prior);
 
 
 // [[Rcpp::export]]
-arma::colvec rtnorm(int n, arma::vec lower, arma::vec upper,
-                    arma::vec mu, arma::vec sd);
+arma::colvec rtnorm(int n,
+                    arma::vec lower,
+                    arma::vec upper,
+                    arma::vec mu,
+                    arma::vec sd);
 // [[Rcpp::export]]
 NumericVector mvrnormArma(int n, arma::vec mu, arma::mat Sigma);
 
@@ -54,14 +57,26 @@ NumericVector mvrnormArma(int n, arma::vec mu, arma::mat Sigma);
 arma::vec mvrnormArma2(int n, arma::vec mu, arma::mat Sigma);
 
 // [[Rcpp::export]]
-arma::vec logt_update_SMLN (arma::vec Time, arma::vec Cens,
-                            arma::mat X, arma::vec beta, double sigma2,
-                            bool set, double eps_l, double eps_r);
+arma::vec logt_update_SMLN (arma::vec Time,
+                            arma::vec Cens,
+                            arma::mat X,
+                            arma::vec beta,
+                            double sigma2,
+                            bool set,
+                            double eps_l,
+                            double eps_r);
 
 // [[Rcpp::export]]
-arma::mat MCMC_LN_CPP (int N, int thin, int burn, arma::vec Time,
-                       arma::vec Cens, arma::mat X, arma::vec beta0,
-                       double sigma20, int prior, bool set, double eps_l,
+arma::mat MCMC_LN_CPP (int N, int thin,
+                       int burn,
+                       arma::vec Time,
+                       arma::vec Cens,
+                       arma::mat X,
+                       arma::vec beta0,
+                       double sigma20,
+                       int prior,
+                       bool set,
+                       double eps_l,
                        double eps_r);
 
 #endif

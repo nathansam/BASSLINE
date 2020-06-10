@@ -1,4 +1,3 @@
-
 #' @title Produce a trace plot of a variable's MCMC chain
 #' @description Plots the chain across (non-discarded) iterations for a
 #' specified observation
@@ -24,12 +23,10 @@ Trace_plot <- function(variable = NULL, chain = NULL) {
   }
 
   Iteration <- Value <- NULL
+  title <- paste("Trace Plot for Variable", colnames(chain)[variable])
   df <- data.frame(Iteration = seq(nrow(chain)), Value = chain[, variable])
   p <- ggplot2::ggplot(ggplot2::aes(x = Iteration, y = Value), data = df)
-  p <- p + ggplot2::geom_line()
-  p <- p + ggplot2::theme_bw()
-  title <- paste("Trace Plot for Variable", colnames(chain)[variable])
-  p <- p + ggplot2::ggtitle(title)
+  p <- p + ggplot2::geom_line() + ggplot2::theme_bw() + ggplot2::ggtitle(title)
   return(p)
 }
 
@@ -65,9 +62,7 @@ BASSLINE_convert <- function(df) {
     } else{
       # if factor then add column for each level
       for (levels in unique(df[, columns])) {
-
         level.binary <- rep(0, n.obs)
-
         for (i in 1:n.obs) {
           if (df[i, columns] == levels) level.binary[i] <- 1
         }
@@ -85,8 +80,18 @@ BASSLINE_convert <- function(df) {
 
 
 #### Input check for MCMC functions
-MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
-                             prior, set, eps_l, eps_r) {
+MCMC.param.check <- function(N,
+                             thin,
+                             burn,
+                             Time,
+                             Cens,
+                             X,
+                             beta0,
+                             sigma20,
+                             prior,
+                             set,
+                             eps_l,
+                             eps_r) {
 
   num.obs <- nrow(X)
   num.covariates <- ncol(X)
@@ -128,7 +133,7 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
     stop("Time is not the correct length.\n")
   }
 
-  if ( all(Cens == 1 | Cens == 0) == F) {
+  if (all(Cens == 1 | Cens == 0) == F) {
     stop("Cens should be either 0 or 1 for each observation\n")
   }
   if (length(Cens) != num.obs) {
@@ -157,7 +162,7 @@ MCMC.param.check <- function(N, thin, burn, Time, Cens, X, beta0, sigma20,
 beta.sample <- function(n) {
   cat("Sampling initial betas from a Normal(0, 1) distribution\n")
   betas <- stats::rnorm(n, 0, 1)
-  cat(paste("Initial beta", 1:length(betas), ":", round(betas, 2), "\n"))
+  cat(paste("Initial beta", seq_len(length(betas)), ":", round(betas, 2), "\n"))
   cat("\n")
   return(betas)
 }

@@ -27,8 +27,18 @@
 #'                 Cens = cancer[, 2], X = cancer[, 3:11])
 #'
 #' @export
-MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
-                     alpha0 = NULL, prior = 2, set = TRUE, eps_l = 0.5,
+MCMC_LEP <- function(N,
+                     thin,
+                     burn,
+                     Time,
+                     Cens,
+                     X,
+                     beta0 = NULL,
+                     sigma20 = NULL,
+                     alpha0 = NULL,
+                     prior = 2,
+                     set = TRUE,
+                     eps_l = 0.5,
                      eps_r = 0.5,
                      ar = 0.44) {
 
@@ -37,21 +47,22 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
   if (is.null(sigma20)) sigma20 <- sigma2.sample()
   if (is.null(alpha0)) alpha0 <- alpha.sample()
 
-  MCMC.param.check(N, thin, burn, Time, Cens, X, beta0, sigma20, prior, set,
-                   eps_l, eps_r)
+  MCMC.param.check(N,
+                   thin,
+                   burn,
+                   Time,
+                   Cens,
+                   X,
+                   beta0,
+                   sigma20,
+                   prior,
+                   set,
+                   eps_l,
+                   eps_r)
 
   k <- length(beta0)
   n <- length(Time)
   N.aux <- round(N / thin, 0)
-  if (prior == 1) {
-    p <- 1 + k / 2
-  }
-  if (prior == 2) {
-    p <- 1
-  }
-  if (prior == 3) {
-    p <- 1
-  }
 
   beta <- matrix(rep(0, times = (N.aux + 1) * k), ncol = k)
   beta[1, ] <- beta0
@@ -92,10 +103,12 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 
     for (ind.b in 1:k) {
       MH.beta <- MH_marginal_beta_j(omega2 = exp(ls.beta.aux[ind.b]),
-                                    logt = logt.aux, X = X,
+                                    logt = logt.aux,
+                                    X = X,
                                     sigma2 = sigma2.aux,
                                     alpha = alpha.aux,
-                                    beta0 = beta.aux, j = ind.b)
+                                    beta0 = beta.aux,
+                                    j = ind.b)
       beta.aux[ind.b] <- MH.beta$beta[ind.b]
       if (MH.beta$ind == 1) {
         accept.beta[ind.b] <- accept.beta[ind.b] + 1
@@ -104,8 +117,11 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
     }
 
     MH.sigma2 <- MH_marginal_sigma2(omega2 = exp(ls.sigma2.aux),
-                                    logt = logt.aux, X = X, beta = beta.aux,
-                                    alpha = alpha.aux, sigma20 = sigma2.aux,
+                                    logt = logt.aux,
+                                    X = X,
+                                    beta = beta.aux,
+                                    alpha = alpha.aux,
+                                    sigma20 = sigma2.aux,
                                     prior = prior)
     sigma2.aux <- MH.sigma2$sigma2
     if (MH.sigma2$ind == 1) {
@@ -114,8 +130,11 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
     }
 
     MH.alpha <- MH_marginal_alpha(omega2 = exp(ls.alpha.aux),
-                                  logt = logt.aux, X = X, beta = beta.aux,
-                                  sigma2 = sigma2.aux, alpha0 = alpha.aux,
+                                  logt = logt.aux,
+                                  X = X,
+                                  beta = beta.aux,
+                                  sigma2 = sigma2.aux,
+                                  alpha0 = alpha.aux,
                                   prior = prior)
     alpha.aux <- MH.alpha$alpha
     if (MH.alpha$ind == 1) {
@@ -126,8 +145,16 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
     a <- ((abs(logt.aux - X %*% beta.aux)) / sqrt(sigma2.aux)) ^ alpha.aux
     U.aux <- -log(1 - stats::runif(n)) + a
 
-    logt.aux <- logt.update.LEP(Time, Cens, X, beta.aux, sigma2.aux,
-                                alpha.aux, u = U.aux, set, eps_l, eps_r)
+    logt.aux <- logt.update.LEP(Time,
+                                Cens,
+                                X,
+                                beta.aux,
+                                sigma2.aux,
+                                alpha.aux,
+                                u = U.aux,
+                                set,
+                                eps_l,
+                                eps_r)
 
     if (i_batch == 50) {
       pbeta.aux <- pbeta.aux / 50
@@ -175,12 +202,18 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
   logt.cols <- paste("logt.", seq(ncol(logt)), sep = "")
   ls.beta.cols <- paste("ls.beta.", seq(ncol(ls.beta)), sep = "")
 
-  colnames(chain) <- c(beta.cols, "sigma2", alpha.cols, U.cols, logt.cols,
-                       ls.beta.cols, "ls.sigma2", "ls.alpha")
+  colnames(chain) <- c(beta.cols,
+                       "sigma2",
+                       alpha.cols,
+                       U.cols,
+                       logt.cols,
+                       ls.beta.cols,
+                       "ls.sigma2",
+                       "ls.alpha")
 
 
   if (burn > 0) {
-    burn.period <- 1:(burn/thin)
+    burn.period <- 1:(burn / thin)
     chain <- chain [- burn.period, ]
   }
 
@@ -203,22 +236,19 @@ MCMC_LEP <- function(N, thin, burn, Time, Cens, X, beta0 =NULL, sigma20 = NULL,
 #'                    X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
-LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
+LML_LEP <- function(thin,
+                    Time,
+                    Cens,
+                    X,
+                    chain,
+                    prior = 2,
+                    set = TRUE,
                     eps_l = 0.5,
                     eps_r = 0.5) {
   chain <- as.matrix(chain)
   n <- length(Time)
   N <- dim(chain)[1]
   k <- dim(X)[2]
-  if (prior == 1) {
-    p <- 1 + k / 2
-  }
-  if (prior == 2) {
-    p <- 1
-  }
-  if (prior == 3) {
-    p <- 1
-  }
 
   if (k > 1) {
     omega2.beta <- exp(apply(chain[, (2 * n + k + 3):(2 * n + 2 * k + 2)],
@@ -229,12 +259,21 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
   omega2.sigma2 <- exp(stats::median(chain[, 2 * n + 2 * k + 3]))
   omega2.alpha <- exp(stats::median(chain[, 2 * n + 2 * k + 4]))
 
-  chain.nonadapt <- MCMC.LEP.NonAdapt(N = N * thin, thin = thin, Time, Cens,
-                                      X, beta0 = as.vector(chain[N, 1:k]),
+  chain.nonadapt <- MCMC.LEP.NonAdapt(N = N * thin,
+                                      thin = thin,
+                                      Time,
+                                      Cens,
+                                      X,
+                                      beta0 = as.vector(chain[N, 1:k]),
                                       sigma20 = chain[N, k + 1],
-                                      alpha0 = chain[N, k + 2], prior, set,
-                                      eps_l, eps_r, omega2.beta,
-                                      omega2.sigma2, omega2.alpha)
+                                      alpha0 = chain[N, k + 2],
+                                      prior,
+                                      set,
+                                      eps_l,
+                                      eps_r,
+                                      omega2.beta,
+                                      omega2.sigma2,
+                                      omega2.alpha)
   chain.nonadapt <- chain.nonadapt[-1, ]
   if (k > 1) {
     beta.star <- apply(chain.nonadapt[, 1:k], 2, "median")
@@ -245,16 +284,29 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
   alpha.star <- stats::median(chain.nonadapt[, k + 2])
 
   # Log-LIKELIHOOD ORDINATE
-  LL.ord <- log.lik.LEP(Time, Cens, X, beta = beta.star, sigma2 = sigma2.star,
-                        alpha = alpha.star, set, eps_l, eps_r)
+  LL.ord <- log.lik.LEP(Time,
+                        Cens,
+                        X,
+                        beta = beta.star,
+                        sigma2 = sigma2.star,
+                        alpha = alpha.star,
+                        set,
+                        eps_l,
+                        eps_r)
   cat("Likelihood ordinate ready!\n")
 
   # PRIOR ORDINATE
-  LP.ord <- prior_LEP(beta = beta.star, sigma2 = sigma2.star,
-                      alpha = alpha.star, prior, logs = TRUE)
+  LP.ord <- prior_LEP(beta = beta.star,
+                      sigma2 = sigma2.star,
+                      alpha = alpha.star,
+                      prior,
+                      logs = TRUE)
   cat("Prior ordinate ready!\n")
 
-  chain.sigma2 <- MCMCR.alpha.LEP(N = N * thin, thin = thin, Time, Cens, X,
+  chain.sigma2 <- MCMCR.alpha.LEP(N = N * thin,
+                                  thin = thin,
+                                  Time, Cens,
+                                  X,
                                   beta0 = as.vector(chain.nonadapt[N, 1:k]),
                                   sigma20 = chain.nonadapt[N, (k + 1)],
                                   alpha0 = alpha.star,
@@ -262,8 +314,12 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
                                                              (2 * n + k + 2)]),
                                   u0 = t(chain.nonadapt[N,
                                                         (k + 3):(k + 2 + n)]),
-                                  prior, set, eps_l, eps_r,
-                                  omega2.beta, omega2.sigma2)
+                                  prior,
+                                  set,
+                                  eps_l,
+                                  eps_r,
+                                  omega2.beta,
+                                  omega2.sigma2)
   cat("Reduced chain.sigma2 ready!\n")
 
   # POSTERIOR ORDINATE - alpha
@@ -295,7 +351,10 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
   PO.alpha <- mean(po1.alpha) / mean(po2.alpha)
   cat("Posterior ordinate alpha ready!\n")
 
-  chain.beta <- MCMCR.sigma2.alpha.LEP(N = N * thin, thin = thin, Time, Cens,
+  chain.beta <- MCMCR.sigma2.alpha.LEP(N = N * thin,
+                                       thin = thin,
+                                       Time,
+                                       Cens,
                                        X,
                                        beta0 = as.vector(chain.nonadapt[N, 1:k]),
                                        sigma20 = sigma2.star,
@@ -304,7 +363,11 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
                                                                   (2 * n + k + 2)]),
                                        u0 = t(chain.nonadapt[N, (k + 3) :
                                                                (k + 2 + n)]),
-                                       prior, set, eps_l, eps_r, omega2.beta)
+                                       prior,
+                                       set,
+                                       eps_l,
+                                       eps_r,
+                                       omega2.beta)
   cat("Reduced chain.beta ready\n!")
 
   # POSTERIOR ORDINATE - sigma2
@@ -318,14 +381,15 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
                                                                   (k + 2 + n) :
                                                                   (2 * n + k + 1)]),
                                   X = X,
-                                  beta = as.vector(t(chain.sigma2[i + 1,
-                                                                  1:k])),
+                                  beta = as.vector(t(chain.sigma2[i + 1, 1:k])),
                                   alpha = alpha.star,
                                   prior = prior) *
       stats::dnorm(x = sigma2.star,
                    mean = as.numeric(chain.sigma2[i + 1, (k + 1)]),
                    sd = sqrt(omega2.sigma2))
-    sigma2.aux <- stats::rnorm(n = 1, mean = sigma2.star, sd = sqrt(omega2.sigma2))
+    sigma2.aux <- stats::rnorm(n = 1,
+                               mean = sigma2.star,
+                               sd = sqrt(omega2.sigma2))
     po2.sigma2[i] <- alpha_sigma2(sigma2_0 = sigma2.star,
                                   sigma2_1 = sigma2.aux,
                                   logt = as.vector(chain.beta[i, (k + 1 + n):
@@ -346,8 +410,12 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
     print(j.beta)
     beta0 <- as.vector(chain.prev[N, 1:k])
     beta0[j.beta + 1] <- beta.star[j.beta + 1]
-    chain.next <- MCMCR.betaJ.sigma2.alpha.LEP(N = N * thin, thin = thin,
-                                               Time, Cens, X, beta0 = beta0,
+    chain.next <- MCMCR.betaJ.sigma2.alpha.LEP(N = N * thin,
+                                               thin = thin,
+                                               Time,
+                                               Cens,
+                                               X,
+                                               beta0 = beta0,
                                                sigma20 = sigma2.star,
                                                alpha0 = alpha.star,
                                                logt0 = as.vector(chain.nonadapt[N,
@@ -356,8 +424,12 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
                                                u0 = as.vector(chain.nonadapt[N,
                                                                              (k + 3):
                                                                                (k + 2 + n)]),
-                                               prior, set, eps_l, eps_r,
-                                               omega2.beta, J = j.beta + 1)
+                                               prior,
+                                               set,
+                                               eps_l,
+                                               eps_r,
+                                               omega2.beta,
+                                               J = j.beta + 1)
     po1.beta <- rep(0, times = N)
     po2.beta <- rep(0, times = N)
 
@@ -365,11 +437,13 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
       beta.0 <- as.vector(t(chain.prev[i + 1, 1:k]))
       beta.1 <- beta.0
       beta.1[j.beta + 1] <- beta.star[j.beta + 1]
-      po1.beta[i] <- alpha_beta(beta_0 = beta.0, beta_1 = beta.1,
+      po1.beta[i] <- alpha_beta(beta_0 = beta.0,
+                                beta_1 = beta.1,
                                 logt = as.vector(chain.prev[i + 1,
                                                             (k + 1 + n) :
                                                               (2 * n + k)]),
-                                X = X, sigma2 = sigma2.star,
+                                X = X,
+                                sigma2 = sigma2.star,
                                 alpha = alpha.star) *
         stats::dnorm(x = beta.star[j.beta + 1],
                      mean = as.numeric(chain.prev[i + 1, j.beta + 1]),
@@ -382,7 +456,8 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
                                 logt = as.vector(chain.next[i + 1, (k + 1
                                                                     + n):
                                                               (2 * n + k)]),
-                                X = X, sigma2 = sigma2.star,
+                                X = X,
+                                sigma2 = sigma2.star,
                                 alpha = alpha.star)
     }
     PO.beta[j.beta + 1] <- mean(po1.beta) / mean(po2.beta)
@@ -399,9 +474,12 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
   # MARGINAL LOG-LIKELIHOOD
   LML <- LL.ord + LP.ord - LPO.alpha - LPO.sigma2 - sum(LPO.beta)
 
-  list(LL.ord = LL.ord, LP.ord = LP.ord, LPO.alpha = LPO.alpha,
-       LPO.sigma2 = LPO.sigma2, LPO.beta = sum(LPO.beta),
-       LML = LML)
+  return(list(LL.ord = LL.ord,
+              LP.ord = LP.ord,
+              LPO.alpha = LPO.alpha,
+              LPO.sigma2 = LPO.sigma2,
+              LPO.beta = sum(LPO.beta),
+              LML = LML))
 }
 
 #' @title Deviance information criterion for the log-exponential power model
@@ -423,24 +501,40 @@ LML_LEP <- function(thin, Time, Cens, X, chain, prior = 2, set = TRUE,
 #'                    X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
-DIC_LEP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
+DIC_LEP <- function(Time,
+                    Cens,
+                    X,
+                    chain,
+                    set = TRUE,
+                    eps_l = 0.5,
+                    eps_r = 0.5) {
   chain <- as.matrix(chain)
   N <- dim(chain)[1]
   k <- dim(X)[2]
-  n <- length(Time)
   LL <- rep(0, times = N)
 
   for (iter in 1:N) {
-    LL[iter] <- log.lik.LEP(Time, Cens, X,
+    LL[iter] <- log.lik.LEP(Time,
+                            Cens,
+                            X,
                             beta = as.vector(chain[iter, 1:k]),
                             sigma2 = chain[iter, k + 1],
-                            alpha = chain[iter, k + 2], set, eps_l, eps_r)
+                            alpha = chain[iter, k + 2],
+                            set,
+                            eps_l,
+                            eps_r)
   }
 
   aux <- apply(chain[, 1:(k + 2)], 2, "median")
-  pd <- -2 * mean(LL) + 2 * log.lik.LEP(Time, Cens, X, beta = aux[1:k],
+  pd <- -2 * mean(LL) + 2 * log.lik.LEP(Time,
+                                        Cens,
+                                        X,
+                                        beta = aux[1:k],
                                         sigma2 = aux[k + 1],
-                                        alpha = aux[k + 2], set, eps_l, eps_r)
+                                        alpha = aux[k + 2],
+                                        set,
+                                        eps_l,
+                                        eps_r)
   pd.aux <- k + 2
 
   DIC <- -2 * mean(LL) + pd
@@ -473,7 +567,12 @@ DIC_LEP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) 
 #'                            X = cancer[, 3:11], chain = LEP)
 #'
 #' @export
-CaseDeletion_LEP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
+CaseDeletion_LEP <- function(Time,
+                             Cens,
+                             X,
+                             chain,
+                             set = TRUE,
+                             eps_l = 0.5,
                              eps_r = 0.5) {
   chain <- as.matrix(chain)
   n <- dim(X)[1]
@@ -486,10 +585,14 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
     aux1 <- rep(0, times = N)
     aux2 <- rep(0, times = N)
     for (ITER in 1:N) {
-      aux2[ITER] <- log.lik.LEP(Time[s], Cens[s], X[s, ],
+      aux2[ITER] <- log.lik.LEP(Time[s],
+                                Cens[s],
+                                X[s, ],
                                 beta = as.vector(chain[ITER, 1:k]),
                                 sigma2 = chain[ITER, k + 1],
-                                alpha = chain[ITER, k + 2], set, eps_l,
+                                alpha = chain[ITER, k + 2],
+                                set,
+                                eps_l,
                                 eps_r)
       aux1[ITER] <- exp(-aux2[ITER])
     }
@@ -537,12 +640,35 @@ CaseDeletion_LEP <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5,
 #'                             cancer[, 3:11], chain = LEP)
 #'
 #' @export
-BF_u_obs_LEP <- function(N, thin, burn, ref, obs, Time, Cens, X, chain,
-                         prior = 2, set = TRUE, eps_l = 0.5, eps_r = 0.5,
+BF_u_obs_LEP <- function(N,
+                         thin,
+                         burn,
+                         ref,
+                         obs,
+                         Time,
+                         Cens,
+                         X,
+                         chain,
+                         prior = 2,
+                         set = TRUE,
+                         eps_l = 0.5,
+                         eps_r = 0.5,
                          ar = 0.44) {
   chain <- as.matrix(chain)
   aux1 <- Post.u.obs.LEP(obs, ref, X, chain)
-  aux2 <- CFP.obs.LEP(N, thin, burn, ref, obs, Time, Cens, X, chain, prior,
-                      set, eps_l, eps_r, ar = 0.44)
+  aux2 <- CFP.obs.LEP(N,
+                      thin,
+                      burn,
+                      ref,
+                      obs,
+                      Time,
+                      Cens,
+                      X,
+                      chain,
+                      prior,
+                      set,
+                      eps_l,
+                      eps_r,
+                      ar = 0.44)
   return(aux1 * aux2)
 }
