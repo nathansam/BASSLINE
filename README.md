@@ -5,6 +5,7 @@
   [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/nathansam/BASSLINE?branch=master&svg=true)](https://ci.appveyor.com/project/nathansam/BASSLINE)
   [![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/master/graph/badge.svg)](https://codecov.io/gh/nathansam/BASSLINE)
   [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/BASSLINE)](https://cran.r-project.org/package=BASSLINE)
+  ![Top language](https://img.shields.io/github/languages/top/nathansam/BASSLINE)
   [![License: GPL-3](https://img.shields.io/badge/License-GPL3-green.svg)](https://opensource.org/licenses/GPL-3.0)
   <!-- badges: end -->
 
