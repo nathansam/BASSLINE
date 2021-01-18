@@ -10,3 +10,5 @@
 ^appveyor\.yml$
 ^man/BenchJournal$
 ^\.vscode$
+^Makefile$
+^Jenkinsfile$
