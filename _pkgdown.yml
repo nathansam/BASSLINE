@@ -1,9 +1,12 @@
 template:
-  params:
-    bootswatch: paper
-destination: docs
-development:
-  mode: auto
+  bootstrap:  5
+  bootswatch: united
+  bslib:
+    primary: "#ffa200"
+    text-muted: "#000000"
+  destination: docs
+  development:
+    mode: auto
 reference:
 - title: "Log-Normal Model"
   desc: "Functions for the log-normal model"

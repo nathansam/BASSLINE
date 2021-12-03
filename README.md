@@ -1,13 +1,12 @@
 # BASSLINE  <img src="man/figures/sticker.svg" align="right" width="150" />
 
- <!-- badges: start -->
-  [![Travis build status](https://travis-ci.org/nathansam/BASSLINE.svg?branch=master)](https://travis-ci.org/nathansam/BASSLINE)
-  [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/nathansam/BASSLINE?branch=master&svg=true)](https://ci.appveyor.com/project/nathansam/BASSLINE)
-  [![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/master/graph/badge.svg)](https://codecov.io/gh/nathansam/BASSLINE)
-  [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/BASSLINE)](https://cran.r-project.org/package=BASSLINE)
-  ![Top language](https://img.shields.io/github/languages/top/nathansam/BASSLINE)
-  [![License: GPL-3](https://img.shields.io/badge/License-GPL3-green.svg)](https://opensource.org/licenses/GPL-3.0)
-  <!-- badges: end -->
+<!-- badges: start -->
+[![R build status](https://github.com/nathansam/BASSLINE/workflows/R-CMD-check/badge.svg)](https://github.com/nathansam/BASSLINE/actions)
+[![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/master/graph/badge.svg)](https://codecov.io/gh/nathansam/BASSLINE)
+[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/BASSLINE)](https://cran.r-project.org/package=BASSLINE)
+![Top language](https://img.shields.io/github/languages/top/nathansam/BASSLINE)
+[![License: GPL-3](https://img.shields.io/badge/License-GPL3-green.svg)](https://opensource.org/licenses/GPL-3.0)
+<!-- badges: end -->
 
 ## Overview
 

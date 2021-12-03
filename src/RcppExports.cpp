@@ -6,6 +6,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // prior_LEP
 NumericVector prior_LEP(NumericVector beta, float sigma2, NumericVector alpha, int prior, bool logs);
 RcppExport SEXP _BASSLINE_prior_LEP(SEXP betaSEXP, SEXP sigma2SEXP, SEXP alphaSEXP, SEXP priorSEXP, SEXP logsSEXP) {
