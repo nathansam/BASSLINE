@@ -5,7 +5,7 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="Mixtures of life distributions provide a convienient framework for
+<meta name="description" content="Mixtures of life distributions provide a convenient framework for
     survival analysis: particularly when standard models such as the Weibull 
     are unable to capture some features from the data. These mixtures can also
     account for unobserved heterogeneity or outlying observations.
@@ -17,7 +17,7 @@
 <script src="deps/bootstrap-5.1.0/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Bayesian Survival Analysis Using Shape Mixtures of Log-Normal Distributions">
-<meta property="og:description" content="Mixtures of life distributions provide a convienient framework for
+<meta property="og:description" content="Mixtures of life distributions provide a convenient framework for
     survival analysis: particularly when standard models such as the Weibull 
     are unable to capture some features from the data. These mixtures can also
     account for unobserved heterogeneity or outlying observations.
@@ -81,7 +81,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>Mixtures of life distributions provide a convienient framework for survival analysis: particularly when standard models such as the Weibull or the log-normal are unable to capture some features from the data. These mixtures can also account for unobserved heterogeneity or outlying observations.</p>
+<p>Mixtures of life distributions provide a convenient framework for survival analysis: particularly when standard models such as the Weibull or the log-normal are unable to capture some features from the data. These mixtures can also account for unobserved heterogeneity or outlying observations.</p>
 <p>BASSLINE (<strong>BA</strong>ye<strong>S</strong>ian <strong>S</strong>urvival ana<strong>L</strong>ys<strong>I</strong>s usi<strong>N</strong>g shap<strong>E</strong> mixtures of log-normal distributions) uses shape mixtures of log-normal distributions to fit data with fat tails and has been adapted from code written by Vallejos &amp; Steel[1]. Some of the functions have been rewritten in C++ for increased performance.</p>
 <p>5 distributions from the log-normal family are supported by BASSLINE:</p>
 <ul>
@@ -96,13 +96,8 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>The recommended way to install BASSLINE is via pak which will handle installing all dependencies:</p>
+<p>BASSLINE is currently not available on CRAN but can be installed via the devtools package</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/ns-load.html" class="external-link">requireNamespace</a></span><span class="op">(</span><span class="st">"pak"</span>, quietly <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span>
-    <span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"pak"</span><span class="op">)</span>
-<span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="http://pak.r-lib.org/reference/pkg_install.html" class="external-link">pkg_install</a></span><span class="op">(</span><span class="st">"nathansam/BASSLINE"</span><span class="op">)</span></code></pre></div>
-<p>Alternatively, BASSLINE can be installed via the devtools package</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"nathansam/BASSLINE"</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
