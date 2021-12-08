@@ -10,7 +10,7 @@
 
 ## Overview
 
-Mixtures of life distributions provide a convienient framework for survival
+Mixtures of life distributions provide a convenient framework for survival
 analysis: particularly when standard models such as the Weibull or the
 log-normal are unable to capture some features from the data. These mixtures
 can also account for unobserved heterogeneity or outlying observations.  
@@ -37,16 +37,8 @@ Case deletion analysis and outlier detection are also supported.
 
 ## Installation
 
-The recommended way to install BASSLINE is via pak which will handle installing
-all dependencies: 
-
-```R
-if (!requireNamespace("pak", quietly = TRUE))
-    install.packages("pak")
-pak::pkg_install("nathansam/BASSLINE")
-```
-
-Alternatively, BASSLINE can be installed via the devtools package
+BASSLINE is currently not available on CRAN but can be installed via the
+devtools package
 
 ```R
 devtools::install_github("nathansam/BASSLINE")

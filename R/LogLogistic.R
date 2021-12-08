@@ -281,7 +281,7 @@ LML_LLOG <- function(thin,
                 LML = LML))
 }
 #' @title Deviance information criterion for the log-logistic model
-#' @description Deviance information criterion is based on the deviance funcion
+#' @description Deviance information criterion is based on the deviance function
 #'     \eqn{D(\theta, y) = -2 log(f(y|\theta))} but also incorporates a
 #'     penalization factor of the complexity of the model
 #' @inheritParams MCMC_LN

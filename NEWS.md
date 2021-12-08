@@ -2,7 +2,7 @@
 
 * Changed N = 1000 to N = 100 (and thin to 2 and burn to 20) in example for
 `LML_LEP` to reduce running times. 
-* Added additonal tests
+* Added additional tests
 * Added column names to chains from MCMC functions
 
 # BASSLINE 0.0.0.9003 (2019-12-28)
