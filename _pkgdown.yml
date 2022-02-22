@@ -1,3 +1,5 @@
+url: "https://www.constantine-cooke.com/BASSLINE/"
+
 template:
   bootstrap:  5
   bootswatch: united
@@ -7,6 +9,16 @@ template:
   destination: docs
   development:
     mode: auto
+    
+navbar:
+  structure:
+    right: [website, github]
+  components:
+    website:
+      text: Constantine-Cooke.com
+      href: https://www.constantine-cooke.com
+      aria-label: Personal website
+
 reference:
 - title: "Log-Normal Model"
   desc: "Functions for the log-normal model"
