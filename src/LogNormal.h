@@ -3,6 +3,7 @@
 
 #define RCPP_ARMADILLO_RETURN_ANYVEC_AS_VECTOR
 #include <RcppArmadillo.h>
+#include <cmath>
 
 using Rcpp::NumericVector;
 using Rcpp::NumericMatrix;

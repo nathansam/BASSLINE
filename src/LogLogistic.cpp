@@ -57,13 +57,13 @@ Rcpp:: List RS_lambda_obs_LLOG(arma::vec logt, arma::mat X, arma::vec beta,
           }
         }
       } else {
-        double H = 0.5 * log(2) + 2.5 * log(PI) - 2.5 *
-          log(lambda) - ((PI * PI) / (2 * lambda)) + 0.5 *
+        double H = 0.5 * log(2) + 2.5 * log(M_PI) - 2.5 *
+          log(lambda) - ((M_PI * M_PI) / (2 * lambda)) + 0.5 *
           lambda;
         double lU = log(U);
         Z = 1;
-        W = exp(- (PI * PI) / (2 * lambda));
-        double K = lambda / (PI * PI);
+        W = exp(- (M_PI * M_PI) / (2 * lambda));
+        double K = lambda / (M_PI * M_PI);
         n_AKS = 0;
         while (n_AKS <= N_AKS) {
           n_AKS = n_AKS + 1;
