@@ -29,7 +29,7 @@ log-Student’s t model, in which case a reduced chain given
       <span class="navbar-toggler-icon"></span>
     </button>
 
-    <div id="navbar" class="collapse navbar-collapse ms-2">
+    <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item">
   <a class="nav-link" href="../articles/BASSLINE.html">Get started</a>
 </li>
@@ -43,6 +43,9 @@ log-Student’s t model, in which case a reduced chain given
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
 
       <ul class="navbar-nav"><li class="nav-item">
+  <a class="external-link nav-link" href="https://www.constantine-cooke.com" aria-label="Personal website">Constantine-Cooke.com</a>
+</li>
+<li class="nav-item">
   <a class="external-link nav-link" href="https://github.com/nathansam/BASSLINE/" aria-label="github">
     <span class="fab fa fab fa-github fa-lg"></span>
      
@@ -137,7 +140,7 @@ updates</p></dd>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/nathansam/BASSLINE" class="external-link">BASSLINE</a></span><span class="op">)</span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://www.constantine-cooke.com/BASSLINE/">BASSLINE</a></span><span class="op">)</span></span>
 <span class="r-in"></span>
 <span class="r-in"><span class="co"># Please note: N=1000 is not enough to reach convergence.</span></span>
 <span class="r-in"><span class="co"># This is only an illustration. Run longer chains for more accurate</span></span>
@@ -146,29 +149,29 @@ updates</p></dd>
 <span class="r-in"><span class="va">LST</span> <span class="op">&lt;-</span> <span class="fu"><a href="MCMC_LST.html">MCMC_LST</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span>
 <span class="r-in">                Cens <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial beta 1 : -0.52 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 2 : -0.19 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 3 : -0.13 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 4 : -0.77 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 5 : -1.28 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 6 : -0.25 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 7 : 0.86 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 8 : -1.97 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 9 : -0.41 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial beta 1 : 0.74 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 2 : 1.79 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 3 : -0.42 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 4 : -0.41 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 5 : -0.72 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 6 : -1.17 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 7 : 0.01 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 8 : -0.93 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 9 : -0.53 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial sigma^2 : 0.49 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial sigma^2 : 0.18 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial nu from a Gamma(2, 2) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial nu : 0.1 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial nu : 0.71 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0.33 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0.34 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">LST.Outlier</span> <span class="op">&lt;-</span> <span class="fu">BF_lambda_obs_LST</span><span class="op">(</span>N <span class="op">=</span> <span class="fl">100</span>, thin <span class="op">=</span> <span class="fl">20</span> , burn <span class="op">=</span> <span class="fl">1</span>, ref <span class="op">=</span> <span class="fl">1</span>,</span>
 <span class="r-in">                                 obs <span class="op">=</span> <span class="fl">1</span>, Time <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span>
 <span class="r-in">                                 Cens <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>,</span>
 <span class="r-in">                                 chain <span class="op">=</span> <span class="va">LST</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0.3 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0.42 </span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
@@ -181,7 +184,7 @@ updates</p></dd>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.1.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
     </footer></div>
