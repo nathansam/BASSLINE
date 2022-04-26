@@ -1,11 +1,11 @@
-# BASSLINE  <img src="man/figures/sticker.svg" align="right" width="150" />
+# BASSLINE  <img src="man/figures/logo.png" align="right" width="150" />
 
 <!-- badges: start -->
-[![R build status](https://github.com/nathansam/BASSLINE/workflows/R-CMD-check/badge.svg)](https://github.com/nathansam/BASSLINE/actions)
-[![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/master/graph/badge.svg)](https://codecov.io/gh/nathansam/BASSLINE)
-[![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/BASSLINE)](https://cran.r-project.org/package=BASSLINE)
-![Top language](https://img.shields.io/github/languages/top/nathansam/BASSLINE)
-[![License: GPL-3](https://img.shields.io/badge/License-GPL3-green.svg)](https://opensource.org/licenses/GPL-3.0)
+| Usage                                                                                                             | Release                                                                                                              | Development                                                                                                                                                                                                                    |
+|-------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| [![License: GPL-3](https://img.shields.io/badge/License-GPL3-green.svg)](https://opensource.org/licenses/GPL-3.0) | [![CRAN\_Status\_Badge](https://www.r-pkg.org/badges/version/BASSLINE)](https://cran.r-project.org/package=BASSLINE) | [![R build status](https://github.com/nathansam/BASSLINE/workflows/R-CMD-check/badge.svg)](https://github.com/nathansam/BASSLINE/actions)                                                                                      |
+| ![R](https://img.shields.io/badge/r-%23276DC3.svg?style=for-the-badge&logo=r&logoColor=white)                     | [![BASSLINE status badge](https://nathansam.r-universe.dev/badges/BASSLINE)](https://nathansam.r-universe.dev)       | [![codecov](https://codecov.io/gh/nathansam/BASSLINE/branch/master/graph/badge.svg)](https://codecov.io/gh/nathansam/BASSLINE)                                                                                                 |
+|                                                                                                                   |                                                                                                                      | [![Project Status: WIP – Initial development is in progress, but there has not yet been a stable, usable release suitable for the public.](https://www.repostatus.org/badges/latest/wip.svg)](https://www.repostatus.org/#wip) |
 <!-- badges: end -->
 
 ## Overview
