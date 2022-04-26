@@ -115,27 +115,27 @@ to a point).</p></dd>
 <span class="r-in"><span class="va">LST</span> <span class="op">&lt;-</span> <span class="fu"><a href="MCMC_LST.html">MCMC_LST</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span>
 <span class="r-in">                Cens <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial beta 1 : 0.94 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 2 : -0.6 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 3 : -0.3 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 4 : -1.77 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 5 : -0.88 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 6 : -0.07 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 7 : 1.63 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 8 : 0.64 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 9 : -1.25 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial beta 1 : 0.86 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 2 : 0.82 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 3 : 2.79 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 4 : 1.63 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 5 : -0.46 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 6 : 1.12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 7 : -0.54 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 8 : -0.42 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 9 : 0.36 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial sigma^2 : 2.12 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial sigma^2 : 0.64 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial nu from a Gamma(2, 2) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial nu : 0.52 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial nu : 0.95 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0.36 </span>
 <span class="r-in"></span>
 <span class="r-in"><span class="va">LST.LML</span> <span class="op">&lt;-</span> <span class="fu">LML_LST</span><span class="op">(</span>thin <span class="op">=</span> <span class="fl">20</span>, Time <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, Cens <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>,</span>
 <span class="r-in">                   X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, chain <span class="op">=</span> <span class="va">LST</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0.41 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0.39 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Likelihood ordinate ready!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Prior ordinate ready!</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> AR nu : 0 </span>
