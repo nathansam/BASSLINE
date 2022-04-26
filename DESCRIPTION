@@ -40,4 +40,4 @@ LinkingTo:
     RcppArmadillo
 SystemRequirements: C++11
 NeedsCompilation: yes
-language: en-GB
+Language: en-GB
