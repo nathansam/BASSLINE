@@ -97,7 +97,7 @@ test_that("logt_update_SMLN same in C++ as in R",{
   
   diff.within.tolerance <- mean(result.R - result.Cpp) < 0.03
 
-  testthat::expect_equal(diff.within.tolerance, TRUE)
+  expect_equal(diff.within.tolerance, TRUE)
 
 })
 

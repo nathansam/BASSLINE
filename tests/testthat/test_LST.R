@@ -17,9 +17,9 @@ test_that("LML_LST Returns Expected Result", {
                   Cens = cancer[, 2], X = cancer[, 3:11])
     LST.LML <- LML_LST(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
                      X = cancer[, 3:11], chain = LST)
-    #testthat::expect_equal(round(as.numeric(LST.LML),2), c( -714.06, -2.16,
-    #                                                       -1.62, 1.15,
-    #                                                       14.52, -730.26))
+    testthat::expect_equal(round(as.numeric(LST.LML),2), c( -712.31, -2.81,
+                                                           -2.30, 1.09,
+                                                           16.40, -730.31))
   }
 })
 
@@ -32,7 +32,7 @@ test_that("DIC_LST Returns Expected Result", {
                     Cens = cancer[, 2], X = cancer[, 3:11])
     LST.DIC <- DIC_LST(Time = cancer[, 1], Cens = cancer[, 2],
                        X = cancer[, 3:11], chain = LST)
-    #testthat::expect_equal(round(LST.DIC,2), 1445.54)
+    testthat::expect_equal(round(LST.DIC,2), 1439.72)
   }
 })
 
