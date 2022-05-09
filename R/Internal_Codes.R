@@ -22,7 +22,7 @@ logt.update.SMLN <- function(Time, Cens, X, beta, sigma2, set, eps_l, eps_r) {
                   (1 - I(Time > eps_l)) *
                     rtnorm(n = n, lower = -Inf, upper = log(Time + eps_r),
                            mu = MEAN,
-                           sd = sqrt(sigma2))) + (1 - Cens) *
+                           sd = sqrt(sigma2))) +  (1 - Cens) *
                                                    rtnorm(n = n,
                                                           lower = log(Time),
                                                           upper = Inf,

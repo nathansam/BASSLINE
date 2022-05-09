@@ -2,7 +2,7 @@
 % Please edit documentation in R/LogLogistic.R
 \name{BF_lambda_obs_LLOG}
 \alias{BF_lambda_obs_LLOG}
-\title{Outlier detection for observation for the log-logisitc model}
+\title{Outlier detection for observation for the log-logistic model}
 \usage{
 BF_lambda_obs_LLOG(ref, obs, X, chain)
 }

@@ -1,4 +1,4 @@
-#' VA Lung Cancer Trial Datatset
+#' VA Lung Cancer Trial Dataset
 #'
 #' Data from a trial in which a therapy (standard or test chemotherapy)
 #'  was randomly applied to 137 patients who were diagnosed with inoperable
@@ -12,9 +12,9 @@
 #'   \item{Cens}{0 or 1. If 0 the observation is right censored}
 #'   \item{Intercept}{The intercept}
 #'   \item{Treat}{The treatment applied to the patient (0: standard, 1: test)}
-#'   \item{Type.1}{The histological type of the tumour (1: type 1, 0: otherwise)}
-#'   \item{Type.2}{The histological type of the tumour (1: type 2, 0: otherwise)}
-#'   \item{Type.3}{The histological type of the tumour (1: type 3, 0: otherwise)}
+#'   \item{Type.1}{The histological type of the tumor (1: type 1, 0: otherwise)}
+#'   \item{Type.2}{The histological type of the tumor (1: type 2, 0: otherwise)}
+#'   \item{Type.3}{The histological type of the tumor (1: type 3, 0: otherwise)}
 #'   \item{Status}{A continuous index representing the status of the patient:
 #'       10—30 completely hospitalized, 40—60 partial confinement, 70—90
 #'       able to care for self.}

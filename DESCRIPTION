@@ -27,7 +27,8 @@ Suggests:
     knitr,
     msm,
     rmarkdown,
-    coda
+    coda,
+    spelling
 LazyData: true
 URL: https://www.constantine-cooke.com/BASSLINE/ https://github.com/nathansam/BASSLINE
 BugReports: https://github.com/nathansam/BASSLINE/issues
@@ -40,4 +41,4 @@ LinkingTo:
     RcppArmadillo
 SystemRequirements: C++11
 NeedsCompilation: yes
-Language: en-GB
+Language: en-US

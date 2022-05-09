@@ -403,7 +403,7 @@ CaseDeletion_LLOG <- function(Time,
     return(cbind(logCPO, KL, CALIBRATION))
 }
 
-#' @title Outlier detection for observation for the log-logisitc model
+#' @title Outlier detection for observation for the log-logistic model
 #' @description This returns a unique number corresponding to the Bayes Factor
 #'     associated to the test \eqn{M_0: \Lambda_{obs} = \lambda_{ref}} versus
 #'     \eqn{M_1: \Lambda_{obs}\neq \lambda_{ref}} (with all other
