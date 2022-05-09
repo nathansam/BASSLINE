@@ -2,12 +2,13 @@
 ################################ USER FUNCTIONS ################################
 ################################################################################
 test_that("MCMC_LEP returns expected number of rows when burn = 20,thin = 10", {
-
   N <- 100
   thin <- 10
   burn <- 20
-  LEP <- MCMC_LEP(N = N, thin = thin, burn = burn, Time = cancer[, 1],
-                  Cens = cancer[, 2], X = cancer[, 3:11])
+  LEP <- MCMC_LEP(
+    N = N, thin = thin, burn = burn, Time = cancer[, 1],
+    Cens = cancer[, 2], X = cancer[, 3:11]
+  )
   expect_equal(nrow(LEP), N / thin + 1 - burn / thin)
 })
 
@@ -20,8 +21,8 @@ test_that("MCMC_LEP returns expected number of rows when burn = 20,thin = 10", {
 test_that("II_alpha same result in C++ as in R", {
   set.seed(1)
   II.alpha <- function(alpha) {
-      aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-      return(aux)
+    aux <- (1 / alpha) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
+    return(aux)
   }
   expect_equivalent(II_alpha(0.5), II.alpha(0.5))
 })
@@ -29,8 +30,8 @@ test_that("II_alpha same result in C++ as in R", {
 test_that("I_alpha same result in C++ as in R", {
   set.seed(1)
   I.alpha <- function(alpha) {
-   aux <- sqrt(1 / alpha ^ 3) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) +
-                                        (1 + digamma(1 + 1 / alpha))^ 2  - 1)
+    aux <- sqrt(1 / alpha^3) * sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) +
+      (1 + digamma(1 + 1 / alpha))^2 - 1)
     return(aux)
   }
   expect_equivalent(I_alpha(0.5), I.alpha(0.5))
@@ -39,16 +40,15 @@ test_that("I_alpha same result in C++ as in R", {
 test_that("J_alpha same result in C++ as in R", {
   set.seed(123)
   J.alpha <- function(alpha, k) {
-      aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
-                 gamma(1 / alpha)) ^ (k / 2)) * (1 / alpha) *
-                    sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
-      return(aux)
+    aux <- ((alpha * (alpha - 1) * gamma(1 - 1 / alpha) /
+      gamma(1 / alpha))^(k / 2)) * (1 / alpha) *
+      sqrt((1 + 1 / alpha) * trigamma(1 + 1 / alpha) - 1)
+    return(aux)
   }
   expect_equivalent(J_alpha(2, 2), J.alpha(2, 2))
 })
 
 test_that("d_texp same result in C++ as in R", {
-
   dtexp <- function(x, rate, trunc) {
     if (x >= trunc) {
       aux <- rate * exp(-rate * (x - trunc))
@@ -84,9 +84,9 @@ test_that("MH_marginal_sigma2 same in C++ as in R", {
         sigma2[i.s + 1] <- sigma2[i.s]
         ind[i.s + 1] <- 2
       } else {
-        l1 <- - ((n / 2) + p) * log(y.aux / sigma2[i.s])
-        l2 <- - sum(abs(logt - X %*% beta) ^ alpha) *
-          (y.aux ^ (-alpha / 2) - sigma2[i.s] ^ (-alpha / 2))
+        l1 <- -((n / 2) + p) * log(y.aux / sigma2[i.s])
+        l2 <- -sum(abs(logt - X %*% beta)^alpha) *
+          (y.aux^(-alpha / 2) - sigma2[i.s]^(-alpha / 2))
         aux <- l1 + l2
         u.aux <- stats::runif(1, 0, 1)
 
@@ -134,38 +134,42 @@ test_that("MH_marginal_sigma2 same in C++ as in R", {
   for (prior in 2) {
     set.seed(123)
     # N will always equal 1 for MH
-    R.result <- MH.marginal.sigma2(N = 1, omega2, logt, X, beta, alpha,
-                                   sigma20, prior)
+    R.result <- MH.marginal.sigma2(
+      N = 1, omega2, logt, X, beta, alpha,
+      sigma20, prior
+    )
 
     set.seed(123)
-    Cpp.result <- MH_marginal_sigma2(omega2, logt, X, beta, alpha, sigma20,
-                                     prior)
+    Cpp.result <- MH_marginal_sigma2(
+      omega2, logt, X, beta, alpha, sigma20,
+      prior
+    )
 
     expect_equal(R.result, Cpp.result)
   }
-
-
-
 })
 
 test_that("alpha_beta same in C++ as in R", {
-
   alpha.beta <- function(beta.0, beta.1, logt, X, sigma2, alpha) {
-    l1 <- -sum(abs((logt - X %*% beta.1) / sqrt(sigma2)) ^ alpha)
-    l2 <- -sum(abs((logt - X %*% beta.0) / sqrt(sigma2)) ^ alpha)
+    l1 <- -sum(abs((logt - X %*% beta.1) / sqrt(sigma2))^alpha)
+    l2 <- -sum(abs((logt - X %*% beta.0) / sqrt(sigma2))^alpha)
     aux <- min(1, exp(l1 - l2))
 
     return(aux)
   }
 
-  R.result <- alpha.beta(c(1, 2), c(2, 3), c(0.2, 0.3),
-                         matrix(c(1, 2, 3, 4), ncol = 2), 0.2, 0.5)
+  R.result <- alpha.beta(
+    c(1, 2), c(2, 3), c(0.2, 0.3),
+    matrix(c(1, 2, 3, 4), ncol = 2), 0.2, 0.5
+  )
 
-  Cpp.result <- alpha_beta(c(1, 2), c(2, 3), c(0.2, 0.3),
-                         matrix(c(1, 2, 3, 4), ncol = 2), 0.2, 0.5)
+  Cpp.result <- alpha_beta(
+    c(1, 2), c(2, 3), c(0.2, 0.3),
+    matrix(c(1, 2, 3, 4), ncol = 2), 0.2, 0.5
+  )
 
   expect_equal(R.result, Cpp.result)
-  })
+})
 
 test_that("alpha_sigma2 same in C++ as in R", {
   alpha.sigma2 <- function(sigma2.0, sigma2.1, logt, X, beta, alpha, prior) {
@@ -183,9 +187,9 @@ test_that("alpha_sigma2 same in C++ as in R", {
       if (prior == 3) {
         p <- 1
       }
-      l1 <- - ((n / 2) + p) * log(sigma2.1 / sigma2.0)
-      l2 <- - sum(abs(logt - X %*% (beta))^alpha) *
-        (sigma2.1 ^ (-alpha / 2) - sigma2.0 ^ (-alpha / 2))
+      l1 <- -((n / 2) + p) * log(sigma2.1 / sigma2.0)
+      l2 <- -sum(abs(logt - X %*% (beta))^alpha) *
+        (sigma2.1^(-alpha / 2) - sigma2.0^(-alpha / 2))
       aux <- min(1, exp(l1 + l2))
     }
 
@@ -193,11 +197,15 @@ test_that("alpha_sigma2 same in C++ as in R", {
   }
 
   for (prior in 1:3) {
-    R.result <- alpha.sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
-                             c(1, 2), 0.4, prior)
+    R.result <- alpha.sigma2(
+      0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
+      c(1, 2), 0.4, prior
+    )
 
-    Cpp.result <- alpha_sigma2(0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
-                               c(1, 2), 0.4, prior)
+    Cpp.result <- alpha_sigma2(
+      0.3, 0.5, c(1, 2), matrix(seq(4), ncol = 2),
+      c(1, 2), 0.4, prior
+    )
 
     expect_equal(R.result, Cpp.result)
   }
@@ -219,11 +227,11 @@ test_that("MH_marginal_alpha same in C++ as in R", {
         ind[i.a + 1] <- 0
       } else {
         l1 <- n * log(y.aux / gamma(1 / y.aux)) -
-          sum(abs((logt - X %*% beta) / sqrt(sigma2)) ^ y.aux)
+          sum(abs((logt - X %*% beta) / sqrt(sigma2))^y.aux)
         l0 <- n * log(alpha[i.a] / gamma(1 / alpha[i.a])) -
-          sum(abs((logt - X %*% beta) / sqrt(sigma2)) ^ alpha[i.a])
+          sum(abs((logt - X %*% beta) / sqrt(sigma2))^alpha[i.a])
         aux <- l1 - l0 + log(prior_alpha(y.aux, k, prior) /
-                               prior_alpha(alpha[i.a], k, prior))
+          prior_alpha(alpha[i.a], k, prior))
         u.aux <- stats::runif(1, 0, 1)
 
         # THE FOLLOWING THREE LINES AVOID CRUSHES
@@ -259,14 +267,16 @@ test_that("MH_marginal_alpha same in C++ as in R", {
   }
 
   for (prior in 1:3) {
-    R.result <- MH.marginal.alpha(N = 1, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
-                                  c(2, 1), 0.3, 0.4, prior)
-    Cpp.result <- MH_marginal_alpha(0.2, c(1, 2), matrix(seq(4), ncol = 2),
-                                    c(2, 1), 0.3, 0.4, prior)
+    R.result <- MH.marginal.alpha(
+      N = 1, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
+      c(2, 1), 0.3, 0.4, prior
+    )
+    Cpp.result <- MH_marginal_alpha(
+      0.2, c(1, 2), matrix(seq(4), ncol = 2),
+      c(2, 1), 0.3, 0.4, prior
+    )
     expect_equal(R.result, Cpp.result)
   }
-
-
 })
 
 
@@ -278,24 +288,27 @@ test_that("alpha_alpha same in C++ as in R", {
       aux <- 0
     } else {
       l1 <- n * log(alpha1 / gamma(1 / alpha1)) -
-        ((1 / sqrt(sigma2)) ^ alpha1) * sum(abs(logt - X %*%
-                                                   beta) ^ alpha1)
+        ((1 / sqrt(sigma2))^alpha1) * sum(abs(logt - X %*%
+          beta)^alpha1)
       l0 <- n * log(alpha0 / gamma(1 / alpha0)) -
-        ((1 / sqrt(sigma2)) ^ alpha0) * sum((abs(logt - (X) %*%
-                                                   (beta))) ^ alpha0)
+        ((1 / sqrt(sigma2))^alpha0) * sum((abs(logt - (X) %*%
+          (beta)))^alpha0)
       aux <- min(1, exp(l1 - l0) * prior_alpha(alpha1, k, prior) /
-                   prior_alpha(alpha0, k, prior))
+        prior_alpha(alpha0, k, prior))
     }
     return(aux)
   }
 
   for (prior in 1:3) {
+    R.result <- alpha.alpha(
+      1.1, 1.2, c(1, 2), matrix(seq(4), ncol = 2),
+      c(2, 1), 3, prior
+    )
 
-    R.result <- alpha.alpha(1.1, 1.2, c(1, 2), matrix(seq(4), ncol = 2),
-                            c(2, 1), 3, prior)
-
-    Cpp.result <- alpha_alpha(1.1, 1.2, c(1, 2), matrix(seq(4), ncol = 2),
-                              c(2, 1), 3, prior)
+    Cpp.result <- alpha_alpha(
+      1.1, 1.2, c(1, 2), matrix(seq(4), ncol = 2),
+      c(2, 1), 3, prior
+    )
     expect_equal(R.result, Cpp.result)
   }
 })
@@ -305,43 +318,52 @@ test_that("d_normp same in C++ as in R", {
   #### (BASED ON library normalp).
   ### POSSIBLE
   dnormp <- function(x, mu = 0, sigmap = 1, p = 2, log = FALSE) {
-    if (!is.numeric(x) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
+    if (!is.numeric(x) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p)) {
       stop(" Non-numeric argument to mathematical function")
-    if (min(p) < 1)
+    }
+    if (min(p) < 1) {
       stop("p must be at least equal to one")
-    if (min(sigmap) <= 0)
+    }
+    if (min(sigmap) <= 0) {
       stop("sigmap must be positive")
-    cost <- 2 * p ^ (1 / p) * gamma(1 + 1 / p) * sigmap
-    expon1 <- (abs(x - mu)) ^ p
-    expon2 <- p * sigmap ^ p
+    }
+    cost <- 2 * p^(1 / p) * gamma(1 + 1 / p) * sigmap
+    expon1 <- (abs(x - mu))^p
+    expon2 <- p * sigmap^p
     dsty <- (1 / cost) * exp(-expon1 / expon2)
-    if (log == TRUE)
+    if (log == TRUE) {
       dsty <- log(dsty)
+    }
     dsty
   }
 
-  R.result <- dnormp(c(1, 2), c(0, 0) , c(1, 1), c(2, 2), log = T)
-  Cpp.result <- d_normp(c(1, 2), c(0, 0) , c(1, 1), c(2, 2), logs = T)
+  R.result <- dnormp(c(1, 2), c(0, 0), c(1, 1), c(2, 2), log = T)
+  Cpp.result <- d_normp(c(1, 2), c(0, 0), c(1, 1), c(2, 2), logs = T)
   expect_equal(R.result, Cpp.result)
 })
 
-test_that("pnorm same in C++ as in R",{
+test_that("pnorm same in C++ as in R", {
   pnormp <- function(q, mu = 0, sigmap = 1, p = 2,
                      lower.tail = TRUE, log.pr = FALSE) {
-    if (!is.numeric(q) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p))
+    if (!is.numeric(q) || !is.numeric(mu) || !is.numeric(sigmap) || !is.numeric(p)) {
       stop(" Non-numeric argument to mathematical function")
-    if (min(p) < 1)
+    }
+    if (min(p) < 1) {
       stop("p must be at least equal to one")
-    if (min(sigmap) <= 0)
+    }
+    if (min(sigmap) <= 0) {
       stop("sigmap must be positive")
+    }
     z <- (q - mu) / sigmap
-    zz <- abs(z) ^ p
+    zz <- abs(z)^p
     zp <- stats::pgamma(zz, shape = 1 / p, scale = p)
     lzp <- stats::pgamma(zz, shape = 1 / p, scale = p, log = TRUE)
     zp <- ifelse(z < 0, 0.5 - exp(lzp - log(2)), 0.5 + exp(lzp - log(2)))
-    if (log.pr == TRUE)
+    if (log.pr == TRUE) {
       zp <- ifelse(z < 0, log(0.5 - exp(lzp - log(2))),
-                   log(0.5 + exp(lzp - log(2))))
+        log(0.5 + exp(lzp - log(2)))
+      )
+    }
     zp
   }
 
@@ -358,12 +380,9 @@ test_that("pnorm same in C++ as in R",{
   R.result <- pnormp(c(1, 2), c(2, 3), c(1, 1), c(2, 1), log.pr = TRUE)
   Cpp.result <- p_normp(c(1, 2), c(2, 3), c(1, 1), c(2, 1), log_pr = TRUE)
   expect_equal(R.result, Cpp.result)
-
-
 })
 
 test_that("log_lik_LEP same in C++ as in R", {
-
   log.lik.LEP <- function(Time, Cens, X, beta, sigma2, alpha, set, eps_l,
                           eps_r) {
     n <- length(Time)
@@ -371,41 +390,54 @@ test_that("log_lik_LEP same in C++ as in R", {
     MEAN <- X %*% beta
     sigma2 <- rep(sigma2, times = n)
     alpha <- rep(alpha, times = n)
-    SP <- as.vector(sqrt(sigma2) * (1 / alpha) ^ (1 / alpha))
+    SP <- as.vector(sqrt(sigma2) * (1 / alpha)^(1 / alpha))
     if (set == 1) {
       aux1 <- (I(Time > eps_l) * log(p_normp(log(Time + eps_r),
-                                             mu = MEAN,
-                                             sigmap = SP,
-                                             p = alpha) -
-                                       p_normp(log(abs(Time - eps_l)),
-                                               mu = MEAN, sigmap = SP,
-                                               p = alpha)) +
-                 (1 - I(Time > eps_l)) * log(p_normp(log(Time + eps_r),
-                                                     mu = MEAN,
-                                                     sigmap = SP,
-                                                     p = alpha) - 0))
+        mu = MEAN,
+        sigmap = SP,
+        p = alpha
+      ) -
+        p_normp(log(abs(Time - eps_l)),
+          mu = MEAN, sigmap = SP,
+          p = alpha
+        )) +
+        (1 - I(Time > eps_l)) * log(p_normp(log(Time + eps_r),
+          mu = MEAN,
+          sigmap = SP,
+          p = alpha
+        ) - 0))
       aux2 <- log(1 - p_normp(log(Time), mu = MEAN, sigmap = SP, p = alpha))
       aux <- ifelse(Cens == 1, aux1, aux2)
     }
     if (set == 0) {
-      aux <- Cens * (d_normp(log(Time), mu = MEAN, sigmap = SP,
-                             p = alpha, logs = TRUE) - log(Time)) + (1 - Cens) *
-        log(1 - p_normp(log(Time), mu = MEAN,
-                        sigmap = SP, p = alpha))
+      aux <- Cens * (d_normp(log(Time),
+        mu = MEAN, sigmap = SP,
+        p = alpha, logs = TRUE
+      ) - log(Time)) + (1 - Cens) *
+        log(1 - p_normp(log(Time),
+          mu = MEAN,
+          sigmap = SP, p = alpha
+        ))
     }
     return(sum(aux))
   }
 
-    R.result <- log.lik.LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol = 2), c(1, 2),
-                            0.2, 1.2, 1, 0.3, 0.4)
-    Cpp.result <- log_lik_LEP(c(1, 2), c(1, 0), matrix(seq(4), ncol = 2),
-                              c(1, 2), 0.2, 1.2, 1, 0.3, 0.4)
-    expect_equal(R.result, Cpp.result)
+  R.result <- log.lik.LEP(
+    c(1, 2), c(1, 0), matrix(seq(4), ncol = 2), c(1, 2),
+    0.2, 1.2, 1, 0.3, 0.4
+  )
+  Cpp.result <- log_lik_LEP(
+    c(1, 2), c(1, 0), matrix(seq(4), ncol = 2),
+    c(1, 2), 0.2, 1.2, 1, 0.3, 0.4
+  )
+  expect_equal(R.result, Cpp.result)
 })
 
 test_that("Post_u_obs_LEP same in C++ as in R", {
-  LEP <- MCMC_LEP(N = 40, thin = 20, burn = 20, Time = cancer[, 1],
-                  Cens = cancer[, 2], X = cancer[, 3:11])
+  LEP <- MCMC_LEP(
+    N = 40, thin = 20, burn = 20, Time = cancer[, 1],
+    Cens = cancer[, 2], X = cancer[, 3:11]
+  )
   alpha <- mean(LEP[, 11])
   uref <- 1.6 + 1 / alpha
 
@@ -419,8 +451,8 @@ test_that("Post_u_obs_LEP same in C++ as in R", {
 
     for (iter in 1:N) {
       trunc.aux <- (abs(chain[iter, (obs + k + 2 + n)] - X[obs, ] %*%
-                          as.vector(chain[iter, 1:k])) /
-                      sqrt(chain[iter, k + 1])) ^ (chain[iter, k + 2])
+        as.vector(chain[iter, 1:k])) /
+        sqrt(chain[iter, k + 1]))^(chain[iter, k + 2])
 
       aux1[iter] <- d_texp(x = ref, trunc = trunc.aux)
     }
@@ -428,12 +460,16 @@ test_that("Post_u_obs_LEP same in C++ as in R", {
     return(aux)
   }
 
-  R.result <- Post.u.obs.LEP(obs = 1, ref = uref, X = cancer[, 3:11],
-                             chain = LEP)
-  Cpp.result <- Post_u_obs_LEP(obs = 1, ref = uref, X = cancer[, 3:11],
-                               chain = LEP)
+  R.result <- Post.u.obs.LEP(
+    obs = 1, ref = uref, X = cancer[, 3:11],
+    chain = LEP
+  )
+  Cpp.result <- Post_u_obs_LEP(
+    obs = 1, ref = uref, X = cancer[, 3:11],
+    chain = LEP
+  )
 
- expect_equal(R.result, Cpp.result)
+  expect_equal(R.result, Cpp.result)
 })
 
 
@@ -447,8 +483,8 @@ test_that("MH_marginal_beta_j same in C++ as in R", {
     for (i.b in 1:N) {
       y.aux <- beta[i.b, ]
       y.aux[j] <- stats::rnorm(n = 1, mean = beta[i.b, j], sd = sqrt(omega2))
-      aux <- -sum(abs((logt - X %*% y.aux) / sqrt(sigma2)) ^ alpha) +
-        sum(abs((logt - X %*% beta[i.b, ]) / sqrt(sigma2)) ^ alpha)
+      aux <- -sum(abs((logt - X %*% y.aux) / sqrt(sigma2))^alpha) +
+        sum(abs((logt - X %*% beta[i.b, ]) / sqrt(sigma2))^alpha)
       u.aux <- stats::runif(1, 0, 1)
       if (is.na(aux)) {
         beta[i.b + 1, ] <- beta[i.b, ]
@@ -480,13 +516,16 @@ test_that("MH_marginal_beta_j same in C++ as in R", {
   }
 
   set.seed(123)
-  R.result <- MH.marginal.beta.j(N = 1, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
-                                 0.3, 0.4, c(1, 2), 2)
+  R.result <- MH.marginal.beta.j(
+    N = 1, 0.2, c(1, 2), matrix(seq(4), ncol = 2),
+    0.3, 0.4, c(1, 2), 2
+  )
 
   set.seed(123)
-  Cpp.result <- MH_marginal_beta_j(0.2, c(1, 2), matrix(seq(4), ncol = 2),
-                                   0.3, 0.4, c(1, 2), 2)
+  Cpp.result <- MH_marginal_beta_j(
+    0.2, c(1, 2), matrix(seq(4), ncol = 2),
+    0.3, 0.4, c(1, 2), 2
+  )
 
-  #expect_equal(R.result, Cpp.result)
-
+  # expect_equal(R.result, Cpp.result)
 })

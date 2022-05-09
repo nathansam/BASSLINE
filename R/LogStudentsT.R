@@ -25,8 +25,10 @@
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LST <- MCMC_LST(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
 #'
 #' @export
 MCMC_LST <- function(N,
@@ -50,18 +52,20 @@ MCMC_LST <- function(N,
   if (is.null(sigma20)) sigma20 <- sigma2.sample()
   if (is.null(nu0)) nu0 <- nu.sample()
 
-  MCMC.param.check(N,
-                   thin,
-                   burn,
-                   Time,
-                   Cens,
-                   X,
-                   beta0,
-                   sigma20,
-                   prior,
-                   set,
-                   eps_l,
-                   eps_r)
+  MCMC.param.check(
+    N,
+    thin,
+    burn,
+    Time,
+    Cens,
+    X,
+    beta0,
+    sigma20,
+    prior,
+    set,
+    eps_l,
+    eps_r
+  )
 
 
 
@@ -114,41 +118,48 @@ MCMC_LST <- function(N,
     rate.aux <- 0.5 * t(logt.aux - X %*% beta.aux) %*% Lambda %*%
       (logt.aux - X %*% beta.aux)
     if (rate.aux > 0 & is.na(rate.aux) == FALSE) {
-      sigma2.aux <- (stats::rgamma(1, shape = shape.aux,
-                                   rate = rate.aux)) ^ (-1)
+      sigma2.aux <- (stats::rgamma(1,
+        shape = shape.aux,
+        rate = rate.aux
+      ))^(-1)
     }
 
-    MH.nu <- MH_nu_LST(omega2 = exp(ls.nu.aux),
-                       beta.aux,
-                       lambda.aux,
-                       nu.aux,
-                       prior)
+    MH.nu <- MH_nu_LST(
+      omega2 = exp(ls.nu.aux),
+      beta.aux,
+      lambda.aux,
+      nu.aux,
+      prior
+    )
     nu.aux <- MH.nu$nu
     accept.nu <- accept.nu + MH.nu$ind
     pnu.aux <- pnu.aux + MH.nu$ind
 
     if ((iter - 1) %% Q == 0 && iter - 1 <= burn) {
       shape1.aux <- (nu.aux + 1) / 2
-      rate1.aux <- 0.5 * (nu.aux + ((logt.aux - X %*% beta.aux) ^ 2) /
-                            sigma2.aux)
+      rate1.aux <- 0.5 * (nu.aux + ((logt.aux - X %*% beta.aux)^2) /
+        sigma2.aux)
       lambda.aux <- stats::rgamma(n,
-                                  shape = rep(shape1.aux, times = n),
-                                  rate = rate1.aux)
+        shape = rep(shape1.aux, times = n),
+        rate = rate1.aux
+      )
     }
 
-    logt.aux <- logt.update.SMLN(Time,
-                                 Cens,
-                                 X,
-                                 beta.aux,
-                                 sigma2.aux / lambda.aux,
-                                 set,
-                                 eps_l,
-                                 eps_r)
+    logt.aux <- logt.update.SMLN(
+      Time,
+      Cens,
+      X,
+      beta.aux,
+      sigma2.aux / lambda.aux,
+      set,
+      eps_l,
+      eps_r
+    )
 
     if (i_batch == 50) {
       pnu.aux <- pnu.aux / 50
       Pnu.aux <- as.numeric(pnu.aux < ar)
-      ls.nu.aux <- ls.nu.aux + ((-1) ^ Pnu.aux) *
+      ls.nu.aux <- ls.nu.aux + ((-1)^Pnu.aux) *
         min(0.01, 1 / sqrt(iter))
       i_batch <- 0
       pnu.aux <- 0
@@ -175,17 +186,19 @@ MCMC_LST <- function(N,
   lambda.cols <- paste("lambda.", seq(ncol(lambda)), sep = "")
   logt.cols <- paste("logt.", seq(ncol(logt)), sep = "")
 
-  colnames(chain) <- c(beta.cols,
-                       "sigma2",
-                       "nu",
-                       lambda.cols,
-                       logt.cols,
-                       "ls.nu")
+  colnames(chain) <- c(
+    beta.cols,
+    "sigma2",
+    "nu",
+    lambda.cols,
+    logt.cols,
+    "ls.nu"
+  )
 
 
   if (burn > 0) {
     burn.period <- 1:(burn / thin)
-    chain <- chain [-burn.period, ]
+    chain <- chain[-burn.period, ]
   }
 
   return(chain)
@@ -202,11 +215,15 @@ MCMC_LST <- function(N,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LST <- MCMC_LST(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
 #'
-#' LST.LML <- LML_LST(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
-#'                    X = cancer[, 3:11], chain = LST)
+#' LST.LML <- LML_LST(
+#'   thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
+#'   X = cancer[, 3:11], chain = LST
+#' )
 #'
 #' @export
 LML_LST <- function(thin,
@@ -231,20 +248,22 @@ LML_LST <- function(thin,
   }
   omega2.nu <- exp(stats::median(chain[, k + 3 + 2 * n]))
 
-  chain.nonadapt <- MCMC.LST.NonAdapt(N = N * thin,
-                                      thin,
-                                      Q,
-                                      Time,
-                                      Cens,
-                                      X,
-                                      beta0 = t(chain[N, 1:k]),
-                                      sigma20 = chain[N, k + 1],
-                                      nu0 = chain[N, k + 2],
-                                      prior,
-                                      set,
-                                      eps_l,
-                                      eps_r,
-                                      omega2.nu)
+  chain.nonadapt <- MCMC.LST.NonAdapt(
+    N = N * thin,
+    thin,
+    Q,
+    Time,
+    Cens,
+    X,
+    beta0 = t(chain[N, 1:k]),
+    sigma20 = chain[N, k + 1],
+    nu0 = chain[N, k + 2],
+    prior,
+    set,
+    eps_l,
+    eps_r,
+    omega2.nu
+  )
   chain.nonadapt <- chain.nonadapt[-1, ]
   sigma2.star <- stats::median(chain.nonadapt[, k + 1])
   nu.star <- stats::median(chain.nonadapt[, k + 2])
@@ -256,43 +275,48 @@ LML_LST <- function(thin,
 
   # Log-LIKELIHOOD ORDINATE
   LL.ord <- log_lik_LST(Time,
-                        Cens,
-                        X,
-                        beta = beta.star,
-                        sigma2 = sigma2.star,
-                        nu = nu.star,
-                        set,
-                        eps_l,
-                        eps_r)
+    Cens,
+    X,
+    beta = beta.star,
+    sigma2 = sigma2.star,
+    nu = nu.star,
+    set,
+    eps_l,
+    eps_r
+  )
   cat("Likelihood ordinate ready!\n")
 
   # PRIOR ORDINATE
-  LP.ord <- prior_LST(beta = beta.star,
-                      sigma2 = sigma2.star,
-                      nu = nu.star,
-                      prior,
-                      logs = TRUE)
+  LP.ord <- prior_LST(
+    beta = beta.star,
+    sigma2 = sigma2.star,
+    nu = nu.star,
+    prior,
+    logs = TRUE
+  )
   cat("Prior ordinate ready!\n")
 
 
   logt0 <- t(chain.nonadapt[N, (n + k + 3):(2 * n + k + 2)])
   lambda0 <- t(chain.nonadapt[N, (k + 3):(k + 2 + n)])
 
-  chain.sigma2 <- MCMCR.nu.LST(N = N * thin,
-                               thin = thin,
-                               Q,
-                               Time,
-                               Cens,
-                               X,
-                               beta0 = t(chain.nonadapt[N, 1:k]),
-                               sigma20 = chain.nonadapt[N, (k + 1)],
-                               nu0 = nu.star,
-                               logt0 = logt0,
-                               lambda0 = lambda0,
-                               prior = prior,
-                               set,
-                               eps_l,
-                               eps_r)
+  chain.sigma2 <- MCMCR.nu.LST(
+    N = N * thin,
+    thin = thin,
+    Q,
+    Time,
+    Cens,
+    X,
+    beta0 = t(chain.nonadapt[N, 1:k]),
+    sigma20 = chain.nonadapt[N, (k + 1)],
+    nu0 = nu.star,
+    logt0 = logt0,
+    lambda0 = lambda0,
+    prior = prior,
+    set,
+    eps_l,
+    eps_r
+  )
   cat("Reduced chain.sigma2 ready!\n")
 
   # POSTERIOR ORDINATE - nu
@@ -302,19 +326,25 @@ LML_LST <- function(thin,
   for (i in 1:N) {
     lambda.po1 <- t(chain.nonadapt[i, (k + 3):(k + 2 + n)])
     mean <- as.numeric(chain.nonadapt[i, (k + 2)])
-    po1.nu[i] <- alpha_nu(nu0 = as.numeric(chain.nonadapt[i, (k + 2)]),
-                          nu1 = nu.star,
-                          lambda = lambda.po1,
-                          prior = prior) * stats::dnorm(x = nu.star,
-                                                        mean = mean,
-                                                        sd = sqrt(omega2.nu))
+    po1.nu[i] <- alpha_nu(
+      nu0 = as.numeric(chain.nonadapt[i, (k + 2)]),
+      nu1 = nu.star,
+      lambda = lambda.po1,
+      prior = prior
+    ) * stats::dnorm(
+      x = nu.star,
+      mean = mean,
+      sd = sqrt(omega2.nu)
+    )
     nu.aux <- stats::rnorm(n = 1, mean = nu.star, sd = sqrt(omega2.nu))
 
     lambda.po2 <- t(chain.sigma2[i + 1, (k + 2):(k + 1 + n)])
-    po2.nu[i] <- alpha_nu(nu0 = nu.star,
-                          nu1 = nu.aux,
-                          lambda = lambda.po2,
-                          prior = prior)
+    po2.nu[i] <- alpha_nu(
+      nu0 = nu.star,
+      nu1 = nu.aux,
+      lambda = lambda.po2,
+      prior = prior
+    )
   }
   PO.nu <- mean(po1.nu) / mean(po2.nu)
   cat("Posterior ordinate nu ready!\n")
@@ -328,8 +358,9 @@ LML_LST <- function(thin,
     aux2 <- diag(as.vector(t(chain.sigma2[i, (k + 2):(k + 1 + n)])))
     rate.aux <- as.numeric(0.5 * t(aux1) %*% aux2 %*% aux1)
     po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star,
-                                        shape = shape,
-                                        scale = rate.aux)
+      shape = shape,
+      scale = rate.aux
+    )
   }
   PO.sigma2 <- mean(po.sigma2)
   cat("Posterior ordinate sigma2 ready!\n")
@@ -338,21 +369,23 @@ LML_LST <- function(thin,
   logt0 <- t(chain.nonadapt[N, (n + k + 3):(2 * n + k + 2)])
   lambda0 <- t(chain.nonadapt[N, (k + 3):(k + 2 + n)])
 
-  chain.beta <- MCMCR.sigma2.nu.LST(N = N * thin,
-                                    thin = thin,
-                                    Q,
-                                    Time,
-                                    Cens,
-                                    X,
-                                    beta0 = t(chain.nonadapt[N, 1:k]),
-                                    sigma20 = sigma2.star,
-                                    nu0 = nu.star,
-                                    logt0 = logt0,
-                                    lambda0 = lambda0,
-                                    prior,
-                                    set,
-                                    eps_l,
-                                    eps_r)
+  chain.beta <- MCMCR.sigma2.nu.LST(
+    N = N * thin,
+    thin = thin,
+    Q,
+    Time,
+    Cens,
+    X,
+    beta0 = t(chain.nonadapt[N, 1:k]),
+    sigma20 = sigma2.star,
+    nu0 = nu.star,
+    logt0 = logt0,
+    lambda0 = lambda0,
+    prior,
+    set,
+    eps_l,
+    eps_r
+  )
 
   cat("Reduced chain.beta ready!\n")
   po.beta <- rep(0, times = N)
@@ -361,11 +394,12 @@ LML_LST <- function(thin,
     aux1.beta <- solve(t(X) %*% aux0.beta %*% X)
     aux2.beta <- aux1.beta %*% t(X) %*% aux0.beta
     mu.aux <- as.vector(aux2.beta %*%
-                          ((chain.beta[(i + 1), (k + 1 + n):(k + 2 * n)])))
+      ((chain.beta[(i + 1), (k + 1 + n):(k + 2 * n)])))
     po.beta[i] <- mvtnorm::dmvnorm(beta.star,
-                                   mean = mu.aux,
-                                   sigma = sigma2.star * aux1.beta,
-                                   log = FALSE)
+      mean = mu.aux,
+      sigma = sigma2.star * aux1.beta,
+      log = FALSE
+    )
   }
   PO.beta <- mean(po.beta)
   cat("Posterior ordinate beta ready!\n")
@@ -378,12 +412,14 @@ LML_LST <- function(thin,
   # MARGINAL LOG-LIKELIHOOD
   LML <- LL.ord + LP.ord - LPO.nu - LPO.sigma2 - LPO.beta
 
-  return(list(LL.ord = LL.ord,
-              LP.ord = LP.ord,
-              LPO.nu = LPO.nu,
-              LPO.sigma2 = LPO.sigma2,
-              LPO.beta = LPO.beta,
-              LML = LML))
+  return(list(
+    LL.ord = LL.ord,
+    LP.ord = LP.ord,
+    LPO.nu = LPO.nu,
+    LPO.sigma2 = LPO.sigma2,
+    LPO.beta = LPO.beta,
+    LML = LML
+  ))
 }
 
 #' @title Deviance information criterion for the log-student's t model
@@ -399,10 +435,14 @@ LML_LST <- function(thin,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'                 Cens = cancer[, 2], X = cancer[, 3:11])
-#' LST.DIC <- DIC_LST(Time = cancer[, 1], Cens = cancer[, 2],
-#'                    X = cancer[, 3:11], chain = LST)
+#' LST <- MCMC_LST(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
+#' LST.DIC <- DIC_LST(
+#'   Time = cancer[, 1], Cens = cancer[, 2],
+#'   X = cancer[, 3:11], chain = LST
+#' )
 #'
 #' @export
 DIC_LST <- function(Time,
@@ -419,26 +459,28 @@ DIC_LST <- function(Time,
 
   for (iter in 1:N) {
     LL[iter] <- log_lik_LST(Time,
-                            Cens,
-                            X,
-                            beta = as.vector(chain[iter, 1:k]),
-                            sigma2 = chain[iter, k + 1],
-                            nu = chain[iter, k + 2],
-                            set,
-                            eps_l,
-                            eps_r)
+      Cens,
+      X,
+      beta = as.vector(chain[iter, 1:k]),
+      sigma2 = chain[iter, k + 1],
+      nu = chain[iter, k + 2],
+      set,
+      eps_l,
+      eps_r
+    )
   }
 
   aux <- apply(chain[, 1:(k + 2)], 2, "median")
   pd <- -2 * mean(LL) + 2 * log_lik_LST(Time,
-                                        Cens,
-                                        X,
-                                        beta = aux[1:k],
-                                        sigma2 = aux[k + 1],
-                                        nu = aux[k + 2],
-                                        set,
-                                        eps_l,
-                                        eps_r)
+    Cens,
+    X,
+    beta = aux[1:k],
+    sigma2 = aux[k + 1],
+    nu = aux[k + 2],
+    set,
+    eps_l,
+    eps_r
+  )
   pd.aux <- k + 2
 
   DIC <- -2 * mean(LL) + pd
@@ -465,10 +507,14 @@ DIC_LST <- function(Time,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'                 Cens = cancer[, 2], X = cancer[, 3:11])
-#' LST.CD <- CaseDeletion_LST(Time = cancer[, 1], Cens = cancer[, 2],
-#'                            cancer[, 3:11], chain = LST)
+#' LST <- MCMC_LST(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
+#' LST.CD <- CaseDeletion_LST(
+#'   Time = cancer[, 1], Cens = cancer[, 2],
+#'   cancer[, 3:11], chain = LST
+#' )
 #'
 #' @export
 CaseDeletion_LST <- function(Time,
@@ -490,14 +536,15 @@ CaseDeletion_LST <- function(Time,
     aux2 <- rep(0, times = N)
     for (ITER in 1:N) {
       aux2[ITER] <- log.lik.LST(Time[s],
-                                Cens[s],
-                                X[s, ],
-                                beta = as.vector(chain[ITER, 1:k]),
-                                sigma2 = chain[ITER, k + 1],
-                                nu = chain[ITER, k + 2],
-                                set,
-                                eps_l,
-                                eps_r)
+        Cens[s],
+        X[s, ],
+        beta = as.vector(chain[ITER, 1:k]),
+        sigma2 = chain[ITER, k + 1],
+        nu = chain[ITER, k + 2],
+        set,
+        eps_l,
+        eps_r
+      )
       aux1[ITER] <- exp(-aux2[ITER])
     }
     logCPO[s] <- -log(mean(aux1))
@@ -534,13 +581,17 @@ CaseDeletion_LST <- function(Time,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LST <- MCMC_LST(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'                 Cens = cancer[, 2], X = cancer[, 3:11])
+#' LST <- MCMC_LST(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
 #'
-#' LST.Outlier <- BF_lambda_obs_LST(N = 100, thin = 20 , burn = 1, ref = 1,
-#'                                  obs = 1, Time = cancer[, 1],
-#'                                  Cens = cancer[, 2], X = cancer[, 3:11],
-#'                                  chain = LST)
+#' LST.Outlier <- BF_lambda_obs_LST(
+#'   N = 100, thin = 20, burn = 1, ref = 1,
+#'   obs = 1, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11],
+#'   chain = LST
+#' )
 #'
 #' @export
 BF_lambda_obs_LST <- function(N,
@@ -556,24 +607,25 @@ BF_lambda_obs_LST <- function(N,
                               prior = 2,
                               set = TRUE,
                               eps_l = 0.5,
-                              eps_r =0.5,
+                              eps_r = 0.5,
                               ar = 0.44) {
   chain <- as.matrix(chain)
   aux1 <- Post_lambda_obs_LST(obs, ref, X, chain)
   aux2 <- CFP.obs.LST(N,
-                      thin,
-                      Q,
-                      burn,
-                      ref,
-                      obs,
-                      Time,
-                      Cens,
-                      X,
-                      chain,
-                      prior,
-                      set,
-                      eps_l,
-                      eps_r,
-                      ar = 0.44)
+    thin,
+    Q,
+    burn,
+    ref,
+    obs,
+    Time,
+    Cens,
+    X,
+    chain,
+    prior,
+    set,
+    eps_l,
+    eps_r,
+    ar = 0.44
+  )
   return(aux1 * aux2)
 }

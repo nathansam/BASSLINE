@@ -1,5 +1,5 @@
 ################################################################################
-##############IMPLEMENTATION OF THE LOG-NORMAL MODEL (NO MIXTURE)###############
+############## IMPLEMENTATION OF THE LOG-NORMAL MODEL (NO MIXTURE)###############
 ################################################################################
 
 #' @title MCMC algorithm for the log-normal model
@@ -42,8 +42,10 @@
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'               Cens = cancer[, 2], X = cancer[, 3:11])
+#' LN <- MCMC_LN(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
 #'
 #' @export
 MCMC_LN <- function(N,
@@ -63,31 +65,35 @@ MCMC_LN <- function(N,
   if (is.null(beta0)) beta0 <- beta.sample(n = ncol(X))
   if (is.null(sigma20)) sigma20 <- sigma2.sample()
 
-  MCMC.param.check(N,
-                   thin,
-                   burn,
-                   Time,
-                   Cens,
-                   X,
-                   beta0,
-                   sigma20,
-                   prior,
-                   set,
-                   eps_l,
-                   eps_r)
+  MCMC.param.check(
+    N,
+    thin,
+    burn,
+    Time,
+    Cens,
+    X,
+    beta0,
+    sigma20,
+    prior,
+    set,
+    eps_l,
+    eps_r
+  )
 
-  chain <-  MCMC_LN_CPP(N,
-                        thin,
-                        burn,
-                        Time,
-                        Cens,
-                        X,
-                        beta0,
-                        sigma20,
-                        prior,
-                        set,
-                        eps_l,
-                        eps_r)
+  chain <- MCMC_LN_CPP(
+    N,
+    thin,
+    burn,
+    Time,
+    Cens,
+    X,
+    beta0,
+    sigma20,
+    prior,
+    set,
+    eps_l,
+    eps_r
+  )
 
   beta.cols <- paste("beta.", colnames(X), sep = "")
   logt.cols <- paste("logt.", seq(length(Time)), sep = "")
@@ -95,7 +101,7 @@ MCMC_LN <- function(N,
 
   if (burn > 0) {
     burn.period <- 1:(burn / thin)
-    chain <- chain [-burn.period, ]
+    chain <- chain[-burn.period, ]
   }
   return(chain)
 }
@@ -110,10 +116,14 @@ MCMC_LN <- function(N,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.LM
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'               Cens = cancer[, 2], X = cancer[, 3:11])
-#' LN.LML <- LML_LN(thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
-#'                          X = cancer[, 3:11], chain = LN)
+#' LN <- MCMC_LN(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
+#' LN.LML <- LML_LN(
+#'   thin = 20, Time = cancer[, 1], Cens = cancer[, 2],
+#'   X = cancer[, 3:11], chain = LN
+#' )
 #'
 #' @export
 LML_LN <- function(thin,
@@ -145,20 +155,23 @@ LML_LN <- function(thin,
 
   # LIKELIHOOD ORDINATE
   LL.ord <- log.lik.LN(Time,
-                       Cens,
-                       X,
-                       beta = beta.star,
-                       sigma2 = sigma2.star,
-                       set,
-                       eps_l,
-                       eps_r)
+    Cens,
+    X,
+    beta = beta.star,
+    sigma2 = sigma2.star,
+    set,
+    eps_l,
+    eps_r
+  )
   cat("Likelihood ordinate ready!\n")
 
   # PRIOR ORDINATE
-  LP.ord <- prior_LN(beta = beta.star,
-                     sigma2 = sigma2.star,
-                     prior = prior,
-                     logs = TRUE)
+  LP.ord <- prior_LN(
+    beta = beta.star,
+    sigma2 = sigma2.star,
+    prior = prior,
+    logs = TRUE
+  )
   cat("Prior ordinate ready!\n")
 
   # POSTERIOR ORDINATE - sigma2
@@ -166,36 +179,40 @@ LML_LN <- function(thin,
   po.sigma2 <- rep(0, times = N)
   for (i in 1:N) {
     aux1 <- as.vector(as.vector(t(chain[i, (k + 2):(k + 1 + n)])) - X %*%
-                        as.vector(chain[i, 1:k]))
+      as.vector(chain[i, 1:k]))
     rate.aux <- as.numeric(0.5 * t(aux1) %*% aux1)
     po.sigma2[i] <- MCMCpack::dinvgamma(sigma2.star,
-                                        shape = shape,
-                                        scale = rate.aux)
+      shape = shape,
+      scale = rate.aux
+    )
   }
   PO.sigma2 <- mean(po.sigma2)
   cat("Posterior ordinate sigma2 ready!\n")
 
   # POSTERIOR ORDINATE - beta
-  chain.beta <- MCMCR.sigma2.LN(N = N * thin,
-                                thin = thin,
-                                Time,
-                                Cens,
-                                X,
-                                beta0 = t(chain[N, 1:k]),
-                                sigma20 = sigma2.star,
-                                logt0 = t(chain[N, (k + 2):(k + 1 + n)]),
-                                prior = prior,
-                                set,
-                                eps_l,
-                                eps_r)
+  chain.beta <- MCMCR.sigma2.LN(
+    N = N * thin,
+    thin = thin,
+    Time,
+    Cens,
+    X,
+    beta0 = t(chain[N, 1:k]),
+    sigma20 = sigma2.star,
+    logt0 = t(chain[N, (k + 2):(k + 1 + n)]),
+    prior = prior,
+    set,
+    eps_l,
+    eps_r
+  )
   po.beta <- rep(0, times = N)
   aux1.beta <- solve(t(X) %*% X)
   aux2.beta <- aux1.beta %*% t(X)
   for (i in 1:N) {
     mu.aux <- as.vector(aux2.beta %*% chain.beta[(i + 1), (k + 1):(k + n)])
     po.beta[i] <- mvtnorm::dmvnorm(beta.star,
-                                   mean = mu.aux,
-                                   sigma = sigma2.star * aux1.beta)
+      mean = mu.aux,
+      sigma = sigma2.star * aux1.beta
+    )
   }
   PO.beta <- mean(po.beta)
   cat("Posterior ordinate beta ready!\n")
@@ -207,11 +224,13 @@ LML_LN <- function(thin,
   # MARGINAL LOG-LIKELIHOOD
   LML <- LL.ord + LP.ord - LPO.sigma2 - LPO.beta
 
-  return(list(LL.ord = LL.ord,
-              LP.ord = LP.ord,
-              LPO.sigma2 = LPO.sigma2,
-              LPO.beta = LPO.beta,
-              LML = LML))
+  return(list(
+    LL.ord = LL.ord,
+    LP.ord = LP.ord,
+    LPO.sigma2 = LPO.sigma2,
+    LPO.beta = LPO.beta,
+    LML = LML
+  ))
 }
 
 
@@ -228,10 +247,14 @@ LML_LN <- function(thin,
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.LM
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'               Cens = cancer[, 2], X = cancer[, 3:11])
-#' LN.DIC <- DIC_LN(Time = cancer[, 1], Cens = cancer[, 2], X = cancer[, 3:11],
-#'                  chain = LN)
+#' LN <- MCMC_LN(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
+#' LN.DIC <- DIC_LN(
+#'   Time = cancer[, 1], Cens = cancer[, 2], X = cancer[, 3:11],
+#'   chain = LN
+#' )
 #'
 #' @export
 
@@ -243,24 +266,26 @@ DIC_LN <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
 
   for (iter in 1:N) {
     LL[iter] <- log.lik.LN(Time,
-                           Cens,
-                           X,
-                           beta = as.vector(chain[iter, 1:k]),
-                           sigma2 = chain[iter, k + 1],
-                           set = set,
-                           eps_l,
-                           eps_r)
+      Cens,
+      X,
+      beta = as.vector(chain[iter, 1:k]),
+      sigma2 = chain[iter, k + 1],
+      set = set,
+      eps_l,
+      eps_r
+    )
   }
 
   aux <- apply(chain[, 1:(k + 1)], 2, "median")
   pd <- -2 * mean(LL) + 2 * log.lik.LN(Time,
-                                       Cens,
-                                       X,
-                                       beta = aux[1:k],
-                                       sigma2 = aux[k + 1],
-                                       set = set,
-                                       eps_l,
-                                       eps_r)
+    Cens,
+    X,
+    beta = aux[1:k],
+    sigma2 = aux[k + 1],
+    set = set,
+    eps_l,
+    eps_r
+  )
   pd.aux <- k + 1
 
   DIC <- -2 * mean(LL) + pd
@@ -288,10 +313,14 @@ DIC_LN <- function(Time, Cens, X, chain, set = TRUE, eps_l = 0.5, eps_r = 0.5) {
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.LM
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'               Cens = cancer[, 2], X = cancer[, 3:11])
-#' LN.CD <- CaseDeletion_LN(Time = cancer[, 1], Cens = cancer[, 2],
-#'                          X = cancer[, 3:11], chain = LN)
+#' LN <- MCMC_LN(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
+#' LN.CD <- CaseDeletion_LN(
+#'   Time = cancer[, 1], Cens = cancer[, 2],
+#'   X = cancer[, 3:11], chain = LN
+#' )
 #'
 #' @export
 CaseDeletion_LN <- function(Time,
@@ -313,13 +342,14 @@ CaseDeletion_LN <- function(Time,
     aux2 <- rep(0, times = N)
     for (ITER in 1:N) {
       aux2[ITER] <- log.lik.LN(Time[s],
-                               Cens[s],
-                               X[s, ],
-                               beta = as.vector(chain[ITER, 1:k]),
-                               sigma2 = chain[ITER, (k + 1)],
-                               set,
-                               eps_l,
-                               eps_r)
+        Cens[s],
+        X[s, ],
+        beta = as.vector(chain[ITER, 1:k]),
+        sigma2 = chain[ITER, (k + 1)],
+        set,
+        eps_l,
+        eps_r
+      )
       aux1[ITER] <- exp(-aux2[ITER])
     }
     logCPO[s] <- -log(mean(aux1))

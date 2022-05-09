@@ -12,8 +12,10 @@
 #' # This is only an illustration. Run longer chains for more accurate
 #' # estimations.
 #'
-#' LN <- MCMC_LN(N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
-#'               Cens = cancer[, 2], X = cancer[, 3:11])
+#' LN <- MCMC_LN(
+#'   N = 1000, thin = 20, burn = 40, Time = cancer[, 1],
+#'   Cens = cancer[, 2], X = cancer[, 3:11]
+#' )
 #' Trace_plot(1, LN)
 #'
 #' @export
@@ -39,10 +41,10 @@ Trace_plot <- function(variable = NULL, chain = NULL) {
 #' @return A numeric matrix suitable for BASSLINE functions
 #' @examples
 #' library(BASSLINE)
-#' Time <- c(5,15,15)
-#' Cens <- c(1,0,1)
+#' Time <- c(5, 15, 15)
+#' Cens <- c(1, 0, 1)
 #' experiment <- as.factor(c("chem1", "chem2", "chem3"))
-#' age <- c(15,35,20)
+#' age <- c(15, 35, 20)
 #' df <- data.frame(Time, Cens, experiment, age)
 #' converted <- BASSLINE_convert(df)
 #'
@@ -59,7 +61,7 @@ BASSLINE_convert <- function(df) {
       # If not a factor then add column to BASSLINE.mat
       BASSLINE.mat <- cbind(BASSLINE.mat, original.var)
       colnames(BASSLINE.mat)[ncol(BASSLINE.mat)] <- colnames(df[columns])
-    } else{
+    } else {
       # if factor then add column for each level
       for (levels in unique(df[, columns])) {
         level.binary <- rep(0, n.obs)
@@ -69,7 +71,8 @@ BASSLINE_convert <- function(df) {
 
         BASSLINE.mat <- cbind(BASSLINE.mat, level.binary)
         level.name <- paste(colnames(df[columns]), ".", levels,
-                            sep = "")
+          sep = ""
+        )
         colnames(BASSLINE.mat)[ncol(BASSLINE.mat)] <- level.name
       }
     }
@@ -92,7 +95,6 @@ MCMC.param.check <- function(N,
                              set,
                              eps_l,
                              eps_r) {
-
   num.obs <- nrow(X)
   num.covariates <- ncol(X)
 
@@ -155,7 +157,6 @@ MCMC.param.check <- function(N,
   if (burn == 0) {
     cat(paste0("Note! No burn-in period is being used!\n"))
   }
-
 }
 
 #### Inital value samplers
@@ -179,7 +180,6 @@ nu.sample <- function() {
   nu <- stats::rgamma(1, 2, 2)
   cat(paste("Initial nu :", round(nu, 2), "\n\n"))
   return(nu)
-
 }
 
 alpha.sample <- function() {
