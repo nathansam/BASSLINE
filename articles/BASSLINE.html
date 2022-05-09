@@ -85,7 +85,7 @@
                   <a class="author_email" href="mailto:#"></a><a href="mailto:catalina.vallejos@igmm.ed.ac.uk" class="email">catalina.vallejos@igmm.ed.ac.uk</a>
       
                   
-            <h4 data-toc-skip class="date">2022-04-26</h4>
+            <h4 data-toc-skip class="date">2022-05-09</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/nathansam/BASSLINE/blob/HEAD/vignettes/BASSLINE.Rmd" class="external-link"><code>vignettes/BASSLINE.Rmd</code></a></small>
       <div class="d-none name"><code>BASSLINE.Rmd</code></div>
@@ -311,107 +311,106 @@
 <span class="va">LN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MCMC_LN.html">MCMC_LN</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">Time</span>,
               Cens <span class="op">=</span> <span class="va">Cens</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="co">#&gt; Initial beta 1 : 1.08 </span>
-<span class="co">#&gt;  Initial beta 2 : -0.28 </span>
-<span class="co">#&gt;  Initial beta 3 : -1.45 </span>
-<span class="co">#&gt;  Initial beta 4 : 1.42 </span>
-<span class="co">#&gt;  Initial beta 5 : -1.31 </span>
-<span class="co">#&gt;  Initial beta 6 : -1.27 </span>
-<span class="co">#&gt;  Initial beta 7 : 1.32 </span>
-<span class="co">#&gt;  Initial beta 8 : 0.98 </span>
-<span class="co">#&gt;  Initial beta 9 : 0.53 </span>
+<span class="co">#&gt; Initial beta 1 : 0.17 </span>
+<span class="co">#&gt;  Initial beta 2 : -0.01 </span>
+<span class="co">#&gt;  Initial beta 3 : 0.74 </span>
+<span class="co">#&gt;  Initial beta 4 : -0.92 </span>
+<span class="co">#&gt;  Initial beta 5 : 0.41 </span>
+<span class="co">#&gt;  Initial beta 6 : -1.51 </span>
+<span class="co">#&gt;  Initial beta 7 : 0.41 </span>
+<span class="co">#&gt;  Initial beta 8 : -1.3 </span>
+<span class="co">#&gt;  Initial beta 9 : 0.35 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial sigma^2 : 1.31</span>
+<span class="co">#&gt; Initial sigma^2 : 1.45</span>
 
 <span class="co"># Log-student's T</span>
 <span class="va">LST</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MCMC_LST.html">MCMC_LST</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span> , Time <span class="op">=</span> <span class="va">Time</span>, Cens <span class="op">=</span> <span class="va">Cens</span>,
                 X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="co">#&gt; Initial beta 1 : 0.25 </span>
-<span class="co">#&gt;  Initial beta 2 : 0.03 </span>
-<span class="co">#&gt;  Initial beta 3 : 0.08 </span>
-<span class="co">#&gt;  Initial beta 4 : -0.55 </span>
-<span class="co">#&gt;  Initial beta 5 : 0.49 </span>
-<span class="co">#&gt;  Initial beta 6 : -2.25 </span>
-<span class="co">#&gt;  Initial beta 7 : 0.75 </span>
-<span class="co">#&gt;  Initial beta 8 : 0.02 </span>
-<span class="co">#&gt;  Initial beta 9 : -0.12 </span>
+<span class="co">#&gt; Initial beta 1 : 0.44 </span>
+<span class="co">#&gt;  Initial beta 2 : 1.8 </span>
+<span class="co">#&gt;  Initial beta 3 : -0.7 </span>
+<span class="co">#&gt;  Initial beta 4 : -0.42 </span>
+<span class="co">#&gt;  Initial beta 5 : 0.9 </span>
+<span class="co">#&gt;  Initial beta 6 : -1.35 </span>
+<span class="co">#&gt;  Initial beta 7 : 1.08 </span>
+<span class="co">#&gt;  Initial beta 8 : 0.85 </span>
+<span class="co">#&gt;  Initial beta 9 : 0.77 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial sigma^2 : 0.3 </span>
+<span class="co">#&gt; Initial sigma^2 : 0.41 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial nu from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial nu : 1.75 </span>
+<span class="co">#&gt; Initial nu : 1.03 </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; AR nu : 0.35</span>
+<span class="co">#&gt; AR nu : 0.36</span>
 
 <span class="co"># Log-Laplace</span>
 <span class="va">LLAP</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MCMC_LLAP.html">MCMC_LLAP</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>,  Time <span class="op">=</span> <span class="va">Time</span>, Cens <span class="op">=</span> <span class="va">Cens</span>,
                   X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="co">#&gt; Initial beta 1 : 0.93 </span>
-<span class="co">#&gt;  Initial beta 2 : -0.46 </span>
-<span class="co">#&gt;  Initial beta 3 : -1.17 </span>
-<span class="co">#&gt;  Initial beta 4 : 0.64 </span>
-<span class="co">#&gt;  Initial beta 5 : -0.47 </span>
-<span class="co">#&gt;  Initial beta 6 : -0.21 </span>
-<span class="co">#&gt;  Initial beta 7 : -0.14 </span>
-<span class="co">#&gt;  Initial beta 8 : -0.22 </span>
-<span class="co">#&gt;  Initial beta 9 : 0.96 </span>
+<span class="co">#&gt; Initial beta 1 : -0.7 </span>
+<span class="co">#&gt;  Initial beta 2 : 0.07 </span>
+<span class="co">#&gt;  Initial beta 3 : 1.45 </span>
+<span class="co">#&gt;  Initial beta 4 : -0.11 </span>
+<span class="co">#&gt;  Initial beta 5 : 2.09 </span>
+<span class="co">#&gt;  Initial beta 6 : 1.42 </span>
+<span class="co">#&gt;  Initial beta 7 : -0.44 </span>
+<span class="co">#&gt;  Initial beta 8 : -1.61 </span>
+<span class="co">#&gt;  Initial beta 9 : -1.82 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial sigma^2 : 0.94</span>
+<span class="co">#&gt; Initial sigma^2 : 0.6</span>
 
 <span class="co">#Log-exponential power</span>
 <span class="va">LEP</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MCMC_LEP.html">MCMC_LEP</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">Time</span>, Cens <span class="op">=</span> <span class="va">Cens</span>,
                 X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="co">#&gt; Initial beta 1 : 0.51 </span>
-<span class="co">#&gt;  Initial beta 2 : 0.18 </span>
-<span class="co">#&gt;  Initial beta 3 : 0.75 </span>
-<span class="co">#&gt;  Initial beta 4 : 0.73 </span>
-<span class="co">#&gt;  Initial beta 5 : -0.76 </span>
-<span class="co">#&gt;  Initial beta 6 : -0.58 </span>
-<span class="co">#&gt;  Initial beta 7 : -0.1 </span>
-<span class="co">#&gt;  Initial beta 8 : 0.15 </span>
-<span class="co">#&gt;  Initial beta 9 : 0.49 </span>
+<span class="co">#&gt; Initial beta 1 : 0.44 </span>
+<span class="co">#&gt;  Initial beta 2 : 1.47 </span>
+<span class="co">#&gt;  Initial beta 3 : -0.9 </span>
+<span class="co">#&gt;  Initial beta 4 : -1.22 </span>
+<span class="co">#&gt;  Initial beta 5 : 1.69 </span>
+<span class="co">#&gt;  Initial beta 6 : 0.84 </span>
+<span class="co">#&gt;  Initial beta 7 : 0 </span>
+<span class="co">#&gt;  Initial beta 8 : 0.37 </span>
+<span class="co">#&gt;  Initial beta 9 : 0 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial sigma^2 : 0.12 </span>
+<span class="co">#&gt; Initial sigma^2 : 2.73 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial alpha from a Uniform(1, 2) distribution</span>
-<span class="co">#&gt; Initial alpha : 1.12 </span>
+<span class="co">#&gt; Initial alpha : 1.05 </span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Inf.sigma2</span>
-<span class="co">#&gt; AR beta 1 : 0.24 </span>
-<span class="co">#&gt;  AR beta 2 : 0.32 </span>
-<span class="co">#&gt;  AR beta 3 : 0.4 </span>
-<span class="co">#&gt;  AR beta 4 : 0.37 </span>
-<span class="co">#&gt;  AR beta 5 : 0.46 </span>
-<span class="co">#&gt;  AR beta 6 : 0.01 </span>
-<span class="co">#&gt;  AR beta 7 : 0.03 </span>
-<span class="co">#&gt;  AR beta 8 : 0 </span>
-<span class="co">#&gt;  AR beta 9 : 0.39 </span>
-<span class="co">#&gt; AR sigma2 : 0.72 </span>
-<span class="co">#&gt; AR alpha : 0.14</span>
+<span class="co">#&gt; AR beta 1 : 0.54 </span>
+<span class="co">#&gt;  AR beta 2 : 0.62 </span>
+<span class="co">#&gt;  AR beta 3 : 0.71 </span>
+<span class="co">#&gt;  AR beta 4 : 0.66 </span>
+<span class="co">#&gt;  AR beta 5 : 0.75 </span>
+<span class="co">#&gt;  AR beta 6 : 0.03 </span>
+<span class="co">#&gt;  AR beta 7 : 0.06 </span>
+<span class="co">#&gt;  AR beta 8 : 0.02 </span>
+<span class="co">#&gt;  AR beta 9 : 0.69 </span>
+<span class="co">#&gt; AR sigma2 : 0.88 </span>
+<span class="co">#&gt; AR alpha : 0.09</span>
 
 <span class="co">#Log-logistic</span>
 <span class="va">LLOG</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MCMC_LLOG.html">MCMC_LLOG</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">Time</span>, Cens <span class="op">=</span> <span class="va">Cens</span>,
                   X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="co">#&gt; Initial beta 1 : -0.38 </span>
-<span class="co">#&gt;  Initial beta 2 : 0.09 </span>
-<span class="co">#&gt;  Initial beta 3 : -0.08 </span>
-<span class="co">#&gt;  Initial beta 4 : 0.94 </span>
-<span class="co">#&gt;  Initial beta 5 : -0.39 </span>
-<span class="co">#&gt;  Initial beta 6 : -0.13 </span>
-<span class="co">#&gt;  Initial beta 7 : -1.63 </span>
-<span class="co">#&gt;  Initial beta 8 : 0.29 </span>
-<span class="co">#&gt;  Initial beta 9 : 0.78 </span>
+<span class="co">#&gt; Initial beta 1 : 0.42 </span>
+<span class="co">#&gt;  Initial beta 2 : 0.71 </span>
+<span class="co">#&gt;  Initial beta 3 : 0.08 </span>
+<span class="co">#&gt;  Initial beta 4 : -0.58 </span>
+<span class="co">#&gt;  Initial beta 5 : 2.17 </span>
+<span class="co">#&gt;  Initial beta 6 : 0.81 </span>
+<span class="co">#&gt;  Initial beta 7 : 0.76 </span>
+<span class="co">#&gt;  Initial beta 8 : -0.51 </span>
+<span class="co">#&gt;  Initial beta 9 : 2.04 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial sigma^2 : 0.4</span></code></pre></div>
+<span class="co">#&gt; Initial sigma^2 : 0.11</span></code></pre></div>
 <div class="section level3">
 <h3 id="diagnostics">Diagnostics<a class="anchor" aria-label="anchor" href="#diagnostics"></a>
 </h3>
@@ -444,38 +443,38 @@
 <code class="sourceCode R"><span class="va">LN</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MCMC_LN.html">MCMC_LN</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">Time</span>,
               Cens <span class="op">=</span> <span class="va">Cens</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="co">#&gt; Initial beta 1 : 2.55 </span>
-<span class="co">#&gt;  Initial beta 2 : -1.42 </span>
-<span class="co">#&gt;  Initial beta 3 : 0.03 </span>
-<span class="co">#&gt;  Initial beta 4 : -0.61 </span>
-<span class="co">#&gt;  Initial beta 5 : 2.04 </span>
-<span class="co">#&gt;  Initial beta 6 : 2.29 </span>
-<span class="co">#&gt;  Initial beta 7 : -1.6 </span>
-<span class="co">#&gt;  Initial beta 8 : -2.11 </span>
-<span class="co">#&gt;  Initial beta 9 : -0.17 </span>
+<span class="co">#&gt; Initial beta 1 : 1.26 </span>
+<span class="co">#&gt;  Initial beta 2 : -0.38 </span>
+<span class="co">#&gt;  Initial beta 3 : 0.66 </span>
+<span class="co">#&gt;  Initial beta 4 : -0.02 </span>
+<span class="co">#&gt;  Initial beta 5 : 0.57 </span>
+<span class="co">#&gt;  Initial beta 6 : 0.56 </span>
+<span class="co">#&gt;  Initial beta 7 : -1.36 </span>
+<span class="co">#&gt;  Initial beta 8 : 0.49 </span>
+<span class="co">#&gt;  Initial beta 9 : -2.27 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial sigma^2 : 0.46</span>
+<span class="co">#&gt; Initial sigma^2 : 1.29</span>
 <span class="fu"><a href="../reference/DIC_LN.html">DIC_LN</a></span><span class="op">(</span>Time <span class="op">=</span> <span class="va">Time</span>, Cens <span class="op">=</span> <span class="va">Cens</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, chain <span class="op">=</span> <span class="va">LN</span><span class="op">)</span>
-<span class="co">#&gt; Effective number of parameters : 8.54 </span>
+<span class="co">#&gt; Effective number of parameters : 9.63 </span>
 <span class="co">#&gt; Actual number of parameters : 10</span>
-<span class="co">#&gt; [1] 1448.599</span>
+<span class="co">#&gt; [1] 1450.023</span>
 
 <span class="co"># Reduced model</span>
 <span class="va">LN.2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/MCMC_LN.html">MCMC_LN</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">Time</span>,
               Cens <span class="op">=</span> <span class="va">Cens</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">8</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span>
 <span class="co">#&gt; Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="co">#&gt; Initial beta 1 : -1.07 </span>
-<span class="co">#&gt;  Initial beta 2 : -1.89 </span>
-<span class="co">#&gt;  Initial beta 3 : -0.58 </span>
-<span class="co">#&gt;  Initial beta 4 : 1.58 </span>
+<span class="co">#&gt; Initial beta 1 : 0.24 </span>
+<span class="co">#&gt;  Initial beta 2 : 0.45 </span>
+<span class="co">#&gt;  Initial beta 3 : 1.29 </span>
+<span class="co">#&gt;  Initial beta 4 : -0.12 </span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="co">#&gt; Initial sigma^2 : 2.1</span>
+<span class="co">#&gt; Initial sigma^2 : 0.29</span>
 <span class="fu"><a href="../reference/DIC_LN.html">DIC_LN</a></span><span class="op">(</span>Time <span class="op">=</span> <span class="va">Time</span>, Cens <span class="op">=</span> <span class="va">Cens</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">8</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, chain <span class="op">=</span> <span class="va">LN.2</span><span class="op">)</span>
-<span class="co">#&gt; Effective number of parameters : 4.29 </span>
+<span class="co">#&gt; Effective number of parameters : 5.22 </span>
 <span class="co">#&gt; Actual number of parameters : 5</span>
-<span class="co">#&gt; [1] 1454.004</span></code></pre></div>
+<span class="co">#&gt; [1] 1455.777</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="log-marginal-likelihood">Log-Marginal Likelihood<a class="anchor" aria-label="anchor" href="#log-marginal-likelihood"></a>
@@ -497,19 +496,19 @@ d\beta \: d\sigma^2 \: d\theta \right)\]</span></p>
 <span class="co">#&gt; Posterior ordinate sigma2 ready!</span>
 <span class="co">#&gt; Posterior ordinate beta ready!</span>
 <span class="co">#&gt; $LL.ord</span>
-<span class="co">#&gt; [1] -715.7584</span>
+<span class="co">#&gt; [1] -715.3812</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $LP.ord</span>
-<span class="co">#&gt; [1] -0.2949015</span>
+<span class="co">#&gt; [1] -0.2563977</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $LPO.sigma2</span>
-<span class="co">#&gt; [1] 0.684243</span>
+<span class="co">#&gt; [1] 0.8230847</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $LPO.beta</span>
-<span class="co">#&gt; [1] 15.42925</span>
+<span class="co">#&gt; [1] 15.56227</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt; $LML</span>
-<span class="co">#&gt; [1] -732.1668</span></code></pre></div>
+<span class="co">#&gt; [1] -732.0229</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="leave-one-out-cross-validation-analysis">Leave-One-Out Cross-Validation Analysis<a class="anchor" aria-label="anchor" href="#leave-one-out-cross-validation-analysis"></a>
@@ -529,29 +528,29 @@ d\beta \: d\sigma^2 \: d\theta \right)\]</span></p>
 </tr></thead>
 <tbody>
 <tr class="odd">
-<td align="right">-5.521366</td>
-<td align="right">0.0115304</td>
-<td align="right">0.5754934</td>
+<td align="right">-5.455811</td>
+<td align="right">0.0076030</td>
+<td align="right">0.5614225</td>
 </tr>
 <tr class="even">
-<td align="right">-7.445357</td>
-<td align="right">0.0178932</td>
-<td align="right">0.5937466</td>
+<td align="right">-7.465292</td>
+<td align="right">0.0200987</td>
+<td align="right">0.5992474</td>
 </tr>
 <tr class="odd">
-<td align="right">-6.905831</td>
-<td align="right">0.0314448</td>
-<td align="right">0.6234432</td>
+<td align="right">-6.981737</td>
+<td align="right">0.0231811</td>
+<td align="right">0.6064235</td>
 </tr>
 <tr class="even">
-<td align="right">-5.931979</td>
-<td align="right">0.0036481</td>
-<td align="right">0.5426312</td>
+<td align="right">-5.925598</td>
+<td align="right">0.0035118</td>
+<td align="right">0.5418299</td>
 </tr>
 <tr class="odd">
-<td align="right">-5.905216</td>
-<td align="right">0.0061348</td>
-<td align="right">0.5552147</td>
+<td align="right">-5.887441</td>
+<td align="right">0.0053357</td>
+<td align="right">0.5515137</td>
 </tr>
 </tbody>
 </table>
@@ -573,11 +572,11 @@ d\beta \: d\sigma^2 \: d\theta \right)\]</span></p>
                                    obs <span class="op">=</span> <span class="va">i</span>, Time <span class="op">=</span> <span class="va">Time</span>, Cens <span class="op">=</span> <span class="va">Cens</span>,
                                    X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>,<span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, chain <span class="op">=</span> <span class="va">LST</span><span class="op">)</span>
 <span class="op">}</span>
-<span class="co">#&gt; AR nu : 0.42 </span>
+<span class="co">#&gt; AR nu : 0.3 </span>
 <span class="co">#&gt; AR nu : 0.4 </span>
-<span class="co">#&gt; AR nu : 0.53 </span>
-<span class="co">#&gt; AR nu : 0.42 </span>
-<span class="co">#&gt; AR nu : 0.42</span></code></pre></div>
+<span class="co">#&gt; AR nu : 0.33 </span>
+<span class="co">#&gt; AR nu : 0.48 </span>
+<span class="co">#&gt; AR nu : 0.38</span></code></pre></div>
 </div>
 <div class="section level2 unnumbered">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>

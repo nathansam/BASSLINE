@@ -103,22 +103,22 @@ to a point).</p></dd>
 <span class="r-in"><span class="va">LLAP</span> <span class="op">&lt;-</span> <span class="fu"><a href="MCMC_LLAP.html">MCMC_LLAP</a></span><span class="op">(</span>N <span class="op">=</span> <span class="fl">1000</span>, thin <span class="op">=</span> <span class="fl">20</span>, burn <span class="op">=</span> <span class="fl">40</span>, Time <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>,</span>
 <span class="r-in">                  Cens <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>, X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span><span class="op">)</span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial betas from a Normal(0, 1) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial beta 1 : 0.57 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 2 : -0.71 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 3 : -0.62 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 4 : -1.51 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 5 : 2.19 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 6 : -0.29 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 7 : 0.26 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 8 : -0.27 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 9 : 1.33 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial beta 1 : -1.5 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 2 : -0.21 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 3 : 0.91 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 4 : 1.44 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 5 : -0.05 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 6 : 0.84 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 7 : 0.09 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 8 : -1.62 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  Initial beta 9 : 0.13 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Sampling initial sigma^2 from a Gamma(2, 2) distribution</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Initial sigma^2 : 0.63 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Initial sigma^2 : 0.83 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span class="va">LLAP.DIC</span> <span class="op">&lt;-</span> <span class="fu">DIC_LLAP</span><span class="op">(</span>Time <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, Cens <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span>,</span>
 <span class="r-in">                     X <span class="op">=</span> <span class="va">cancer</span><span class="op">[</span>, <span class="fl">3</span><span class="op">:</span><span class="fl">11</span><span class="op">]</span>, chain <span class="op">=</span> <span class="va">LLAP</span><span class="op">)</span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Effective number of parameters : 5.51 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Effective number of parameters : 4.37 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Actual number of parameters : 10 </span>
 <span class="r-in"></span>
 </code></pre></div>
